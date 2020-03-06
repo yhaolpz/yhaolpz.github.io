@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Glide 源码分析 - 缩略图使用及原理 | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="缩略图的使用可参考官方文档。 若使用简化方式设置缩略图：">
+<meta name="keywords" content="glide">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Glide 源码分析 - 缩略图使用及原理">
+<meta property="og:url" content="http://yoursite.com/2455213e/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="缩略图的使用可参考官方文档。 若使用简化方式设置缩略图：">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4679478-08af148de8e8a2c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Glide 源码分析 - 缩略图使用及原理">
+<meta name="twitter:description" content="缩略图的使用可参考官方文档。 若使用简化方式设置缩略图：">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/4679478-08af148de8e8a2c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Glide-源码分析-缩略图使用及原理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2455213e/" class="article-date">
+  <time datetime="2019-02-17T08:25:28.000Z" itemprop="datePublished">2019-02-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Glide-源码分析/">Glide 源码分析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Glide 源码分析 - 缩略图使用及原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>缩略图的使用可参考<a href="https://muyangmin.github.io/glide-docs-cn/doc/options.html#缩略图-thumbnail-请求" target="_blank" rel="noopener">官方文档</a>。</p>
+<p>若使用简化方式设置缩略图：</p>
+<a id="more"></a>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Glide.with(context).load(imgUrl).thumbnail(<span class="number">0.2f</span>).into(imageView);</span><br></pre></td></tr></table></figure>
+<p>发起缩略图请求的关键逻辑位于 RequestBuilder 的 buildThumbnailRequestRecursive 方法中：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Base case: thumbnail multiplier generates a thumbnail request, but cannot recurse.</span></span><br><span class="line">  ThumbnailRequestCoordinator coordinator = <span class="keyword">new</span> ThumbnailRequestCoordinator(parentCoordinator);</span><br><span class="line"></span><br><span class="line">  Request fullRequest =</span><br><span class="line">      obtainRequest(</span><br><span class="line">          target,</span><br><span class="line">          targetListener,</span><br><span class="line">          requestOptions,</span><br><span class="line">          coordinator,</span><br><span class="line">          transitionOptions,</span><br><span class="line">          priority,</span><br><span class="line">          overrideWidth,</span><br><span class="line">          overrideHeight);</span><br><span class="line"></span><br><span class="line">  RequestOptions thumbnailOptions = requestOptions.clone()</span><br><span class="line">      .sizeMultiplier(thumbSizeMultiplier);</span><br><span class="line">  Request thumbnailRequest =</span><br><span class="line">      obtainRequest(</span><br><span class="line">          target,</span><br><span class="line">          targetListener,</span><br><span class="line">          thumbnailOptions,</span><br><span class="line">          coordinator,</span><br><span class="line">          transitionOptions,</span><br><span class="line">          getThumbnailPriority(priority),</span><br><span class="line">          overrideWidth,</span><br><span class="line">          overrideHeight);</span><br><span class="line"></span><br><span class="line">  coordinator.setRequests(fullRequest, thumbnailRequest);</span><br><span class="line">  <span class="keyword">return</span> coordinator;</span><br></pre></td></tr></table></figure></p>
+<p>其中 fullRequest、thumbnailRequest 分别为原图、缩略图请求，ThumbnailRequestCoordinator 就是字面意思，专门用于协调原图、缩略图的请求，并合并成一个请求，可以看到在构建缩略图请求时，为了尽量让缩略图比原图加载的更快一点，调用 getThumbnailPriority 方法调整了请求优先级：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NonNull</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Priority <span class="title">getThumbnailPriority</span><span class="params">(@NonNull Priority current)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (current) &#123;</span><br><span class="line">    <span class="keyword">case</span> LOW:</span><br><span class="line">      <span class="keyword">return</span> Priority.NORMAL;</span><br><span class="line">    <span class="keyword">case</span> NORMAL:</span><br><span class="line">      <span class="keyword">return</span> Priority.HIGH;</span><br><span class="line">    <span class="keyword">case</span> HIGH:</span><br><span class="line">    <span class="keyword">case</span> IMMEDIATE:</span><br><span class="line">      <span class="keyword">return</span> Priority.IMMEDIATE;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"unknown priority: "</span> + requestOptions.getPriority());</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>加载完数据后，Glide 会分别解码缩略图、原图两种尺寸的图片，具体解码实现位于 Downsampler 的 decode 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Resource&lt;Bitmap&gt; <span class="title">decode</span><span class="params">(InputStream is, <span class="keyword">int</span> requestedWidth, <span class="keyword">int</span> requestedHeight,</span></span></span><br><span class="line"><span class="function"><span class="params">    Options options, DecodeCallbacks callbacks)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">  Preconditions.checkArgument(is.markSupported(), <span class="string">"You must provide an InputStream that supports"</span></span><br><span class="line">      + <span class="string">" mark()"</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">byte</span>[] bytesForOptions = byteArrayPool.get(ArrayPool.STANDARD_BUFFER_SIZE_BYTES, <span class="keyword">byte</span>[]<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">  BitmapFactory.Options bitmapFactoryOptions = getDefaultOptions();</span><br><span class="line">  bitmapFactoryOptions.inTempStorage = bytesForOptions;</span><br><span class="line"></span><br><span class="line">  DecodeFormat decodeFormat = options.get(DECODE_FORMAT);</span><br><span class="line">  DownsampleStrategy downsampleStrategy = options.get(DownsampleStrategy.OPTION);</span><br><span class="line">  <span class="keyword">boolean</span> fixBitmapToRequestedDimensions = options.get(FIX_BITMAP_SIZE_TO_REQUESTED_DIMENSIONS);</span><br><span class="line">  <span class="keyword">boolean</span> isHardwareConfigAllowed =</span><br><span class="line">    options.get(ALLOW_HARDWARE_CONFIG) != <span class="keyword">null</span> &amp;&amp; options.get(ALLOW_HARDWARE_CONFIG);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    Bitmap result = decodeFromWrappedStreams(is, bitmapFactoryOptions,</span><br><span class="line">        downsampleStrategy, decodeFormat, isHardwareConfigAllowed, requestedWidth,</span><br><span class="line">        requestedHeight, fixBitmapToRequestedDimensions, callbacks);</span><br><span class="line">    <span class="keyword">return</span> BitmapResource.obtain(result, bitmapPool);</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    releaseOptions(bitmapFactoryOptions);</span><br><span class="line">    byteArrayPool.put(bytesForOptions);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>解码完后会调用到 DecodeJob 的 notifyComplete 方法，进一步调用到 EngineJob 的 onResourceReady 方法，在 onResourceReady 方法中通过 handle 转到主线程，然后调用到 EngineJob 的 handleResultOnMainThread 方法，接着调用 SingleRequest 的 onResourceReady 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">onResourceReady</span><span class="params">(Resource&lt;R&gt; resource, R result, DataSource dataSource)</span> </span>&#123;</span><br><span class="line">   <span class="comment">// We must call isFirstReadyResource before setting status.</span></span><br><span class="line">   <span class="keyword">boolean</span> isFirstResource = isFirstReadyResource();</span><br><span class="line">   status = Status.COMPLETE;</span><br><span class="line">   <span class="keyword">this</span>.resource = resource;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (glideContext.getLogLevel() &lt;= Log.DEBUG) &#123;</span><br><span class="line">     Log.d(GLIDE_TAG, <span class="string">"Finished loading "</span> + result.getClass().getSimpleName() + <span class="string">" from "</span></span><br><span class="line">         + dataSource + <span class="string">" for "</span> + model + <span class="string">" with size ["</span> + width + <span class="string">"x"</span> + height + <span class="string">"] in "</span></span><br><span class="line">         + LogTime.getElapsedMillis(startTime) + <span class="string">" ms"</span>);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   isCallingCallbacks = <span class="keyword">true</span>;</span><br><span class="line">   <span class="keyword">try</span> &#123;</span><br><span class="line">     <span class="keyword">boolean</span> anyListenerHandledUpdatingTarget = <span class="keyword">false</span>;</span><br><span class="line">     <span class="keyword">if</span> (requestListeners != <span class="keyword">null</span>) &#123;</span><br><span class="line">       <span class="keyword">for</span> (RequestListener&lt;R&gt; listener : requestListeners) &#123;</span><br><span class="line">         anyListenerHandledUpdatingTarget |=</span><br><span class="line">             listener.onResourceReady(result, model, target, dataSource, isFirstResource);</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">     anyListenerHandledUpdatingTarget |=</span><br><span class="line">         targetListener != <span class="keyword">null</span></span><br><span class="line">             &amp;&amp; targetListener.onResourceReady(result, model, target, dataSource, isFirstResource);</span><br><span class="line"></span><br><span class="line">     <span class="keyword">if</span> (!anyListenerHandledUpdatingTarget) &#123;</span><br><span class="line">       Transition&lt;? <span class="keyword">super</span> R&gt; animation =</span><br><span class="line">           animationFactory.build(dataSource, isFirstResource);</span><br><span class="line">       target.onResourceRReady(result, animation);</span><br><span class="line">     &#125;</span><br><span class="line">   &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">     isCallingCallbacks = <span class="keyword">false</span>;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   notifyLoadSuccess();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到此方法中终于将加载资源回调给 Target 了，调用栈大致如下：</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/4679478-08af148de8e8a2c6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>以上不止是设置缩略图时的加载流程，没有缩略图时走的也是这个流程。我们知道图片缩略图不过是通过 BitmapFactory.Options  解码一张尺寸较小、质量较差的图罢了，而 Glide 除了支持配置图片缩略图，还支持配置本地视频缩略图。取视频缩略图的关键逻辑位于 VideoDecoder 的 decodeFrame 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Bitmap <span class="title">decodeFrame</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     MediaMetadataRetriever mediaMetadataRetriever,</span></span></span><br><span class="line"><span class="function"><span class="params">     <span class="keyword">long</span> frameTimeMicros,</span></span></span><br><span class="line"><span class="function"><span class="params">     <span class="keyword">int</span> frameOption,</span></span></span><br><span class="line"><span class="function"><span class="params">     <span class="keyword">int</span> outWidth,</span></span></span><br><span class="line"><span class="function"><span class="params">     <span class="keyword">int</span> outHeight,</span></span></span><br><span class="line"><span class="function"><span class="params">     DownsampleStrategy strategy)</span> </span>&#123;</span><br><span class="line">   Bitmap result = <span class="keyword">null</span>;</span><br><span class="line">   <span class="comment">// Arguably we should handle the case where just width or just height is set to</span></span><br><span class="line">   <span class="comment">// Target.SIZE_ORIGINAL. Up to and including OMR1, MediaMetadataRetriever defaults to setting</span></span><br><span class="line">   <span class="comment">// the dimensions to the display width and height if they aren't specified (ie</span></span><br><span class="line">   <span class="comment">// getScaledFrameAtTime is not used). Given that this is an optimization only if</span></span><br><span class="line">   <span class="comment">// Target.SIZE_ORIGINAL is not used and not using getScaledFrameAtTime ever would match the</span></span><br><span class="line">   <span class="comment">// behavior of Glide in all versions of Android prior to OMR1, it's probably fine for now.</span></span><br><span class="line">   <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= VERSION_CODES.O_MR1</span><br><span class="line">       &amp;&amp; outWidth != Target.SIZE_ORIGINAL</span><br><span class="line">       &amp;&amp; outHeight != Target.SIZE_ORIGINAL</span><br><span class="line">       &amp;&amp; strategy != DownsampleStrategy.NONE) &#123;</span><br><span class="line">     result =</span><br><span class="line">         decodeScaledFrame(</span><br><span class="line">             mediaMetadataRetriever, frameTimeMicros, frameOption, outWidth, outHeight, strategy);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (result == <span class="keyword">null</span>) &#123;</span><br><span class="line">     result = decodeOriginalFrame(mediaMetadataRetriever, frameTimeMicros, frameOption);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到在 Android 8.1 系统上支持直接获取缩放的视频缩略图，8.1 以下则直接获取帧原图，分别通过 MediaMetadataRetriever 的 getScaledFrameAtTime 、getFrameAtTime 获取。MediaMetadataRetriever 是 Android 提供的类，用来获取本地和网络 Media 文件信息，提供了用于从输入媒体文件检索帧和元数据的统一接口。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/2455213e/" data-id="ck7fsd3uo001eheca33g1vb4u" class="article-share-link" data-share="baidu" data-title="Glide 源码分析 - 缩略图使用及原理">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/glide/">glide</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/3fe9ef36/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Glide 源码分析 - 展示 gif 原理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/aeb1195c/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Glide 源码分析 - 请求优先级及原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

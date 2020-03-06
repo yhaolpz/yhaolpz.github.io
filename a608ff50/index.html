@@ -1,0 +1,320 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Android 9.0 Activity 启动流程分析 | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从一个问题出发：调用 startActivity 后系统到底做了什么事？ 如果让我回答这个问题，我的答案会是这样：Android 系统启动后会先启动一个 init 进程，init 进程启动 Zygote 进程，Zygote 进程进而会启动 system server 进程，在这个 system server 进程中，会启动 AMS、WMS 等系统服务。我们的 app 中调用 startActivi">
+<meta name="keywords" content="Android,Framework,AMS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 9.0 Activity 启动流程分析">
+<meta property="og:url" content="http://yoursite.com/a608ff50/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="从一个问题出发：调用 startActivity 后系统到底做了什么事？ 如果让我回答这个问题，我的答案会是这样：Android 系统启动后会先启动一个 init 进程，init 进程启动 Zygote 进程，Zygote 进程进而会启动 system server 进程，在这个 system server 进程中，会启动 AMS、WMS 等系统服务。我们的 app 中调用 startActivi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-25T11:05:44.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 9.0 Activity 启动流程分析">
+<meta name="twitter:description" content="从一个问题出发：调用 startActivity 后系统到底做了什么事？ 如果让我回答这个问题，我的答案会是这样：Android 系统启动后会先启动一个 init 进程，init 进程启动 Zygote 进程，Zygote 进程进而会启动 system server 进程，在这个 system server 进程中，会启动 AMS、WMS 等系统服务。我们的 app 中调用 startActivi">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Android-9-0-Activity-启动流程分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/a608ff50/" class="article-date">
+  <time datetime="2019-09-15T11:42:33.000Z" itemprop="datePublished">2019-09-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Framework/">Framework</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 9.0 Activity 启动流程分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从一个问题出发：调用 startActivity 后系统到底做了什么事？</p>
+<p>如果让我回答这个问题，我的答案会是这样：Android 系统启动后会先启动一个 init 进程，init 进程启动 Zygote 进程，Zygote 进程进而会启动 system server 进程，在这个 system server 进程中，会启动 AMS、WMS 等系统服务。我们的 app 中调用 startActivity 后，需要通过 AMS 执行启动 Activity，而我们的 app 进程与 system server 是不同的进程，所以要跨进程，跨进程是通过 Binder 来实现的。 </p>
+<p>（？？？？？满脸问号脸），我这是回答了啥？</p>
+<a id="more"></a>
+<p>问题是调用 startActivity 后系统到底做了什么事？而我却只是讲了下需要跨进程调用 AMS，可以说几乎是没有回答。为什么我讲了一通却根本没有回答到点上呢？因为我不会… 我根本不知道具体要调用到哪几个类，有哪几个关键方法，做了哪些关键的事，为了突破这个障碍，今天就来仔细研究一下到底 startActivity 做了哪些事，涉及源码基于 <a href="http://androidxref.com/9.0.0_r3/" target="_blank" rel="noopener">Android 9.0 版本</a></p>
+<p>在开始分析之前，心存这几个疑问：</p>
+<ul>
+<li>代码中具体是在哪里调用 AMS 跨进程通信的？</li>
+<li>跨进程调用 AMS 是通过 AIDL 接口方式实现的吗？如果是的话，具体是哪个接口？</li>
+<li>Intent 数据具体是怎样跨进程传输的呢？</li>
+<li>为什么需要 AMS 去执行 Activity 的启动，AMS 到底做了哪些事？</li>
+<li>AMS 执行完后再回到 app 进程也是跨进程，这部分是怎么实现的？ </li>
+<li>上一个 Activity onPause 方法执行完新的 Activity 才能被创建，这个逻辑是在哪里控制的？</li>
+</ul>
+<p>好了开车吧！🙂️</p>
+<p>startActivity 首先会调用到 Activity#startActivityForResult 方法，如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startActivityForResult</span><span class="params">(@RequiresPermission Intent intent, <span class="keyword">int</span> requestCode,</span></span></span><br><span class="line"><span class="function"><span class="params">          @Nullable Bundle options)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">if</span> (mParent == <span class="keyword">null</span>) &#123;<span class="comment">//【a】</span></span><br><span class="line">          options = transferSpringboardActivityOptions(options);</span><br><span class="line">          Instrumentation.ActivityResult ar =</span><br><span class="line">              mInstrumentation.execStartActivity(</span><br><span class="line">                  <span class="keyword">this</span>, mMainThread.getApplicationThread(), mToken, <span class="keyword">this</span>,</span><br><span class="line">                  intent, requestCode, options);<span class="comment">//【b】</span></span><br><span class="line">          <span class="comment">//省略...</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (options != <span class="keyword">null</span>) &#123;</span><br><span class="line">              mParent.startActivityFromChild(<span class="keyword">this</span>, intent, requestCode, options);</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              mParent.startActivityFromChild(<span class="keyword">this</span>, intent, requestCode);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>【a】. mParent 是一个 Activity，父 Activity 是什么场景下的呢，起初怀疑与 manifest 中 parentActivityName 配置有关，但并没有。<br>【b】. 进一步调用 Instrumentation 的 execStartActivity 方法，Instrumentation 用于具体操作某个 Activity 的功能（单向调用 AMS）以及统计、测量该应用程序的所有开销，这与它的中文含义”仪表盘”可以说是相当吻合。一个进程只有一个 Instrumentation 对象，每个 Activity 都持有 Instrumentation 。</p>
+<p>Instrumentation 的 execStartActivity 方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ActivityResult <span class="title">execStartActivity</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    Context who, IBinder contextThread, IBinder token, String target,</span></span></span><br><span class="line"><span class="function"><span class="params">    Intent intent, <span class="keyword">int</span> requestCode, Bundle options)</span> </span>&#123;</span><br><span class="line">    IApplicationThread whoThread = (IApplicationThread) contextThread;</span><br><span class="line">    <span class="keyword">if</span> (mActivityMonitors != <span class="keyword">null</span>) &#123;</span><br><span class="line">       <span class="comment">//省略...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        intent.migrateExtraStreamToClipData();</span><br><span class="line">        intent.prepareToLeaveProcess(who);</span><br><span class="line">        <span class="keyword">int</span> result = ActivityManager.getService()</span><br><span class="line">            .startActivity(whoThread, who.getBasePackageName(), intent,</span><br><span class="line">                    intent.resolveTypeIfNeeded(who.getContentResolver()),</span><br><span class="line">                    token, target, requestCode, <span class="number">0</span>, <span class="keyword">null</span>, options); <span class="comment">//【a】</span></span><br><span class="line">        checkStartActivityResult(result, intent);<span class="comment">//【b】</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Failure from system"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>【b】. 处理启动 Activity 的结果，如果结果值异常的话进一步抛出异常<br>【a】. 通过 ActivityManager 获取到 AMS 并调用 startActivity 方法，这也说明上面对 Instrumentation 的描述是正确的，确实是通过它来调用 AMS 的，这时候我们也能自信的回答 “startActivity 方法是在哪里跨进程调用 AMS 的” 问题了。</p>
+<p>继续来看 ActivityManager 的 getService 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IActivityManager <span class="title">getService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> IActivityManagerSingleton.get();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton&lt;IActivityManager&gt; IActivityManagerSingleton =</span><br><span class="line">        <span class="keyword">new</span> Singleton&lt;IActivityManager&gt;() &#123;<span class="comment">//【a】</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> IActivityManager <span class="title">create</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">final</span> IBinder b = ServiceManager.getService(Context.ACTIVITY_SERVICE);<span class="comment">//【b】</span></span><br><span class="line">                <span class="keyword">final</span> IActivityManager am = IActivityManager.Stub.asInterface(b);<span class="comment">//【c】</span></span><br><span class="line">                <span class="keyword">return</span> am;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br></pre></td></tr></table></figure></p>
+<p>【a】. 这里通过 Singleton+泛型 方式实现了单例，有 lazy 和易读的优点，平时写单例一般是通过静态内部类或枚举实现的，适当的场景也可以考虑用这种方式写，不过 Singleton 是 @hide 的，需要我们在外部定义<br>【b】. 在学习 Binder 机制的时候有四个很重要的概念，Client、Server、ServiceManager、Binder 驱动，ServiceManager 主要作用就是帮助系统维护众多的 Service 列表，ServiceManager 本身也是运行在一个独立的进程，所以从 ServiceManager 中获取 Service 也是一个跨进程操作，为了提高性能，内部以 HashMap&lt;String, IBinder&gt; 形式缓存了各个 Service。<br>【c】. 这里可以看到是标准的 AIDL 的调用格式，IActivityManager 就是跨进程调用 AMS 的 AIDL 接口，源码位于 frameworks/base/core/java/android/app/IActivityManager.aidl，这时我们就能回答开头的 “跨进程调用 AMS 是通过 AIDL 接口方式实现的吗？如果是的话，具体是哪个接口” 问题了。</p>
+<p>就这样调用逻辑在 Instrumentation 中由 AMS 接管，AMS 继承 IActivityManager.Stub 实现了 IPC 方法，供 Instrumentation、Context 调用，AMS 代码量很庞大（27000+行），源码位于 frameworks/base/services/core/java/com/android/server/am/ActivityManagerService.java</p>
+<p>接着来看 AMS 的 startActivityAsUser 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">startActivityAsUser</span><span class="params">(IApplicationThread caller, String callingPackage,</span></span></span><br><span class="line"><span class="function"><span class="params">        Intent intent, String resolvedType, IBinder resultTo, String resultWho, <span class="keyword">int</span> requestCode,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span> startFlags, ProfilerInfo profilerInfo, Bundle bOptions, <span class="keyword">int</span> userId,</span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">boolean</span> validateIncomingUser)</span> </span>&#123;</span><br><span class="line">    enforceNotIsolatedCaller(<span class="string">"startActivity"</span>);</span><br><span class="line"></span><br><span class="line">    userId = mActivityStartController.checkTargetUser(userId, validateIncomingUser,</span><br><span class="line">            Binder.getCallingPid(), Binder.getCallingUid(), <span class="string">"startActivityAsUser"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> Switch to user app stacks here.</span></span><br><span class="line">    <span class="keyword">return</span> mActivityStartController.obtainStarter(intent, <span class="string">"startActivityAsUser"</span>)</span><br><span class="line">            .setCaller(caller)</span><br><span class="line">            .setCallingPackage(callingPackage)</span><br><span class="line">            .setResolvedType(resolvedType)</span><br><span class="line">            .setResultTo(resultTo)</span><br><span class="line">            .setResultWho(resultWho)</span><br><span class="line">            .setRequestCode(requestCode)</span><br><span class="line">            .setStartFlags(startFlags)</span><br><span class="line">            .setProfilerInfo(profilerInfo)</span><br><span class="line">            .setActivityOptions(bOptions)</span><br><span class="line">            .setMayWait(userId)</span><br><span class="line">            .execute();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里就已经处于 system server 进程了，对于开头的问题 “Intent 数据具体是怎样跨进程传输的”，也有了答案，是通过调用 AIDL 接口方法作为参数直接传递的。这里可以看到 Activity 的启动逻辑用 ActivityStarter 做了一层封装，写法上更加清晰，ActivityStarter 的 execute 方法如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (mRequest.mayWait) &#123;</span><br><span class="line">            <span class="keyword">return</span> startActivityMayWait(mRequest.caller, mRequest.callingUid,</span><br><span class="line">                    mRequest.callingPackage, mRequest.intent, mRequest.resolvedType,</span><br><span class="line">                    mRequest.voiceSession, mRequest.voiceInteractor, mRequest.resultTo,</span><br><span class="line">                    mRequest.resultWho, mRequest.requestCode, mRequest.startFlags,</span><br><span class="line">                    mRequest.profilerInfo, mRequest.waitResult, mRequest.globalConfig,</span><br><span class="line">                    mRequest.activityOptions, mRequest.ignoreTargetSecurity, mRequest.userId,</span><br><span class="line">                    mRequest.inTask, mRequest.reason,</span><br><span class="line">                    mRequest.allowPendingRemoteAnimationRegistryLookup);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> startActivity(mRequest.caller, mRequest.intent, mRequest.ephemeralIntent,</span><br><span class="line">                    mRequest.resolvedType, mRequest.activityInfo, mRequest.resolveInfo,</span><br><span class="line">                    mRequest.voiceSession, mRequest.voiceInteractor, mRequest.resultTo,</span><br><span class="line">                    mRequest.resultWho, mRequest.requestCode, mRequest.callingPid,</span><br><span class="line">                    mRequest.callingUid, mRequest.callingPackage, mRequest.realCallingPid,</span><br><span class="line">                    mRequest.realCallingUid, mRequest.startFlags, mRequest.activityOptions,</span><br><span class="line">                    mRequest.ignoreTargetSecurity, mRequest.componentSpecified,</span><br><span class="line">                    mRequest.outActivity, mRequest.inTask, mRequest.reason,</span><br><span class="line">                    mRequest.allowPendingRemoteAnimationRegistryLookup);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        onExecutionComplete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>进一步会调用 startActivityMayWait 方法，然后就是在 ActivityStarter 一大长串的调用了，调用顺序为：startActivityMayWait -&gt; startActivity -&gt; startActivity -&gt; startActivity -&gt; startActivityUnchecked，</p>
+<h5 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h5><ol>
+<li><a href="https://blog.csdn.net/itachi85/article/details/78569299" target="_blank" rel="noopener">Android深入四大组件（六）Android8.0 根Activity启动过程（前篇）</a></li>
+<li><a href="https://blog.csdn.net/qinjuning/article/details/7262769" target="_blank" rel="noopener">Android中ActivityManagerService与应用程序(客户端)通信模型分析</a></li>
+<li><a href="https://www.2cto.com/kf/201903/799681.html" target="_blank" rel="noopener">Android startActivity原理分析(基于Android 8.1 AOSP)</a></li>
+<li><a href="https://segmentfault.com/a/1190000019042206" target="_blank" rel="noopener">AMS startActivity())</a></li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/a608ff50/" data-id="ck7fsd3u30006hecakj6d3dxr" class="article-share-link" data-share="baidu" data-title="Android 9.0 Activity 启动流程分析">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AMS/">AMS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Framework/">Framework</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/798144ac/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Ubuntu16.04 Caffe 安装步骤记录（超详尽） | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="历时一周终于在 ubuntu16.04 系统成功安装 caffe 并编译，网上有很多教程，但是某些步骤并没有讲解详尽，导致配置过程总是出现各种各样匪夷所思的问题，尤其对于新手而言更是欲哭无泪，在我饱受折磨后决定把安装步骤记录下来，尽量详尽清楚明白，避免后来小白重蹈覆辙。  建议转往 CSDN 上查看这篇文章，那里热心评论或许可以帮到你">
+<meta name="keywords" content="Caffe,Ubuntu">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu16.04 Caffe 安装步骤记录（超详尽）">
+<meta property="og:url" content="http://yoursite.com/fd96e42a/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="历时一周终于在 ubuntu16.04 系统成功安装 caffe 并编译，网上有很多教程，但是某些步骤并没有讲解详尽，导致配置过程总是出现各种各样匪夷所思的问题，尤其对于新手而言更是欲哭无泪，在我饱受折磨后决定把安装步骤记录下来，尽量详尽清楚明白，避免后来小白重蹈覆辙。  建议转往 CSDN 上查看这篇文章，那里热心评论或许可以帮到你">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-0502f901f2df7852?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-b4978a9a686f82ba?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-d608948871b39494?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-706f774b0cd728b1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ubuntu16.04 Caffe 安装步骤记录（超详尽）">
+<meta name="twitter:description" content="历时一周终于在 ubuntu16.04 系统成功安装 caffe 并编译，网上有很多教程，但是某些步骤并没有讲解详尽，导致配置过程总是出现各种各样匪夷所思的问题，尤其对于新手而言更是欲哭无泪，在我饱受折磨后决定把安装步骤记录下来，尽量详尽清楚明白，避免后来小白重蹈覆辙。  建议转往 CSDN 上查看这篇文章，那里热心评论或许可以帮到你">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-0502f901f2df7852?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Ubuntu16-04-Caffe-安装步骤记录（超详尽）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/fd96e42a/" class="article-date">
+  <time datetime="2017-12-04T07:10:09.000Z" itemprop="datePublished">2017-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/深度学习/">深度学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Ubuntu16.04 Caffe 安装步骤记录（超详尽）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>历时一周终于在 ubuntu16.04 系统成功安装 caffe 并编译，网上有很多教程，但是某些步骤并没有讲解详尽，导致配置过程总是出现各种各样匪夷所思的问题，尤其对于新手而言更是欲哭无泪，在我饱受折磨后决定把安装步骤记录下来，尽量详尽清楚明白，避免后来小白重蹈覆辙。</p>
+<blockquote>
+<p>建议转往 CSDN 上查看<a href="https://blog.csdn.net/yhaolpz/article/details/71375762" target="_blank" rel="noopener">这篇文章</a>，那里热心评论或许可以帮到你<br><a id="more"></a></p>
+</blockquote>
+<p>安装硬件： intel i5 + NVIDIA 740 M</p>
+<p>安装流程细分为如下10个步骤，细化步骤粒度更易避免出错：</p>
+<p> <strong>1、安装依赖包</strong><br> <strong>2、禁用 nouveau</strong><br> <strong>3、配置环境变量</strong><br> <strong>4、下载 CUDA 8.0</strong><br> <strong>5、安装 CUDA 8.0</strong><br> <strong>6、验证 CUDA 8.0 是否安装成功</strong><br> <strong>7、安装 cudnn</strong><br> <strong>8、安装 opencv3.1</strong><br> <strong>9、安装 caffe</strong><br> <strong>10、安装 pycaffe notebook 接口环境</strong></p>
+<h1 id="第1步-安装依赖包"><a href="#第1步-安装依赖包" class="headerlink" title="第1步 安装依赖包"></a><strong>第1步 安装依赖包</strong></h1><p>安装后续步骤或环境必需的依赖包，依次输入以下命令:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libprotobuf-dev libleveldb-dev libsnappy-dev libopencv-dev libhdf5-serial-dev protobuf-compiler</span><br><span class="line"></span><br><span class="line">sudo apt-get install --no-install-recommends libboost-all-dev</span><br><span class="line"></span><br><span class="line">sudo apt-get install libopenblas-dev liblapack-dev libatlas-base-dev</span><br><span class="line"></span><br><span class="line">sudo apt-get install libgflags-dev libgoogle-glog-dev liblmdb-dev</span><br><span class="line"></span><br><span class="line">sudo apt-get install git cmake build-essential</span><br></pre></td></tr></table></figure>
+<p>有一定几率安装失败而导致后续步骤出现问题，所以要确保以上依赖包都已安装成功，验证方法就是重新运行安装命令，如验证 git cmake build-essential是否安装成功共则再次运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install git cmake build-essential</span><br></pre></td></tr></table></figure>
+<p>界面提示如下则说明已成功安装依赖包，否则继续安装直到安装成功。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">yhao@yhao-X550VB:~$ sudo apt-get install git cmake build-essential</span><br><span class="line">正在读取软件包列表... 完成</span><br><span class="line">正在分析软件包的依赖关系树       </span><br><span class="line">正在读取状态信息... 完成       </span><br><span class="line">build-essential 已经是最新版 (12.1ubuntu2)。</span><br><span class="line">cmake 已经是最新版 (3.5.1-1ubuntu3)。</span><br><span class="line">git 已经是最新版 (1:2.7.4-0ubuntu1.1)。</span><br><span class="line">下列软件包是自动安装的并且现在不需要了：</span><br><span class="line">  lib32gcc1 libc6-i386</span><br><span class="line">使用&apos;sudo apt autoremove&apos;来卸载它(它们)。</span><br><span class="line">升级了 0 个软件包，新安装了 0 个软件包，要卸载 0 个软件包，有 94 个软件包未被升级。</span><br></pre></td></tr></table></figure></p>
+<h1 id="第2步-禁用-nouveau"><a href="#第2步-禁用-nouveau" class="headerlink" title="第2步 禁用 nouveau"></a><strong>第2步 禁用 nouveau</strong></h1><p>安装好依赖包后需要禁用 nouveau，只有在禁用掉 nouveau 后才能顺利安装 NVIDIA 显卡驱动，禁用方法就是在 /etc/modprobe.d/blacklist-nouveau.conf 文件中添加一条禁用命令，首先需要打开该文件，通过以下命令打开：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit /etc/modprobe.d/blacklist-nouveau.conf</span><br></pre></td></tr></table></figure>
+<p>打开后发现该文件中没有任何内容，写入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">blacklist nouveau option nouveau modeset=0</span><br></pre></td></tr></table></figure>
+<p>保存时命令窗口可能会出现以下提示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">** (gedit:4243): WARNING **: Set document metadata failed: 不支持设置属性 metadata::gedit-position</span><br></pre></td></tr></table></figure>
+<p><strong>无视此提示</strong>～，保存后关闭文件，注意此时还需执行以下命令使禁用 nouveau 真正生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo update-initramfs -u</span><br></pre></td></tr></table></figure>
+<h1 id="第3步-配置环境变量"><a href="#第3步-配置环境变量" class="headerlink" title="第3步 配置环境变量"></a><strong>第3步 配置环境变量</strong></h1><p>同样使用 gedit 命令打开配置文件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit ~/.bashrc</span><br></pre></td></tr></table></figure></p>
+<p>打开后在文件最后加入以下两行内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH</span><br><span class="line"></span><br><span class="line">export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH</span><br></pre></td></tr></table></figure>
+<p>保存退出。</p>
+<h1 id="第4步-下载-CUDA-8-0"><a href="#第4步-下载-CUDA-8-0" class="headerlink" title="第4步 下载 CUDA 8.0"></a><strong>第4步 下载 CUDA 8.0</strong></h1><p>进入 <a href="https://developer.nvidia.com/cuda-downloads" target="_blank" rel="noopener">https://developer.nvidia.com/cuda-downloads</a> ，依次选择 CUDA 类型然后下载即可。<br><img src="http://upload-images.jianshu.io/upload_images/4679478-0502f901f2df7852?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<h1 id="第5步-安装-CUDA-8-0"><a href="#第5步-安装-CUDA-8-0" class="headerlink" title="第5步 安装 CUDA 8.0"></a><strong>第5步 安装 CUDA 8.0</strong></h1><p>第四步下载的1.4G的 CUDA中包含有 nvidia 显卡驱动，故此步骤 CUDA 的安装包括了 nvidia 显卡驱动的安装，此时注意你是否已经安装过 nvidia 显卡驱动，若无法保证已安装的 nvidia 显卡驱动一定正确，那就卸载掉之前安装的 nvidia 显卡驱动（<a href="http://blog.csdn.net/u010159842/article/details/54344583" target="_blank" rel="noopener">卸载方法链接</a>)，然后开始安装 CUDA 8.0；若可以保证已安装正确的 nvidia 显卡驱动，则直接开始安装 CUDA 8.0，在安装过程中选择不再安装 nvidia 显卡驱动。</p>
+<p>为了方便开始安装过程的路径查找，把下载的 CUDA 安装文件移动到 HOME 路径下，然后通过 Ctrl + Alt + F1 进入文本模式，输入帐号密码登录，通过 Ctrl + Alt + F7 可返回图形化模式，在文本模式登录后首先关闭桌面服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo service lightdm stop</span><br></pre></td></tr></table></figure>
+<p>然后通过  Ctrl + Alt + F7 发现已无法成功返回图形化模式，说明桌面服务已成功关闭，注意此步对接下来的 nvidia 驱动安装尤为重要，必需确保桌面服务已关闭。</p>
+<p>Ctrl + Alt + F1 进入文本模式，然后运行 CUDA 安装文件进行安装，之前我们已经把 CUDA 安装文件移动至 HOME，直接通过 sh 命令运行安装文件即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo sh cuda_8.0.61_375.26_linux.run --no-opengl-libs</span><br></pre></td></tr></table></figure>
+<p>其中 cuda_8.0.61_375.26_linux.run 是我的 CUDA 安装文件名，而你需替换为自己的 CUDA 安装文件名，若此时忘记可直接通过 ls 文件查看文件名，这也是我建议把 CUDA 安装文件移动到 HOME 下的另一个原因。</p>
+<p>执行此命令约1分钟后会出现 0%信息，此时长按回车键让此百分比增长，直到100%，然后按照提示操作即可，先输入 accept ，然后让选择是否安装 nvidia 驱动，这里的选择对应第5步开头，若未安装则输入 “y”，若确保已安装正确驱动则输入“n”。</p>
+<p>剩下的选择则都输入“y”确认安装或确认默认路径安装，开始安装，此时若出现安装失败提示则可能为未关闭桌面服务或在已安装 nvidia 驱动的情况下重复再次安装 nvidia 驱动，安装完成后输入重启命令重启：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure>
+<p>重启后登录进入系统，配置 CUDA 环境变量，与第3步相同，使用 gedit 命令打开配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>在该文件最后加入以下两行并保存：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export PATH=/usr/local/cuda-8.0/bin:$PATH</span><br><span class="line"></span><br><span class="line">export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH</span><br></pre></td></tr></table></figure>
+<p>使该配置生效：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
+<h1 id="第6步-验证-CUDA-8-0-是否安装成功"><a href="#第6步-验证-CUDA-8-0-是否安装成功" class="headerlink" title="第6步 验证 CUDA 8.0 是否安装成功"></a><strong>第6步 验证 CUDA 8.0 是否安装成功</strong></h1><p>分别执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/cuda-8.0/samples/1_Utilities/deviceQuery</span><br><span class="line"></span><br><span class="line">sudo make</span><br><span class="line"></span><br><span class="line">./deviceQuery</span><br></pre></td></tr></table></figure>
+<p>若看到类似以下信息则说明 cuda 已安装成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">./deviceQuery Starting...</span><br><span class="line"></span><br><span class="line"> CUDA Device Query (Runtime API) version (CUDART static linking)</span><br><span class="line"></span><br><span class="line">Detected 1 CUDA Capable device(s)</span><br><span class="line"></span><br><span class="line">Device 0: &quot;GeForce GT 740M&quot;</span><br><span class="line">  CUDA Driver Version / Runtime Version          8.0 / 8.0</span><br><span class="line">  CUDA Capability Major/Minor version number:    3.5</span><br><span class="line">  Total amount of global memory:                 2004 MBytes (2100953088 bytes)</span><br><span class="line">  ( 2) Multiprocessors, (192) CUDA Cores/MP:     384 CUDA Cores</span><br><span class="line">  GPU Max Clock rate:                            1032 MHz (1.03 GHz)</span><br><span class="line">  Memory Clock rate:                             800 Mhz</span><br><span class="line">  Memory Bus Width:                              64-bit</span><br><span class="line">  L2 Cache Size:                                 524288 bytes</span><br><span class="line">  Maximum Texture Dimension Size (x,y,z)         1D=(65536), 2D=(65536, 65536), 3D=(4096, 4096, 4096)</span><br><span class="line">  Maximum Layered 1D Texture Size, (num) layers  1D=(16384), 2048 layers</span><br><span class="line">  Maximum Layered 2D Texture Size, (num) layers  2D=(16384, 16384), 2048 layers</span><br><span class="line">  Total amount of constant memory:               65536 bytes</span><br><span class="line">  Total amount of shared memory per block:       49152 bytes</span><br><span class="line">  Total number of registers available per block: 65536</span><br><span class="line">  Warp size:                                     32</span><br><span class="line">  Maximum number of threads per multiprocessor:  2048</span><br><span class="line">  Maximum number of threads per block:           1024</span><br><span class="line">  Max dimension size of a thread block (x,y,z): (1024, 1024, 64)</span><br><span class="line">  Max dimension size of a grid size    (x,y,z): (2147483647, 65535, 65535)</span><br><span class="line">  Maximum memory pitch:                          2147483647 bytes</span><br><span class="line">  Texture alignment:                             512 bytes</span><br><span class="line">  Concurrent copy and kernel execution:          Yes with 1 copy engine(s)</span><br><span class="line">  Run time limit on kernels:                     No</span><br><span class="line">  Integrated GPU sharing Host Memory:            No</span><br><span class="line">  Support host page-locked memory mapping:       Yes</span><br><span class="line">  Alignment requirement for Surfaces:            Yes</span><br><span class="line">  Device has ECC support:                        Disabled</span><br><span class="line">  Device supports Unified Addressing (UVA):      Yes</span><br><span class="line">  Device PCI Domain ID / Bus ID / location ID:   0 / 1 / 0</span><br><span class="line">  Compute Mode:</span><br><span class="line">     &lt; Default (multiple host threads can use ::cudaSetDevice() with device simultaneously) &gt;</span><br><span class="line"></span><br><span class="line">deviceQuery, CUDA Driver = CUDART, CUDA Driver Version = 8.0, CUDA Runtime Version = 8.0, NumDevs = 1, Device0 = GeForce GT 740M</span><br><span class="line">Result = PASS</span><br></pre></td></tr></table></figure>
+<h1 id="第7步-安装-cudnn"><a href="#第7步-安装-cudnn" class="headerlink" title="第7步 安装  cudnn"></a><strong>第7步 安装  cudnn</strong></h1><p>登录官网：<a href="https://developer.nvidia.com/rdp/cudnn-download" target="_blank" rel="noopener">https://developer.nvidia.com/rdp/cudnn-download</a> ，下载对应 cuda 版本且 linux 系统的 cudnn 压缩包，注意官网下载 cudnn 需要注册帐号并登录，不想注册的可从我的网盘下载：<a href="https://pan.baidu.com/s/1c2xPVzy" target="_blank" rel="noopener">https://pan.baidu.com/s/1c2xPVzy</a></p>
+<p>[图片上传失败…(image-fd7f61-1512452977704)]</p>
+<p>下载完成后解压，得到一个 cudn 文件夹，该文件夹下include 和 lib64 两个文件夹，命令行进入 cudn/include 路径下，然后进行以下操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp cudnn.h /usr/local/cuda/include/ #复制头文件</span><br></pre></td></tr></table></figure>
+<p>然后命令行进入 cudn/lib64 路径下，运行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo cp lib* /usr/local/cuda/lib64/ #复制动态链接库</span><br><span class="line">cd /usr/local/cuda/lib64/sudo rm -rf libcudnn.so libcudnn.so.5 #删除原有动态文件</span><br><span class="line">sudo ln -s libcudnn.so.5.1.10 libcudnn.so.5 #生成软衔接</span><br><span class="line">sudo ln -s libcudnn.so.5 libcudnn.so #生成软链接</span><br></pre></td></tr></table></figure>
+<p>这里需要注意第三行命令，网上有人的第三行命令为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s libcudnn.so.5.1.5 libcudnn.so.5 #生成软衔接</span><br></pre></td></tr></table></figure>
+<p>起初我执行的也是上条链接 libcudnn.so.5.1.5 的命令，但是后面编译caffe时出错，报错内容为 /usr/bin/ld: 找不到 -lcudnn，所以这里需要先查看一下自己应该链接的是 libcudnn.so.5.1.10 还是 libcudnn.so.5.1.5 ，查看方法为下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">locate libcudnn.so</span><br></pre></td></tr></table></figure>
+<p>我执行完后显示如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">yhao@yhao-X550VB:~$ locate libcudnn.so</span><br><span class="line">/home/yhao/.local/share/Trash/files/libcudnn.so</span><br><span class="line">/home/yhao/.local/share/Trash/files/libcudnn.so.5</span><br><span class="line">/home/yhao/.local/share/Trash/files/libcudnn.so.5.1.10</span><br><span class="line">/home/yhao/.local/share/Trash/files/cuda/lib64/libcudnn.so</span><br><span class="line">/home/yhao/.local/share/Trash/files/cuda/lib64/libcudnn.so.5</span><br><span class="line">/home/yhao/.local/share/Trash/files/cuda/lib64/libcudnn.so.5.1.10</span><br><span class="line">/home/yhao/.local/share/Trash/info/libcudnn.so.5.1.10.trashinfo</span><br><span class="line">/home/yhao/.local/share/Trash/info/libcudnn.so.5.trashinfo</span><br><span class="line">/home/yhao/.local/share/Trash/info/libcudnn.so.trashinfo</span><br><span class="line">/home/yhao/cuda/lib64/libcudnn.so</span><br><span class="line">/home/yhao/cuda/lib64/libcudnn.so.5</span><br><span class="line">/home/yhao/cuda/lib64/libcudnn.so.5.1.10</span><br><span class="line">/usr/local/lib/libcudnn.so</span><br><span class="line">/usr/local/lib/libcudnn.so.5</span><br></pre></td></tr></table></figure>
+<p>可以看到我的文件是 libcudnn.so.5.1.10 ，并没有 libcudnn.so.5.1.5，所以第三行命令我链接的是 libcudnn.so.5.1.10 ，这里第三行链接命令视你的查看结果而定。</p>
+<p>安装完成后可用 nvcc -V 命令验证是否安装成功，若出现以下信息则表示安装成功：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yhao@yhao-X550VB:~$ nvcc -V</span><br><span class="line">nvcc: NVIDIA (R) Cuda compiler driver</span><br><span class="line">Copyright (c) 2005-2016 NVIDIA Corporation</span><br><span class="line">Built on Tue_Jan_10_13:22:03_CST_2017</span><br><span class="line">Cuda compilation tools, release 8.0, V8.0.61</span><br></pre></td></tr></table></figure></p>
+<h1 id="第8步-安装-opencv3-1"><a href="#第8步-安装-opencv3-1" class="headerlink" title="第8步 安装  opencv3.1"></a><strong>第8步 安装  opencv3.1</strong></h1><p>进入官网  : <a href="http://opencv.org/releases.html" target="_blank" rel="noopener">http://opencv.org/releases.html</a> , 选择 3.1.0 版本的 source , 下载 opencv-3.1.0.zip<br><img src="http://upload-images.jianshu.io/upload_images/4679478-b4978a9a686f82ba?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>解压到你要安装的位置，命令行进入已解压的文件夹 opencv-3.1.0 目录下，执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir build # 创建编译的文件目录</span><br><span class="line"></span><br><span class="line">cd build</span><br><span class="line"></span><br><span class="line">cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=/usr/local ..</span><br><span class="line"></span><br><span class="line">make -j8  #编译</span><br></pre></td></tr></table></figure>
+<p>在执行 make -j8 命令编译到 92% 时可能会出现以下错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">modules/cudalegacy/src/graphcuts.cpp:120:54: error: </span><br><span class="line">‘NppiGraphcutState’ has not been declared</span><br><span class="line">typedef NppStatus (*init_func_t)(NppiSize oSize, </span><br><span class="line">NppiGraphcutState** ppState, Npp8u* pDeviceMem);</span><br></pre></td></tr></table></figure>
+<p>这是由于opecv3.1与cuda8.0不兼容导致的。解决办法：</p>
+<p>修改 /opencv-3.1.0/modules/cudalegacy/src/graphcuts.cpp 文件内容，如图：<br><img src="http://upload-images.jianshu.io/upload_images/4679478-d608948871b39494?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>编译成功后安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make install #安装</span><br></pre></td></tr></table></figure>
+<p>安装完成后通过查看 opencv 版本验证是否安装成功：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pkg-config --modversion opencv</span><br></pre></td></tr></table></figure>
+<h1 id="第9步-安装-caffe"><a href="#第9步-安装-caffe" class="headerlink" title="第9步 安装  caffe"></a><strong>第9步 安装  caffe</strong></h1><p>首先在你要安装的路径下 clone ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/BVLC/caffe.git</span><br></pre></td></tr></table></figure>
+<p>进入 caffe ，将 Makefile.config.example 文件复制一份并更名为 Makefile.config ，也可以在 caffe 目录下直接调用以下命令完成复制操作 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo cp Makefile.config.example Makefile.config</span><br></pre></td></tr></table></figure>
+<p>复制一份的原因是编译 caffe 时需要的是 Makefile.config 文件，而Makefile.config.example 只是caffe 给出的配置文件例子，不能用来编译 caffe。</p>
+<p>然后修改 Makefile.config 文件，在 caffe 目录下打开该文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo gedit Makefile.config</span><br></pre></td></tr></table></figure>
+<p>修改 Makefile.config 文件内容：</p>
+<p><strong>1.应用 cudnn</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将</span><br><span class="line">#USE_CUDNN := 1</span><br><span class="line">修改成： </span><br><span class="line">USE_CUDNN := 1</span><br></pre></td></tr></table></figure></p>
+<p><strong>2.应用 opencv 版本</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将</span><br><span class="line">#OPENCV_VERSION := 3 </span><br><span class="line">修改为： </span><br><span class="line">OPENCV_VERSION := 3</span><br></pre></td></tr></table></figure>
+<p><strong>3.使用 python 接口</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将</span><br><span class="line">#WITH_PYTHON_LAYER := 1 </span><br><span class="line">修改为 </span><br><span class="line">WITH_PYTHON_LAYER := 1</span><br></pre></td></tr></table></figure></p>
+<p><strong>4.修改 python 路径</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib </span><br><span class="line">修改为： </span><br><span class="line">INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include /usr/include/hdf5/serial</span><br><span class="line">LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib /usr/lib/x86_64-linux-gnu /usr/lib/x86_64-linux-gnu/hdf5/serial</span><br></pre></td></tr></table></figure></p>
+<p>这里贴出 <a href="http://download.csdn.net/detail/yhaolpz/9847059" target="_blank" rel="noopener">我的Makefile.config文件</a> 方便大家参考</p>
+<p>然后修改 caffe 目录下的 Makefile 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将：</span><br><span class="line">NVCCFLAGS +=-ccbin=$(CXX) -Xcompiler-fPIC $(COMMON_FLAGS)</span><br><span class="line">替换为：</span><br><span class="line">NVCCFLAGS += -D_FORCE_INLINES -ccbin=$(CXX) -Xcompiler -fPIC $(COMMON_FLAGS)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将：</span><br><span class="line">LIBRARIES += glog gflags protobuf boost_system boost_filesystem m hdf5_hl hdf5</span><br><span class="line">改为：</span><br><span class="line">LIBRARIES += glog gflags protobuf boost_system boost_filesystem m hdf5_serial_hl hdf5_serial</span><br></pre></td></tr></table></figure>
+<p>然后修改 /usr/local/cuda/include/host_config.h  文件 :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">将</span><br><span class="line">#error-- unsupported GNU version! gcc versions later than 4.9 are not supported!</span><br><span class="line">改为</span><br><span class="line">//#error-- unsupported GNU version! gcc versions later than 4.9 are not supported!</span><br></pre></td></tr></table></figure>
+<p>OK ，可以开始编译了，在 caffe 目录下执行 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make all -j8</span><br></pre></td></tr></table></figure>
+<p>这是如果之前的配置或安装出错，那么编译就会出现各种各样的问题，所以前面的步骤一定要细心。</p>
+<p>编译成功后可运行测试：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo make runtest -j8</span><br></pre></td></tr></table></figure>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-706f774b0cd728b1?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>如果显示结果为上图所示，则表示 caffe 已经成功安装。</p>
+<h1 id="10、安装-pycaffe-notebook-接口环境"><a href="#10、安装-pycaffe-notebook-接口环境" class="headerlink" title="10、安装 pycaffe notebook 接口环境"></a><strong>10、安装 pycaffe notebook 接口环境</strong></h1><p>在上一步成功安装 caffe 之后，就可以通过 caffe 去做训练数据集或者预测各种相关的事了，只不过需要在命令行下通过 caffe 命令进行操作，而这一步 pycaffe 的安装以及 notebook 环境配置只是为了更方便的去使用 caffe ，实际上大多数都是通过 python 来操作 caffe 的，而 notebook 使用浏览器作为界面，可以更方便的编写和执行 python 代码。</p>
+<p>首先编译 pycaffe :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd caffe</span><br><span class="line"></span><br><span class="line">sudo make pycaffe -j8</span><br></pre></td></tr></table></figure>
+<p>以下是我编译 pycaffe 时出现的错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python/caffe/_caffe.cpp:10:31: fatal error: numpy/arrayobject.h: 没有那个文件或目录</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install python-numpy</span><br></pre></td></tr></table></figure>
+<p>此外也可能是由于 Makefile.config 文件中 python 路径设置错误出现的错误，可根据上一步检查一下，也可能出现别的错误，百度谷歌之～</p>
+<p>编译 pycaffe 成功后，验证一下是否可以在 python 中导入 caffe 包，首先进入 python 环境：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python</span><br></pre></td></tr></table></figure>
+<p>然后导入 caffe :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; import caffe</span><br></pre></td></tr></table></figure>
+<p>若不报错则表示 caffe 的 python 接口已正确编译，但是应该不会那么顺利，以下是我导入 caffe 时出现的错误：</p>
+<p>错误1：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File &quot;&lt;stdin&gt;&quot;, line 1, in &lt;module&gt;   ImportError: No module named caffe</span><br></pre></td></tr></table></figure></p>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo echo export PYTHONPATH=&quot;~/caffe/python&quot; &gt;&gt; ~/.bashrc</span><br><span class="line"></span><br><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>错误2：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ImportError: No module named skimage.io</span><br></pre></td></tr></table></figure>
+<p>解决方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -U scikit-image #若没有安装pip: sudo apt install python-pip</span><br></pre></td></tr></table></figure>
+<p>ok，最后一步，配置notebook环境</p>
+<p>首先要安装python接口依赖库，在caffe根目录的python文件夹下，有一个requirements.txt的清单文件，上面列出了需要的依赖库，按照这个清单安装就可以了。</p>
+<p>在安装scipy库的时候，需要fortran编译器（gfortran)，如果没有这个编译器就会报错，因此，我们可以先安装一下。</p>
+<p>首先进入 caffe/python 目录下，执行安装代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install gfortran</span><br><span class="line"></span><br><span class="line">for req in $(cat requirements.txt); do sudo pip install $req; done</span><br></pre></td></tr></table></figure>
+<p>安装完成以后执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+<p>就会看到，安装成功的，都会显示Requirement already satisfied, 没有安装成功的，会继续安装。</p>
+<p>然后安装 jupyter ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo pip install jupyter</span><br></pre></td></tr></table></figure>
+<p>安装完成后运行 notebook :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">jupyter notebook</span><br><span class="line"></span><br><span class="line">或</span><br><span class="line"></span><br><span class="line">ipython notebook</span><br></pre></td></tr></table></figure>
+<p>就会在浏览器中打开notebook,  点击右上角的New-python2, 就可以新建一个网页一样的文件，扩展名为ipynb。在这个网页上，我们就可以像在命令行下面一样运行python代码了。输入代码后，按shift+enter运行，更多的快捷键，可点击上方的help-Keyboard shortcuts查看，或者先按esc退出编辑状态，再按h键查看。</p>
+<p>[图片上传失败…(image-34a0cd-1512452977704)]</p>
+<p>为心仪公司折腾DL许久然而并无缘～</p>
+<p>加油。</p>
+<p>参考文章：</p>
+<p><a href="http://www.cnblogs.com/denny402/p/5088399.html" target="_blank" rel="noopener">http://www.cnblogs.com/denny402/p/5088399.html</a></p>
+<p><a href="http://blog.csdn.net/sunpeng19960715/article/details/54835148" target="_blank" rel="noopener">http://blog.csdn.net/sunpeng19960715/article/details/54835148</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/fd96e42a/" data-id="ck7fsd3ur001lhecawyvg3izt" class="article-share-link" data-share="baidu" data-title="Ubuntu16.04 Caffe 安装步骤记录（超详尽）">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Caffe/">Caffe</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/8837781/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度
+        
+      </div>
+    </a>
+  
+  
+    <a href="/8d13674/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Andorid 应用内悬浮控件实践方案总结</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

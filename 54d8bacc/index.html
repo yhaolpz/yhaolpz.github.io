@@ -1,0 +1,367 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>全面掌握 Java 内部类 | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+<meta name="keywords" content="Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="全面掌握 Java 内部类">
+<meta property="og:url" content="http://yoursite.com/54d8bacc/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="全面掌握 Java 内部类">
+<meta name="twitter:description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-全面掌握-Java-内部类" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/54d8bacc/" class="article-date">
+  <time datetime="2017-02-05T07:08:25.000Z" itemprop="datePublished">2017-02-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      全面掌握 Java 内部类
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>  一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。</p>
+<a id="more"></a>
+<p>内部类是一种非常有用的特性，它可以把一些逻辑相关的类组织在一起，并控制位于内部的类的可视性，下文中内部类均指非静态内部类。</p>
+<p>内部类的学习分为以下10个知识点：</p>
+<p><strong>1.创建内部类与连接外部类</strong><br><strong>2.内部类与向上转型</strong><br><strong>3.局部内部类</strong><br><strong>4.匿名内部类</strong><br><strong>5.局部内部类和匿名内部类</strong><br><strong>6.嵌套类</strong><br><strong>7.内部类的继承</strong><br><strong>8.内部类可以被覆盖吗</strong><br><strong>9.为什么需要内部类</strong><br><strong>10.内部类标识符</strong></p>
+<h1 id="1、创建内部类与连接外部类"><a href="#1、创建内部类与连接外部类" class="headerlink" title=" 1、创建内部类与连接外部类"></a> <strong>1、创建内部类与连接外部类</strong></h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> speed = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">getSpeed</span><span class="params">()</span> </span>&#123; <span class="comment">//访问外部类成员</span></span><br><span class="line">            <span class="keyword">return</span> speed;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function">Car <span class="title">getCar</span><span class="params">()</span> </span>&#123; <span class="comment">//通过.this获取外部类对象</span></span><br><span class="line">            <span class="keyword">return</span> Car.<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        Car.Tyre tyre = car.<span class="keyword">new</span> Tyre();</span><br><span class="line">        tyre.getSpeed();</span><br><span class="line">        System.out.println(car == tyre.getCar()); <span class="comment">// true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要想创建内部类的对象，必须使用外部类的对象，如上，且必须地具体指明这个对象的类型：OuterClassName.InnerClassName，然后通过 OuterClassInstance.new InnerClassName() 来创建内部类对象。</p>
+<p>内部类对象会暗暗连接到创建它的外部类对象上，捕获外部类的对象引用，然后在内部类中访问此外部类的成员时，就是通过这个引用来访问的，并且拥有其外部类的所有元素的访问权。正是由于此原因，Android 中非静态内部类创建静态实例才会造成内存泄漏。</p>
+<p>在内部类中通过 OuterClassName.this 可获取外部类对象，如上代码中通过 Car.this 获取 Car 类对象。</p>
+<h1 id="2、内部类与向上转型"><a href="#2、内部类与向上转型" class="headerlink" title="2、内部类与向上转型"></a><strong>2、内部类与向上转型</strong></h1><p>当将内部类向上转型为基类，尤其是转型为一个接口的时候，此内部类能够隐藏这个接口的实现，如下例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">cost</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> speed = <span class="number">100</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span></span>&#123;</span><br><span class="line">        <span class="keyword">double</span> originalPrice = <span class="number">100</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> originalPrice * <span class="number">0.75</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        cost tyre = car.<span class="keyword">new</span> Tyre(); <span class="comment">//向上转型</span></span><br><span class="line">        tyre.getPrice();  <span class="comment">// 75.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="3、局部内部类"><a href="#3、局部内部类" class="headerlink" title="3、局部内部类"></a><strong>3、局部内部类</strong></h1><p>前面提到的都是处于外部类中的内部类，而内部类也可以定义在一个方法里面或者在任意的作用域中，这么做有以下两个理由：</p>
+<p>1.如实现某接口的内部类，可以在方法中创建并返回对其的引用</p>
+<p>2.要解决一个复杂的问题，需要创建一个类来辅助，但不希望这个类是公共可用的 </p>
+<p>例1：在方法中定义内部类：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> speed = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">cost <span class="title">getTyre</span><span class="params">()</span> </span>&#123; <span class="comment">//方法内部</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">            <span class="keyword">double</span> originalPrice = <span class="number">100</span>;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123; <span class="comment">//打折操作</span></span><br><span class="line">                <span class="keyword">return</span> originalPrice * <span class="number">0.75</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Tyre();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        cost tyre = car.getTyre();</span><br><span class="line">        tyre.getPrice();  <span class="comment">// 75.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>例2：在任意作用域中定义内部类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> hadTyre = <span class="keyword">true</span>; <span class="comment">//是否有轮胎</span></span><br><span class="line"></span><br><span class="line">    <span class="function">cost <span class="title">getTyre</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (hadTyre) &#123; <span class="comment">//任意作用域中</span></span><br><span class="line">            <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">                <span class="keyword">double</span> originalPrice = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123; <span class="comment">//打折操作</span></span><br><span class="line">                    <span class="keyword">return</span> originalPrice * <span class="number">0.75</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Tyre();</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();                 </span><br><span class="line">        cost tyre = car.getTyre();</span><br><span class="line">        tyre.getPrice();  <span class="comment">// 75.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义在一个方法里面或者在任意的作用域中的内部类也叫作局部内部类，局部内部类不能有 private 等访问说明符，因为它不是外部类的一部分，但是它可以访问<strong>当前代码块内的常量</strong>以及外部类中的所有成员：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> hadTyre = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> coupon1 = <span class="number">10</span>; <span class="comment">// 外部类成员(10元优惠券)</span></span><br><span class="line"></span><br><span class="line">    <span class="function">cost <span class="title">getTyre</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (hadTyre) &#123;</span><br><span class="line">            <span class="keyword">double</span> coupon2 = <span class="number">5</span>; <span class="comment">// 代码块内常量(5元优惠券)</span></span><br><span class="line">            <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">                <span class="keyword">double</span> originalPrice = <span class="number">100</span>;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">return</span> originalPrice * <span class="number">0.75</span> - coupon1 - coupon2;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Tyre();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        cost tyre = car.getTyre();</span><br><span class="line">        System.out.print(tyre.getPrice());  <span class="comment">// 60.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>书中说可以访问当前代码块内的常量，这里有点不解，coupon2 是常量？</p>
+<h1 id="4、匿名内部类"><a href="#4、匿名内部类" class="headerlink" title="4、匿名内部类"></a><strong>4、匿名内部类</strong></h1><p>上例中 getTyre() 方法要创建一个 cost 对象，从 cost tyre = car.getTyre(); 看出我们并不关心内部类的名字 Tyre，只要返回的是 cost 类对象就足够了，所以这里可以用匿名内部类来实现，顾名思义，它没有名字，如下例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="function">cost <span class="title">getTyre</span><span class="params">(<span class="keyword">double</span> p)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> cost() &#123;</span><br><span class="line">            <span class="keyword">double</span> coupon = <span class="number">10</span>; <span class="comment">// 10元优惠券</span></span><br><span class="line">            <span class="keyword">private</span> <span class="keyword">double</span> price = p; <span class="comment">//原价</span></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> price - coupon;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        cost tyre = car.getTyre(<span class="number">100</span>);</span><br><span class="line">        System.out.print(tyre.getPrice());  <span class="comment">// 90.0</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能会有疑问，这段代码可以编译通过吗？应该是 getTyre(final double p) 吧？确实，在匿名内部类中使用一个在其外部定义的对象，那么编译器必须要求其参数引用是 final 类型，以上代码在低于 Java 8 的版本编译不会通过，但是在 <strong>Java 8 版本不用 final 修饰局部变量也可以编译通过</strong>，只不过不能修改值，只能打印输出或赋值给其他变量。</p>
+<h1 id="5、局部内部类和匿名内部类"><a href="#5、局部内部类和匿名内部类" class="headerlink" title="5、局部内部类和匿名内部类"></a><strong>5、局部内部类和匿名内部类</strong></h1><p>首先来看局部内部类和匿名内部类的对比实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> coupon2 = <span class="number">5</span>;</span><br><span class="line">    <span class="function">cost <span class="title">getTyre1</span><span class="params">(<span class="keyword">double</span> p)</span> </span>&#123; <span class="comment">//局部内部类</span></span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">            <span class="keyword">double</span> coupon = <span class="number">10</span>;</span><br><span class="line">            <span class="keyword">private</span> <span class="keyword">double</span> price = p;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> price - coupon - coupon2;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Tyre();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function">cost <span class="title">getTyre2</span><span class="params">(<span class="keyword">double</span> p)</span> </span>&#123; <span class="comment">//匿名内部类</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> cost() &#123;</span><br><span class="line">            <span class="keyword">double</span> coupon = <span class="number">10</span>;</span><br><span class="line">            <span class="keyword">private</span> <span class="keyword">double</span> price = p;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> price - coupon - coupon2;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>getTyre() 方法用来创建一个 cost 类对象，我们分别使用局部内部类和匿名内部类实现了这个功能，它们具有相同的行为和能力，既然局部内部类的名字在方法外是不可见的，那为什么我们仍然使用局部内部类而不是匿名内部类呢？唯一的理由是：我们需要一个已命名的构造器，或者需要重载狗仔器，而匿名内部类只能用于实例初始化，所以使用局部内部类而不使用匿名内部类的另一个理由就是：需要不止一个该内部类的对象。</p>
+<h1 id="6、嵌套类"><a href="#6、嵌套类" class="headerlink" title="6、嵌套类"></a><strong>6、嵌套类</strong></h1><p>如果不需要内部类对象与其外部类对象之间有联系，那么可以将内部类声明为 static，即静态内部类，也称嵌套类，静态内部类和非静态内部类的最大区别就是非静态内部类对象隐士的保存了一个外部类对象的引用，这意味着：</p>
+<p>1.不需要外部类的对象就可以创建静态内部类的对象</p>
+<p>2.不能从静态内部类的对象中访问非静态的外部类对象</p>
+<p>3.静态内部类中可以定义静态或者非静态的成员，而非静态内部类则不能有静态成员。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span> price = <span class="number">100</span>; </span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> <span class="keyword">implements</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">double</span> coupon = <span class="number">5</span>; <span class="comment">// 3.若为非静态内部类则无法定义为 static 类型</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> price; <span class="comment">// 2.若 price 不为 static 则无法访问</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car.Tyre tyre = <span class="keyword">new</span> Car.Tyre(); <span class="comment">// 1.静态内部类的创建不依赖外部类对象</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这也是静态内部类和内部类的关键区别。此外静态内部类也可定义在接口内部：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">cost</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Price</span> </span>&#123; &#125; <span class="comment">// 默认为 public 、static</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你想要创建某些公共代码，使得它们可以被某个接口的所有不同实现所公用，那么使用接口内部嵌套类会显得很方便。</p>
+<h1 id="7、内部类的继承"><a href="#7、内部类的继承" class="headerlink" title="7、内部类的继承"></a><strong>7、内部类的继承</strong></h1><p>怎么继承自一个内部类？内部类的构造必须依赖其外部类对象，所以在继承内部类的时候，事情会变得复杂，比如我们要继承自 Size 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Tyre</span></span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Size</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TyreSize</span> <span class="keyword">extends</span> <span class="title">Tyre</span>.<span class="title">Size</span></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译器会报错： No enclosing instance of type ‘com.example.Tyre’ is in scope ，即缺少 Tyre 类的实例，若要创建位于 Tyre 内部的 Size 类，则必须要有 Tyre 的实例对象，要解决这个问题，需要引入 Tyre 实例且说清它们之间的关联：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TyreSize</span> <span class="keyword">extends</span> <span class="title">Tyre</span>.<span class="title">Size</span></span>&#123;</span><br><span class="line">    TyreSize(Tyre tyre) &#123;</span><br><span class="line">        tyre.<span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译通过。</p>
+<h1 id="8、内部类可以被覆盖吗"><a href="#8、内部类可以被覆盖吗" class="headerlink" title="8、内部类可以被覆盖吗"></a><strong>8、内部类可以被覆盖吗</strong></h1><p> 如果创建了一个内部类，然后继承其外部类并重新定义此内部类时，内部类可以被覆盖吗？例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    Car() &#123;</span><br><span class="line">        System.out.println(<span class="string">"new Car()"</span>);</span><br><span class="line">        <span class="keyword">new</span> Tyre();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> </span>&#123; <span class="comment">// 我会被覆盖吗</span></span><br><span class="line">        Tyre() &#123; System.out.println(<span class="string">"new Tyre()"</span>); &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigCar</span> <span class="keyword">extends</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> </span>&#123;</span><br><span class="line">        Tyre() &#123;System.out.println(<span class="string">"BigCar new Tyre()"</span>); &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> BigCar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 Car 的构造器中新建的 Tyre 是 Car 中的 Tyre 还是 BigCar 中的 Tyre 呢？运行程序输出：</p>
+<p>new Car()<br>new Tyre()</p>
+<p>BigCar 中定义的 Tyre 内部类并没有覆盖 Car 中的 Tyre 内部类，实际上这两个内部类是完全独立的两个实体，各自在自己的命名空间内，没有谁覆盖谁之说。</p>
+<h1 id="9、为什么需要内部类"><a href="#9、为什么需要内部类" class="headerlink" title="9、为什么需要内部类"></a><strong>9、为什么需要内部类</strong></h1><p>也就是说，内部类存在的意义是什么呢？为什么 Sun 公司如此费心地增加这项语言特性呢？这里将内部类的意义总结为以下四点：</p>
+<h2 id="A-逻辑上被包含且对外隐藏"><a href="#A-逻辑上被包含且对外隐藏" class="headerlink" title="A. 逻辑上被包含且对外隐藏"></a><strong>A. 逻辑上被包含且对外隐藏</strong></h2><p>如果一个类在逻辑上被包含于另一个类，那么将此类设置为另一个类的内部类，比如轮胎类可以写作汽车类的内部类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中只存在被包含关系，也可通过组合方式实现，写作内部类是没有必要的，当想对外保密汽车使用何种轮胎时，写作内部类才是有必要的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="B-实现多重继承"><a href="#B-实现多重继承" class="headerlink" title="B. 实现多重继承"></a><strong>B. 实现多重继承</strong></h2><p>每个内部类都能独立的继承一个接口，无论外部类是否已经继承了某个接口的实现，对于内部类都没有影响。内部类提供可以继承多个抽象类或具体的类的能力，有效的实现了多重继承，网上一个实例简单直观的展示了通过内部类实现多重继承（儿子利用多重继承来继承父亲和母亲的优良基因）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Father</span> </span>&#123; <span class="comment">//父亲</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strong</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">9</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Mother</span> </span>&#123; <span class="comment">//母亲</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">kind</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">8</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Son</span> </span>&#123; <span class="comment">// 儿子通过内部类实现多重继承</span></span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Father_1</span> <span class="keyword">extends</span> <span class="title">Father</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strong</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.strong() + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Mother_1</span> <span class="keyword">extends</span>  <span class="title">Mother</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">kind</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">super</span>.kind() - <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getStrong</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Father_1().strong();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getKind</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Mother_1().kind();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="C-闭包与回调"><a href="#C-闭包与回调" class="headerlink" title="C. 闭包与回调"></a><strong>C. 闭包与回调</strong></h2><p>闭包是一个可调用的对象，它记录了一些信息，这些信息来自于创建它的作用域。通过这个定义，可以看出内部类是面向对象的闭包，因为它不仅包含外部类对象（创建内部类的作用域）的信息，还自动拥有一个指向此外部类对象的引用，在此作用域内，内部类有权操作所有的成员，包括private成员。</p>
+<p>通过内部类提供闭包功能比指针更灵活、更安全</p>
+<p>例如：一个接口程序员和一个基类作家都有一个相同的方法work，相同的方法名，但是其含义完全不同，这时候就需要闭包。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Writer</span> </span>&#123; <span class="comment">//作家基类</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">programmer</span></span>&#123; <span class="comment">//程序员接口</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>闭包实现代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriterProgrammer</span> <span class="keyword">extends</span> <span class="title">Writer</span> </span>&#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="comment">//写作</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">code</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="comment">//写代码</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">ProgrammerInner</span> <span class="keyword">implements</span> <span class="title">programmer</span></span>&#123;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>&#123;</span><br><span class="line">          code();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>WriterProgrammer 继承自 Writer ， 直接实现父类作家的work()方法，然后使用内部类实现程序员的work()方法回调code()方法。如果WriterProgrammer 同时继承自 Writer 且实现 programmer 接口，那么就不能同时实现作家和程序员的意义不同的 work()方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">WriterProgrammer</span> <span class="keyword">extends</span> <span class="title">Writer</span> <span class="keyword">implements</span> <span class="title">programmer</span></span>&#123;</span><br><span class="line">       <span class="meta">@Override</span></span><br><span class="line">       <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span> </span>&#123; <span class="comment">//programmer的 work</span></span><br><span class="line"></span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="D-控制框架"><a href="#D-控制框架" class="headerlink" title="D. 控制框架"></a><strong>D. 控制框架</strong></h2><p>应用程序框架就是被设计用以解决某类特定问题的一个类或一组类，而控制框架就是一类特殊的应用程序框架，它用来解决响应事件的需求，主要用来响应事件的系统被称作事件驱动系统。 Java Swing 库就是一个控制框架，它优雅的解决了 GUI 的问题，并使用了大量的内部类</p>
+<p> 控制框架的完整实现是由单个类创建的，内部类用来表示解决问题所必须的各种不同的 action，另外内部类能够很容易的访问外部类的任意成员，可以让这种实现更轻松。</p>
+<p>例如控制温室的运作：控制灯光、水、温度调节器的开关等，每个行为都是完全不同的，使用内部类可以在单一的类中产生对同一个基类 Event 的多种导出版本，对于温室系统的每一种行为，都继承一个新的 Event 内部类，并在要实现的 action() 中编写控制代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GreenhouseControls</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LightOn</span> <span class="keyword">extends</span> <span class="title">Event</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//开灯...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LightOff</span> <span class="keyword">extends</span> <span class="title">Event</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//关灯...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WaterOn</span> <span class="keyword">extends</span> <span class="title">Event</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">action</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//开水闸...</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 其他操作...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="10、内部类标识符"><a href="#10、内部类标识符" class="headerlink" title="10、内部类标识符"></a><strong>10、内部类标识符</strong></h1><p>每个类都会产生一个.class文件，其中包含了如何创建该类型的对象的全部信息，内部类也必须生成一个 .class 文件，从而可以包含它自己的  Class 对象信息，这些类文件的命名有严格的规则：外部类名字+“$”+ 内部类名字，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>生成的 .class 文件包括：</p>
+<p>Car.class<br>Car$Tyre.class</p>
+<p>如果内部类是匿名的，编译器会简单的产生一个数字作为其标识符，如果内部类是嵌套在别的内部类之中，只需直接将它们的名字加在其外部类标识符与”$”后面，这是 Java 的标准命名方式，产生的文件自动都是平台无关的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h1><p>本文主要参考 Java 编程思想书中对内部类部分的讲解思路，将各部分知识点转换为自以为更易理解的例子~嗯~总算较为全面的理解内部类了~以后应该不会怕啦hhh~</p>
+<p>参考文章：</p>
+<p>BruceEckel. Java编程思想:第4版[M]. 机械工业出版社, 2007.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/54d8bacc/" data-id="ck7fsd3uy0024hecaf26m3avl" class="article-share-link" data-share="baidu" data-title="全面掌握 Java 内部类">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/c034d1cd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          动手打造史上最简单的 Recycleview 侧滑菜单
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

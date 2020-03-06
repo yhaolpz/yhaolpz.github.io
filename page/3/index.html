@@ -1,0 +1,755 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Great hopes make great man">
+<meta property="og:url" content="http://yoursite.com/page/3/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Great hopes make great man">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main">
+  
+    <article id="post-Android-集成-ijkplayer-编译及替换-cmake-方式编译" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/13c2b04d/" class="article-date">
+  <time datetime="2018-07-02T03:26:24.000Z" itemprop="datePublished">2018-07-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/13c2b04d/">Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ijkplayer 编译步骤：<br>1.编译libijkffmpeg.so<br>2.编译cpufeatures yuv_static ijkj4a静态库<br>3.编译libijksdl.so<br>4.编译android-ndk-profiler ijksoundtouch 静态库<br>5.编译libijkplayer.so</p>
+        
+          <p class="article-more-link">
+            <a href="/13c2b04d/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/13c2b04d/" data-id="ck7fsd3uh000xhecadxm27qis" class="article-share-link" data-share="baidu" data-title="Android 集成 ijkplayer 编译及替换 cmake 方式编译">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ijkplayer/">ijkplayer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ijkplayer-源码分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/186751e8/" class="article-date">
+  <time datetime="2018-06-22T03:11:16.000Z" itemprop="datePublished">2018-06-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/186751e8/">ijkplayer 源码分析（上）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。</p>
+<p>ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。</p>
+        
+          <p class="article-more-link">
+            <a href="/186751e8/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/186751e8/" data-id="ck7fsd3ut001rhecawr12d5l0" class="article-share-link" data-share="baidu" data-title="ijkplayer 源码分析（上）">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ijkplayer/">ijkplayer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ijkplayer-学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/306f0479/" class="article-date">
+  <time datetime="2018-05-01T02:53:54.000Z" itemprop="datePublished">2018-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/306f0479/">ijkplayer 学习笔记</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>笔记可能微乱，但大致清晰，可能会对他人有所帮助，故分享出来。</p>
+<p>目录：</p>
+<blockquote>
+<p>ijk概述<br>mediacodec相关<br>OpenGL相关<br>filter相关<br>setOption配置相关<br>metadata相关<br>h264编码器特有的设置域<br>线程相关<br>消息机制<br>音频输出<br>声道切换<br>SDL_CreateCond 与 SDL_CreateThreadEx<br>如何暂停</p>
+</blockquote>
+        
+          <p class="article-more-link">
+            <a href="/306f0479/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/306f0479/" data-id="ck7fsd3us001phecaunmb7cgt" class="article-share-link" data-share="baidu" data-title="ijkplayer 学习笔记">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ijkplayer/">ijkplayer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-视频相关的理论知识与基础概念" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/322c0cad/" class="article-date">
+  <time datetime="2018-01-10T10:14:14.000Z" itemprop="datePublished">2018-01-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/322c0cad/">视频相关的理论知识与基础概念</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文将视频相关的理论知识与基础概念划分为 11 个知识点，如下：</p>
+<blockquote>
+<p><strong>视频</strong><br>  <strong>分辨率</strong><br>  <strong>比特率</strong><br>  <strong>采样率</strong><br>  <strong>帧率</strong><br>  <strong>视频编码</strong><br>  <strong>编码标准</strong><br>  <strong>视频封装格式</strong><br>  <strong>视频解码</strong><br>  <strong>视频播放原理</strong><br>  <strong>视频与流媒体</strong></p>
+</blockquote>
+        
+          <p class="article-more-link">
+            <a href="/322c0cad/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/322c0cad/" data-id="ck7fsd3vb002xhecad5ev08b7" class="article-share-link" data-share="baidu" data-title="视频相关的理论知识与基础概念">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-带你彻底理解-Window-和-WindowManager" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/9cf3ee4d/" class="article-date">
+  <time datetime="2017-12-17T07:24:01.000Z" itemprop="datePublished">2017-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/9cf3ee4d/">带你彻底理解 Window 和 WindowManager</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：</p>
+        
+          <p class="article-more-link">
+            <a href="/9cf3ee4d/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/9cf3ee4d/" data-id="ck7fsd3v9002phecakm0dxo8y" class="article-share-link" data-share="baidu" data-title="带你彻底理解 Window 和 WindowManager">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Window/">Window</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android-集成-FFmpeg-三-获取-FFmpeg-执行进度" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/8837781/" class="article-date">
+  <time datetime="2017-12-17T07:18:03.000Z" itemprop="datePublished">2017-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/8837781/">Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在以命令方式调用 FFmpeg 的时候，可能会执行一些比较耗时的任务，这时如果没有进度展示，用户可能会以为程序崩溃了，体验十分不好．能不能在以命令方式调用 FFmpeg 时实时获取执行进度呢？谷歌关键词 “Android FFmpeg 命令” 可以得到很多教程，但加上关键词 “进度”就没有相关文章了，看来以命令方式调用 FFmpeg 实时获取执行进度这个需求没有前人的肩膀可站，要开动自己的小脑筋了．</p>
+        
+          <p class="article-more-link">
+            <a href="/8837781/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/8837781/" data-id="ck7fsd3ue000phecajnfa35mh" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Ubuntu16-04-Caffe-安装步骤记录（超详尽）" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/fd96e42a/" class="article-date">
+  <time datetime="2017-12-04T07:10:09.000Z" itemprop="datePublished">2017-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/深度学习/">深度学习</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/fd96e42a/">Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>历时一周终于在 ubuntu16.04 系统成功安装 caffe 并编译，网上有很多教程，但是某些步骤并没有讲解详尽，导致配置过程总是出现各种各样匪夷所思的问题，尤其对于新手而言更是欲哭无泪，在我饱受折磨后决定把安装步骤记录下来，尽量详尽清楚明白，避免后来小白重蹈覆辙。</p>
+<blockquote>
+<p>建议转往 CSDN 上查看<a href="https://blog.csdn.net/yhaolpz/article/details/71375762" target="_blank" rel="noopener">这篇文章</a>，那里热心评论或许可以帮到你<br>
+        
+          <p class="article-more-link">
+            <a href="/fd96e42a/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/fd96e42a/" data-id="ck7fsd3ur001lhecawyvg3izt" class="article-share-link" data-share="baidu" data-title="Ubuntu16.04 Caffe 安装步骤记录（超详尽）">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Caffe/">Caffe</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/">Ubuntu</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Andorid-应用内悬浮控件实践方案总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/8d13674/" class="article-date">
+  <time datetime="2017-11-17T07:13:35.000Z" itemprop="datePublished">2017-11-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/8d13674/">Andorid 应用内悬浮控件实践方案总结</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>推荐使用 FloatWindow 库实现悬浮窗，功能全面，链式调用，简洁清爽。</strong><br>地址 :  <a href="https://github.com/yhaolpz/FloatWindow" target="_blank" rel="noopener">https://github.com/yhaolpz/FloatWindow</a></p>
+        
+          <p class="article-more-link">
+            <a href="/8d13674/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/8d13674/" data-id="ck7fsd3u00002hecai4ptmro6" class="article-share-link" data-share="baidu" data-title="Andorid 应用内悬浮控件实践方案总结">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/悬浮控件/">悬浮控件</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android-集成-FFmpeg-二-以命令方式调用-FFmpeg" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/ddeb5551/" class="article-date">
+  <time datetime="2017-09-22T07:17:03.000Z" itemprop="datePublished">2017-09-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/ddeb5551/">Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。</p>
+        
+          <p class="article-more-link">
+            <a href="/ddeb5551/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/ddeb5551/" data-id="ck7fsd3uf000rhecahys1p2hk" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Android-集成-FFmpeg-一-基础知识及简单调用" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/e0b4d9fc/" class="article-date">
+  <time datetime="2017-09-21T07:15:20.000Z" itemprop="datePublished">2017-09-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/e0b4d9fc/">Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。</p>
+        
+          <p class="article-more-link">
+            <a href="/e0b4d9fc/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/e0b4d9fc/" data-id="ck7fsd3ud000khecaq2j317ys" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (一) 基础知识及简单调用">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/音视频/">音视频</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+
+  <nav id="page-nav">
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">下一页 &raquo;</a>
+  </nav>
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

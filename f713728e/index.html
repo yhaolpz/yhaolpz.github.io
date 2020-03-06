@@ -1,0 +1,339 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>对 Android 开发的一点思考 | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="17 年毕业开始工作到现在已快两个年头，在实际项目开发的过程中，我对 Android 开发有了一些自己的思考。本着碰撞才会有火花、讨论才会进步的理念，我把对 Android 开发的一点思考分享出来，真诚的希望可以有不同的观点，在纠结反驳之中得到最优解，共同进步。">
+<meta name="keywords" content="Android,开发模式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对 Android 开发的一点思考">
+<meta property="og:url" content="http://yoursite.com/f713728e/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="17 年毕业开始工作到现在已快两个年头，在实际项目开发的过程中，我对 Android 开发有了一些自己的思考。本着碰撞才会有火花、讨论才会进步的理念，我把对 Android 开发的一点思考分享出来，真诚的希望可以有不同的观点，在纠结反驳之中得到最优解，共同进步。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/img/14.jpg">
+<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="对 Android 开发的一点思考">
+<meta name="twitter:description" content="17 年毕业开始工作到现在已快两个年头，在实际项目开发的过程中，我对 Android 开发有了一些自己的思考。本着碰撞才会有火花、讨论才会进步的理念，我把对 Android 开发的一点思考分享出来，真诚的希望可以有不同的观点，在纠结反驳之中得到最优解，共同进步。">
+<meta name="twitter:image" content="http://yoursite.com/img/14.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-对-Android-开发的一点思考" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/f713728e/" class="article-date">
+  <time datetime="2019-04-07T09:17:09.000Z" itemprop="datePublished">2019-04-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      对 Android 开发的一点思考
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>17 年毕业开始工作到现在已快两个年头，在实际项目开发的过程中，我对 Android 开发有了一些自己的思考。本着碰撞才会有火花、讨论才会进步的理念，我把对 Android 开发的一点思考分享出来，真诚的希望可以有不同的观点，在纠结反驳之中得到最优解，共同进步。</p>
+<a id="more"></a>
+<p>最初的时候，你是否是一个完美主义者，不容忍任何一点 warning 与叹号，if 必有 else，switch 必有 default，即使 else 和 default 中确实什么也不用处理，你也会添加一个 //do nothing 注释，表示这里的逻辑是经过充分考虑的，下次阅读程序时，告诉别人也告诉自己，这里的确什么也不用处理，可以快速跳过。</p>
+<p>我想大多数开发者，都是经历过这种心态的，然后在繁忙的版本迭代中、在赶着回家的加班时、在愈来愈发的对自己的薪水不满时、在一次又一次看到团队中别人得过且过的代码时，渐渐的，就可能对“生活”妥协，丢掉了完美主义。</p>
+<p>然而如果你有更高的追求，就要勇敢的战胜自己的感性。</p>
+<h3 id="使用-IntDef、StringDef"><a href="#使用-IntDef、StringDef" class="headerlink" title="使用 IntDef、StringDef"></a>使用 IntDef、StringDef</h3><p>平时特常用的 View.setVisibility() 方法使用 IntDef 来规定参数的可选项，可以试想一下，假如没用 IntDef 会怎么样？对于初学者来说，可能要稍微阅读一下源码或查下资料才能知道 setVisibility 有哪些参数可以设置。你可能会觉得没什么差，因为你很清楚 setVisibility 方法有哪些参数可以设置。但若是程序中新增的一个方法呢？比如你新接触一个模块，某个界面有若干个跳转 Action，你得先找到定义这些 Action 的地方，而若一不小心将这些 Action 分散写在不同的地方，那对后面的维护和拓展可能就是一个灾难。</p>
+<p>建议凡是符合语义的逻辑，都必须用 IntDef、StringDef 来约束，它比枚举节省内存，性能更优，其 RetentionPolicy.SOURCE 表示此注解只在源码中存在，编译时会剔除。你可以在 Android Studio 的 Live Templates 中添加 IntDef、StringDef 写法：<br><img src="../img/14.jpg" alt></p>
+<h3 id="使用精准表达的变量类型"><a href="#使用精准表达的变量类型" class="headerlink" title="使用精准表达的变量类型"></a>使用精准表达的变量类型</h3><p>比如你需要声明一个变量来表示某个功能是否启用，譬如控制你的 App 是否展示广告，并且可以通过服务端在线下发开关来控制，如果没有接收到下发的开关，就根据地区来决定是否展示。</p>
+<p>这种情况下你会使用什么类型的变量？</p>
+<p>你可能会想到使用一个 int 类型变量来控制，然后需要给这个变量加上注释：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 0：展示； 1：不展示； 2：未接收到在线开关，需要根据地区决定是否展示</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> mShouldShowAd;</span><br></pre></td></tr></table></figure>
+<p>以后每当改动到这部分逻辑，都需要查看一下这个变量数值对应的含义，随着时间的推移和代码量的增多，在此逻辑之上可能堆积了很多代码，然后就会出现各种各样的问题，别人可能在不存在的逻辑分支做了一些事：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mShouldShowAd == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">//do something</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (mShouldShowAd == <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">//do something</span></span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (mShouldShowAd == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="comment">//do something</span></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//do something...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>甚至可能对这个变量赋值 [0,2] 区间之外的数值！ 你可能对这个变量的意义很了解也绝不会用错，但你不能保证他人不会出现上面所说的荒唐的用法，因为这个变量类型并不能很精准的表达它的语义，也没有任何约束性。</p>
+<p>我们可以怎样改善这种难维护、有风险的代码？</p>
+<ul>
+<li>可以使用 IntDef 规定这个变量的取值</li>
+<li>可以换成 Boolean 类型，用 null 表示未获取到在线开关，恰好的表达语义并且易读、易维护</li>
+</ul>
+<h3 id="使用尽可能少的变量"><a href="#使用尽可能少的变量" class="headerlink" title="使用尽可能少的变量"></a>使用尽可能少的变量</h3><p>举个例子：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mDebug = BuildConfig.DEBUG;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (mDebug) &#123;</span><br><span class="line">    Log.d(TAG, <span class="string">"..."</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>你是否写过这样的逻辑？明明已经存在了一个可以直接使用的变量条件，你仍然要重新定义。这个例子逻辑还十分简单，此变量是 final 类型的，不会出错。而如果是非 final 类型的变量，那就是强行增加了一个赋值联动的逻辑，埋下了隐患，后续如果出了问题，白白的增加了定位问题的路径与复杂度。</p>
+<p>实际开发中我们可能自己都意识不到使用了不必要的变量，比如我们的服务端接口一般会有多个接口环境，那你的代码可能是这样的：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//是否是测试环境</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> sIsApiHostTest;</span><br><span class="line"><span class="comment">//是否是beta环境</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">boolean</span> sIsApiHostBeta;</span><br><span class="line"><span class="comment">//正式环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHost = <span class="string">"http://api.com/"</span>;</span><br><span class="line"><span class="comment">//测试环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHostTest = <span class="string">"http://test.api.com/"</span>;</span><br><span class="line"><span class="comment">//beta环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHostBeta = <span class="string">"http://beta.api.com/"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是测试环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sIsApiHostTest;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是beta环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiBeta</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sIsApiHostBeta;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取接口域名</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getApiHost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (isApiTest()) &#123;</span><br><span class="line">        <span class="keyword">return</span> sApiHostTest;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isApiBeta()) &#123;</span><br><span class="line">        <span class="keyword">return</span> sApiHostBeta;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> sApiHost;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样看起来好像没什么问题，只要维护好 sIsApiHostTest、sIsApiHostBeta 这两个变量就行了。如果后面又添加了一个环境呢？又添加了三四个环境呢？是不是还要维护多个变量？这个逻辑可以通过减少变量来改善：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//当前环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sCurApiHost;</span><br><span class="line"><span class="comment">//正式环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHost = <span class="string">"http://api.com/"</span>;</span><br><span class="line"><span class="comment">//测试环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHostTest = <span class="string">"http://test.api.com/"</span>;</span><br><span class="line"><span class="comment">//beta环境host</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sApiHostBeta = <span class="string">"http://beta.api.com/"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是测试环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sApiHostTest.equals(sCurApiHost);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是beta环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiBeta</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sApiHostBeta.equals(sCurApiHost);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取接口域名</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getApiHost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sCurApiHost;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>再加上 StringDef 就完美了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@StringDef</span>(&#123;ApiHost.sApiHost, ApiHost.sApiHostTest, ApiHost.sApiHostBeta&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ApiHost &#123;</span><br><span class="line">    <span class="comment">//正式环境host</span></span><br><span class="line">    String sApiHost = <span class="string">"http://api.com/"</span>;</span><br><span class="line">    <span class="comment">//测试环境host</span></span><br><span class="line">    String sApiHostTest = <span class="string">"http://test.api.com/"</span>;</span><br><span class="line">    <span class="comment">//beta环境host</span></span><br><span class="line">    String sApiHostBeta = <span class="string">"http://beta.api.com/"</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//当前环境host</span></span><br><span class="line"><span class="meta">@ApiHost</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> String sCurApiHost = ApiHost.sApiHost;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是测试环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiTest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ApiHost.sApiHostTest.equals(sCurApiHost);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 是否是beta环境</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">isApiBeta</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ApiHost.sApiHostBeta.equals(sCurApiHost);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 获取接口域名</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@ApiHost</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getApiHost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> sCurApiHost;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 设置接口域名</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@ApiHost</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setApiHost</span><span class="params">(@ApiHost String apiHost)</span> </span>&#123;</span><br><span class="line">    sCurApiHost = apiHost;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不知道你有没有感受到易读性、可维护性、拓展性都蹭蹭蹭的往上涨呢？</p>
+<h3 id="单一数据源"><a href="#单一数据源" class="headerlink" title="单一数据源"></a>单一数据源</h3><p>同时接受多个数据源数据的逻辑相比只接受一个数据源的数据需要考虑时序性等问题，要复杂很多。打个比方，可以把数据源当作你的直接上级，上级会不定时的分配任务给你做，如果你有多个上级，一个让你做任务 A，一个让你做任务 B，且 A 需要在 B 之前完成，你要怎么办？两个上级都让你做任务 A，但是只用做一次，你要怎么办？</p>
+<p>在安卓中较为典型的场景就是同时加载网络和本地缓存数据到 UI 上，你的 UI 上展示的数据来自不同的地方，你需要考虑不同数据源之间如何协作。谷歌推出的 Jetpack 开发指南上推荐我们使用单一数据源，假如你的网络数据也需要缓存的话，那你的实现逻辑应该是这样：</p>
+<ul>
+<li>加载网络数据，返回后插入到本地<ul>
+<li>统一从本地取数据展示到 UI 上</li>
+</ul>
+</li>
+</ul>
+<p>这点和上面说的“使用尽可能少的变量”有相通之处，都是尽量规避使用多个条件变量对程序产生影响的逻辑。</p>
+<h3 id="职责分离"><a href="#职责分离" class="headerlink" title="职责分离"></a>职责分离</h3><p>强烈建议什么类里就干什么事，别把逻辑都揉到一块儿，这样随着代码量的增加，会愈发的难以维护，到最后就变成一颗存在重大隐患的地雷，看见就头疼。</p>
+<p>举个例子，比如你要自定义一个 View，那就像系统控件一样，只负责一个控件该负责的事，处理一下渲染、展示，把手势交互通过接口开放出来，把数据的获取写在数据仓库中。这样如果数据展示出了问题，可以很快的定位到是数据获取出了问题，还是渲染展示出了问题；如果这个控件的渲染展示是经过验证的，之后就几乎不用改动此控件，至少你有机会可以将你的自定义 View 写的像系统的控件一样稳定。</p>
+<p>这里再推荐一下谷歌的 Jetpack - MVVM 全家桶，MVC 真的是不易读、难维护、问题多、很简陋。</p>
+<h3 id="回归最初的完美主义"><a href="#回归最初的完美主义" class="headerlink" title="回归最初的完美主义"></a>回归最初的完美主义</h3><p>希望你我可以战胜感性，不向“生活”妥协，让优秀成为准则和习惯，回归最初的完美主义。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/f713728e/" data-id="ck7fsd3v7002lhecav0vk7d28" class="article-share-link" data-share="baidu" data-title="对 Android 开发的一点思考">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/开发模式/">开发模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/c75061d/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 知识简记
+        
+      </div>
+    </a>
+  
+  
+    <a href="/f346f34f/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">一个轻量的 Android 端日志打印记录库</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>

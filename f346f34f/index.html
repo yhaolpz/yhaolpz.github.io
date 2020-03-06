@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>一个轻量的 Android 端日志打印记录库 | Great hopes make great man</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="地址：https://github.com/yhaolpz/PLog  PLog 即 Persistence Log，可持久化日志于文件，便于还原用户使用场景，解决异常问题。 特性：1.mmap 方式高效写入，规避 IO 操作带来的性能消耗 2.兼容多进程并发文件写入，日志文件保存在各自的进程目录下 3.通过 zip 压缩并加密，节省上报流量，保护日志私密性 4.内置收集 Activity/Fr">
+<meta name="keywords" content="Android,日志">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个轻量的 Android 端日志打印记录库">
+<meta property="og:url" content="http://yoursite.com/f346f34f/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="地址：https://github.com/yhaolpz/PLog  PLog 即 Persistence Log，可持久化日志于文件，便于还原用户使用场景，解决异常问题。 特性：1.mmap 方式高效写入，规避 IO 操作带来的性能消耗 2.兼容多进程并发文件写入，日志文件保存在各自的进程目录下 3.通过 zip 压缩并加密，节省上报流量，保护日志私密性 4.内置收集 Activity/Fr">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/img/2.jpg">
+<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个轻量的 Android 端日志打印记录库">
+<meta name="twitter:description" content="地址：https://github.com/yhaolpz/PLog  PLog 即 Persistence Log，可持久化日志于文件，便于还原用户使用场景，解决异常问题。 特性：1.mmap 方式高效写入，规避 IO 操作带来的性能消耗 2.兼容多进程并发文件写入，日志文件保存在各自的进程目录下 3.通过 zip 压缩并加密，节省上报流量，保护日志私密性 4.内置收集 Activity/Fr">
+<meta name="twitter:image" content="http://yoursite.com/img/2.jpg">
+  
+    <link rel="alternative" href="/atom.xml" title="Great hopes make great man" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Great hopes make great man</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yoursite.com">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-一个轻量的-Android-端日志打印记录库" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/f346f34f/" class="article-date">
+  <time datetime="2019-03-31T06:22:56.000Z" itemprop="datePublished">2019-03-31</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一个轻量的 Android 端日志打印记录库
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p> 地址：<a href="https://github.com/yhaolpz/PLog" target="_blank" rel="noopener">https://github.com/yhaolpz/PLog</a></p>
+<p><img src="../img/2.jpg" alt></p>
+<p>PLog 即 Persistence Log，可持久化日志于文件，便于还原用户使用场景，解决异常问题。</p>
+<h2 id="特性："><a href="#特性：" class="headerlink" title="特性："></a>特性：</h2><p>1.mmap 方式高效写入，规避 IO 操作带来的性能消耗</p>
+<p>2.兼容多进程并发文件写入，日志文件保存在各自的进程目录下</p>
+<p>3.通过 zip 压缩并加密，节省上报流量，保护日志私密性</p>
+<p>4.内置收集 Activity/Fragment 生命周期、崩溃、网络状态等常用信息：</p>
+<a id="more"></a>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><h5 id="1-初始化"><a href="#1-初始化" class="headerlink" title="1.初始化"></a>1.初始化</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PLog.Config config = <span class="keyword">new</span> PLog.Config.Builder(<span class="keyword">this</span>)</span><br><span class="line">        .logDir(mLogDirPath) <span class="comment">//日志存放目录，默认优先存储于SD卡</span></span><br><span class="line">        .logcatDebugLevel(PLog.DebugLevel.DEBUG) <span class="comment">//允许输出到Logcat的级别</span></span><br><span class="line">        .recordDebugLevel(PLog.DebugLevel.DEBUG) <span class="comment">//允许记录到日志文件的级别</span></span><br><span class="line">        .fileSizeLimitDay(<span class="number">15</span>) <span class="comment">//单天日志文件存储上限</span></span><br><span class="line">        .overdueDay(<span class="number">3</span>) <span class="comment">//日志文件过期天数</span></span><br><span class="line">        .cipherKey(<span class="string">"123456"</span>) <span class="comment">//日志密钥</span></span><br><span class="line">        .build();</span><br><span class="line">PLog.init(config);</span><br></pre></td></tr></table></figure>
+<h5 id="2-打印"><a href="#2-打印" class="headerlink" title="2.打印"></a>2.打印</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//普通打印</span></span><br><span class="line">PLog.d(<span class="string">"wyh"</span>, <span class="string">"This is a log that can be recorded in a file"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Format</span></span><br><span class="line">PLog.d(<span class="string">"wyh"</span>, <span class="string">"This is a %s"</span>, <span class="string">"log"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//数组类型</span></span><br><span class="line">PLog.d(<span class="string">"wyh"</span>, <span class="keyword">new</span> String[]&#123;<span class="string">"a"</span>, <span class="string">"b"</span>, <span class="string">"c"</span>&#125;);</span><br><span class="line"><span class="comment">//output: [a,b,c]</span></span><br></pre></td></tr></table></figure>
+<h5 id="3-只记录到日志文件"><a href="#3-只记录到日志文件" class="headerlink" title="3.只记录到日志文件"></a>3.只记录到日志文件</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PLog.record(PLog.DebugLevel.DEBUG,<span class="string">"wyh"</span>,<span class="string">"This is a log that can only be recorded in files"</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="4-只输出到logcat"><a href="#4-只输出到logcat" class="headerlink" title="4.只输出到logcat"></a>4.只输出到logcat</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PLog.print(PLog.DebugLevel.DEBUG,<span class="string">"wyh"</span>,<span class="string">"This is a log"</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="5-触发上传"><a href="#5-触发上传" class="headerlink" title="5.触发上传"></a>5.触发上传</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">PLog.upload(<span class="keyword">new</span> UploadListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">upload</span><span class="params">(@NonNull List&lt;File&gt; files)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//上传到你的服务端</span></span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//建议上传成功及时删除日志文件</span></span><br><span class="line">        <span class="keyword">for</span> (File file : files) &#123;</span><br><span class="line">             <span class="keyword">if</span> (file.exists()) &#123;</span><br><span class="line">                file.delete();</span><br><span class="line">             &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h2 id="存储逻辑"><a href="#存储逻辑" class="headerlink" title="存储逻辑"></a>存储逻辑</h2><h4 id="日志文件类型"><a href="#日志文件类型" class="headerlink" title="日志文件类型"></a>日志文件类型</h4><p>为更好的区分并管理日志，将从写入到上传经历不同状态的日志文件划分为以下类型：</p>
+<ul>
+<li>“-mmap” 正在写入的日志文件，不可上传，文件命名为: yyyy-MM-dd-mmap</li>
+<li>“-mmap-up” 写入完成的日志文件，可压缩上传，文件命名为: yyyy-MM-dd-mmap-up</li>
+<li>“-mmap-up-old” 单天较早写入完成的日志大小，可压缩上传，文件命名为: yyyy-MM-dd-mmap-up-old</li>
+<li>“-mmap-up-last” 触发上传时超出存储上限部分的日志文件，上传操作的中间态，不会长久存在，可压缩上传，文件命名为: yyyy-MM-dd-mmap-up-last</li>
+<li>“.zip” 已压缩加密的日志文件，可直接上传，文件命名为: yyyy-MM-dd HH:mm:ss.zip</li>
+</ul>
+<h4 id="控制日志时效"><a href="#控制日志时效" class="headerlink" title="控制日志时效"></a>控制日志时效</h4><p>暂定保留最近三天的日志，更早的日志将会在特定时机自动清除当前进程目录所有类型过期的日志文件，这些时机包括：</p>
+<ul>
+<li>初始化时</li>
+<li>触发上传重命名日志文件添加”-up”时</li>
+<li>触发上传压缩所有标记为”-up”的可上传的日志时</li>
+<li>触发上传扫描所有”.zip”可上传的日志时</li>
+</ul>
+<h4 id="控制存储上限"><a href="#控制存储上限" class="headerlink" title="控制存储上限"></a>控制存储上限</h4><p>理论上我们应该避免无意义的日志记录滥用，控制日志体积，但为避免极端情况下大量日志写入导致存储爆炸，通过将日志文件分为两片控制存储上限。</p>
+<p>譬如规定单天日志存储体积上限为 MAX，逻辑大致为下：</p>
+<ul>
+<li>当天日志文件 -mmap 写入体积达 MAX/3 时就会停止写入，并命名为 -mmap-up，然后新建文件 -mmap 继续写入</li>
+<li>当写入达 MAX/3 时，先将已存在的 -mmap-up 命名为 -mmap-up-old，再将刚写满的 -mmap 命名为 -mmap-up，然后新建文件 -mmap 继续写入</li>
+<li>当写入达 MAX/3 时，先删除 -mmap-up-old 文件，将已存在的 -mmap-up 命名为 -mmap-up-old，再将刚写满的 -mmap 命名为 -mmap-up，然后新建文件 -mmap 继续写入</li>
+</ul>
+<p>按照此逻辑，假定当天写入日志体积为 SIZE，可以将单天日志存储情况划分为以下几种状态：</p>
+<ul>
+<li>a. SIZE &lt; MAX/3</li>
+<li>b. MAX/3 &lt; SIZE &lt; MAX*2/3</li>
+<li>c. MAX*2/3 &lt; SIZE &lt; MAX</li>
+</ul>
+<p>当处于 a 状态时触发上传： -mmap –&gt; -mmap-up –&gt; zip<br>当处于 b 状态时触发上传： -mmap-up –&gt; -mmap-up-old –&gt; zip ;  -mmap –&gt; -mmap-up –&gt; zip<br>当处于 c 状态时触发上传： -mmap-up-old –&gt; zip ;  -mmap-up –&gt; zip ;  -mmap –&gt; -mmap-up-last –&gt; zip</p>
+<p>为了防止频繁的判断日志体积，可设置每隔一定写入条数后判断一次进行优化，目前设置间隔为 1000 条。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yoursite.com/f346f34f/" data-id="ck7fsd3uu001vhecatp1r3slc" class="article-share-link" data-share="baidu" data-title="一个轻量的 Android 端日志打印记录库">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/日志/">日志</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/f713728e/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          对 Android 开发的一点思考
+        
+      </div>
+    </a>
+  
+  
+    <a href="/1516a551/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">单例的线程安全及序列化问题</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Glide-源码分析/">Glide 源码分析</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/OpenGL/">OpenGL</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/kotlin/">kotlin</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/算法之美/">算法之美</a><span class="category-list-count">2</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AMS/" style="font-size: 10px;">AMS</a> <a href="/tags/Android/" style="font-size: 20px;">Android</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 16px;">FFmpeg</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Java/" style="font-size: 12px;">Java</a> <a href="/tags/OpenGL/" style="font-size: 14px;">OpenGL</a> <a href="/tags/Recycleview/" style="font-size: 12px;">Recycleview</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Window/" style="font-size: 10px;">Window</a> <a href="/tags/glide/" style="font-size: 16px;">glide</a> <a href="/tags/ijkplayer/" style="font-size: 14px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/侧滑菜单/" style="font-size: 12px;">侧滑菜单</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/剑指offer/" style="font-size: 12px;">剑指offer</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/开源/" style="font-size: 10px;">开源</a> <a href="/tags/悬浮控件/" style="font-size: 10px;">悬浮控件</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/设计模式/" style="font-size: 10px;">设计模式</a> <a href="/tags/音视频/" style="font-size: 18px;">音视频</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="https://www.jianshu.com/u/bf20b3c0da59" target="_blank">我的「简书」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://blog.6ag.cn" target="_blank">六阿哥</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 yhao<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
+</html>
