@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ahab">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ahab">
+    
+    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta name="description" content="1.网络&amp;amp;算法&amp;amp;数据结构 2.Java 基础&amp;amp;容器&amp;amp;同步&amp;amp;设计模式 3.Java 虚拟机&amp;amp;内存结构&amp;amp;GC&amp;amp;类加载&amp;amp;四种引用&amp;amp;动态代理 4.Android 基础&amp;amp;性能优化&amp;amp;Framwork 5.Android 模块化&amp;amp;热修复&amp;amp;热更新&amp;amp;打包&amp;amp;混淆&amp;amp;压缩&amp;amp;AO">
+<meta name="keywords" content="Android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 知识简记">
+<meta property="og:url" content="http://yhaowa.gitee.io/c75061d/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="1.网络&amp;amp;算法&amp;amp;数据结构 2.Java 基础&amp;amp;容器&amp;amp;同步&amp;amp;设计模式 3.Java 虚拟机&amp;amp;内存结构&amp;amp;GC&amp;amp;类加载&amp;amp;四种引用&amp;amp;动态代理 4.Android 基础&amp;amp;性能优化&amp;amp;Framwork 5.Android 模块化&amp;amp;热修复&amp;amp;热更新&amp;amp;打包&amp;amp;混淆&amp;amp;压缩&amp;amp;AO">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/20.jpg">
+<meta property="og:updated_time" content="2020-03-14T10:56:17.333Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 知识简记">
+<meta name="twitter:description" content="1.网络&amp;amp;算法&amp;amp;数据结构 2.Java 基础&amp;amp;容器&amp;amp;同步&amp;amp;设计模式 3.Java 虚拟机&amp;amp;内存结构&amp;amp;GC&amp;amp;类加载&amp;amp;四种引用&amp;amp;动态代理 4.Android 基础&amp;amp;性能优化&amp;amp;Framwork 5.Android 模块化&amp;amp;热修复&amp;amp;热更新&amp;amp;打包&amp;amp;混淆&amp;amp;压缩&amp;amp;AO">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/img/20.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
+    
+    <title>Android 知识简记 · Ahab&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/android.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Android 知识简记</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Ahab's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Android 知识简记
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">9.3k</span>阅读时长: <span class="post-count reading-time">34 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/06/01</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <ul>
+<li>1.网络&amp;算法&amp;数据结构</li>
+<li>2.Java 基础&amp;容器&amp;同步&amp;设计模式</li>
+<li>3.Java 虚拟机&amp;内存结构&amp;GC&amp;类加载&amp;四种引用&amp;动态代理</li>
+<li>4.Android 基础&amp;性能优化&amp;Framwork</li>
+<li>5.Android 模块化&amp;热修复&amp;热更新&amp;打包&amp;混淆&amp;压缩&amp;AOP</li>
+<li>6.JNI&amp;音视频&amp;FFmpeg&amp;播放器</li>
+<li>7.AndroidStudio&amp;Lint&amp;gradle&amp;maven&amp;CI&amp;CD</li>
+</ul>
+<a id="more"></a>
+<h1 id="1-网络-amp-算法-amp-数据结构"><a href="#1-网络-amp-算法-amp-数据结构" class="headerlink" title="1.网络&amp;算法&amp;数据结构"></a>1.网络&amp;算法&amp;数据结构</h1><h4 id="网络协议模型"><a href="#网络协议模型" class="headerlink" title="网络协议模型"></a>网络协议模型</h4><ul>
+<li>应用层：负责处理特定的应用程序细节，如 HTTP、FTP、DNS</li>
+<li>运输层：为两台主机提供端到端的基础通信，如 TCP、UDP</li>
+<li>网络层：控制分组传输、路由选择等，如 IP</li>
+<li>链路层：操作系统设备驱动程序、网卡相关接口</li>
+</ul>
+<h4 id="TCP-和-UDP-区别"><a href="#TCP-和-UDP-区别" class="headerlink" title="TCP 和 UDP 区别"></a>TCP 和 UDP 区别</h4><ul>
+<li>TCP 连接；可靠；有序；面向字节流；速度慢；较重量；全双工；适用于文件传输、浏览器等<br>全双工：A 给 B 发消息的同时，B 也能给 A 发<br>半双工：A 给 B 发消息的同时，B 不能给 A 发</li>
+<li>UDP 无连接；不可靠；无序；面向报文；速度快；轻量；适用于即时通讯、视频通话等</li>
+</ul>
+<h4 id="TCP-三次握手"><a href="#TCP-三次握手" class="headerlink" title="TCP 三次握手"></a>TCP 三次握手</h4><ol>
+<li>A：你能听到吗？</li>
+<li>B：我能听到，你能听到吗？</li>
+<li>A：我能听到，开始吧</li>
+</ol>
+<ul>
+<li>A 和 B 两方都要能确保：我说的话，你能听到；你说的话，我能听到。所以需要三次握手</li>
+</ul>
+<h4 id="TCP-四次挥手"><a href="#TCP-四次挥手" class="headerlink" title="TCP 四次挥手"></a>TCP 四次挥手</h4><ol>
+<li>A：我说完了</li>
+<li>B：我知道了，等一下，我可能还没说完</li>
+<li>B：我也说完了</li>
+<li>A：我知道了，结束吧</li>
+</ol>
+<ul>
+<li>B 收到 A 结束的消息后 B 可能还没说完，没法立即回复结束标示，只能等说完后再告诉 A ：我说完了</li>
+</ul>
+<h4 id="POST-和-GET-区别"><a href="#POST-和-GET-区别" class="headerlink" title="POST 和 GET 区别"></a>POST 和 GET 区别</h4><ul>
+<li>Get 参数放在 url 中；Post 参数放在 request Body 中</li>
+<li>Get 可能不安全，因为参数放在 url 中</li>
+</ul>
+<h4 id="HTTP-请求过程"><a href="#HTTP-请求过程" class="headerlink" title="HTTP 请求过程"></a>HTTP 请求过程</h4><ol>
+<li>DNS 域名解析</li>
+<li>TCP 三次握手建立连接</li>
+<li>发起 HTTP 请求</li>
+</ol>
+<h4 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h4><ul>
+<li>HTTP 是超文本传输协议，明文传输；HTTPS 使用 SSL 协议对 HTTP 传输数据进行了加密</li>
+<li>HTTP 默认 80 端口；HTTPS 默认 443 端口</li>
+<li>优点：安全</li>
+<li>缺点：费时、SSL 证书收费，加密能力还是有限的，但是比 HTTP 强多了</li>
+<li>加密过程：</li>
+</ul>
+<h4 id="平衡二叉树、二叉查找树、红黑树"><a href="#平衡二叉树、二叉查找树、红黑树" class="headerlink" title="平衡二叉树、二叉查找树、红黑树"></a>平衡二叉树、二叉查找树、红黑树</h4><h1 id="2-Java-基础-amp-容器-amp-同步-amp-设计模式"><a href="#2-Java-基础-amp-容器-amp-同步-amp-设计模式" class="headerlink" title="2.Java 基础&amp;容器&amp;同步&amp;设计模式"></a>2.Java 基础&amp;容器&amp;同步&amp;设计模式</h1><h4 id="StringBuilder、StringBuffer、-、String-concat-链接字符串："><a href="#StringBuilder、StringBuffer、-、String-concat-链接字符串：" class="headerlink" title="StringBuilder、StringBuffer、+、String.concat 链接字符串："></a>StringBuilder、StringBuffer、+、String.concat 链接字符串：</h4><ul>
+<li>StringBuffer 线程安全，StringBuilder 线程不安全</li>
+<li>+实际上是用 StringBuilder 来实现的，所以非循环体可以直接用 +，循环体不行，因为会频繁创建 StringBuilder</li>
+<li>String.concat 实质是 new String ，效率也低，耗时排序：StringBuilder &lt; StringBuffer &lt; concat &lt; +</li>
+</ul>
+<h4 id="Java-泛型擦除"><a href="#Java-泛型擦除" class="headerlink" title="Java 泛型擦除"></a>Java 泛型擦除</h4><ul>
+<li>修饰成员变量等类结构相关的泛型不会被擦除</li>
+<li>容器类泛型会被擦除</li>
+</ul>
+<h4 id="Exception-和-Error"><a href="#Exception-和-Error" class="headerlink" title="Exception 和 Error"></a>Exception 和 Error</h4><ul>
+<li>Exception 和 Error 都继承自 Throwable</li>
+<li>Error 大部分是指不可恢复的错误状态，比如 OOM，所以也不需要捕获</li>
+<li>Exception 分为 CheckedException 和 UnCheckedException<ul>
+<li>CheckedException：必须显式捕获，受编译器检查，比如 io 操作</li>
+<li>UnCheckedException：不用显示捕获，比如空指针、数组越界等</li>
+</ul>
+</li>
+</ul>
+<h4 id="IO-、-NIO、-OKIO"><a href="#IO-、-NIO、-OKIO" class="headerlink" title="IO 、 NIO、 OKIO"></a>IO 、 NIO、 OKIO</h4><ul>
+<li>IO 是面向流的，一次一个字节的处理，NIO 是面向缓冲区的，一次产生或消费一个数据块</li>
+<li>IO 是阻塞的，NIO 是非阻塞的</li>
+<li>NIO 支持内存映射方式</li>
+<li>okio 相比 io 和 nio，api 更简单易用</li>
+<li>okio 支持超时机制</li>
+<li>okio 引入 ByteString 空间换时间提高性能</li>
+<li>okio 采用 segment 机制进行内存共享，节省 copy 时间消耗</li>
+</ul>
+<h4 id="ArrayList、LinkedList"><a href="#ArrayList、LinkedList" class="headerlink" title="ArrayList、LinkedList"></a>ArrayList、LinkedList</h4><ul>
+<li><p>ArrayList</p>
+<ul>
+<li>基于数组实现，查找快：o(1)，增删慢：o(n)</li>
+<li>初始容量为10，扩容通过 System.arrayCopy 方法</li>
+</ul>
+</li>
+<li><p>LinkedList</p>
+<ul>
+<li>基于双向链表实现，查找慢：o(n)，增删快：o(1)</li>
+<li>封装了队列和栈的调用</li>
+</ul>
+</li>
+</ul>
+<h4 id="HashMap-、HashTable、HashSet"><a href="#HashMap-、HashTable、HashSet" class="headerlink" title="HashMap 、HashTable、HashSet"></a>HashMap 、HashTable、HashSet</h4><ul>
+<li><p>HashMap（允许 key/value 为 null）</p>
+<ul>
+<li>基于数组和单向链表实现，数组是 HashMap 的主体；链表是为解决哈希冲突而存在的，存放的是key和value结合的实体</li>
+<li>数组索引通过 key.hashCode（还会二次 hash） 得到，在链表上通过 key.equals 索引</li>
+<li>哈希冲突落在同一个桶中时，直接放在链表头部（java1.8后放到尾部）</li>
+<li>JAVA 8 中链表数量大于 8 时会转为红黑树存储，查找时间由 O(n) 变为 O(logn)</li>
+<li>数组长度总是2的n次方：这样就能通过位运算实现取余，从而让 index 能落在数组长度范围内</li>
+<li>加载因子（默认0.75）表示添加到多少填充比时进行扩容，填充比大：链表较长，查找慢；填充比小：链表短，查找快</li>
+<li>扩容时直接创建原数组两倍的长度，然后将原有对象再进行hash找到新的index，重新放</li>
+</ul>
+</li>
+<li><p>HashTable（不允许 key/value 为 null)</p>
+<ul>
+<li>数据结构和 HashMap 一样</li>
+<li>线程安全</li>
+</ul>
+</li>
+<li><p>HashSet</p>
+<ul>
+<li>基于 HashMap 实现，元素就是 HashMap 的 key，Value 传入了一个固定值</li>
+</ul>
+</li>
+</ul>
+<h4 id="ArrayMap、SparseArray"><a href="#ArrayMap、SparseArray" class="headerlink" title="ArrayMap、SparseArray"></a>ArrayMap、SparseArray</h4><ul>
+<li><p>ArrayMap</p>
+<ul>
+<li>基于两个数组实现，一个存放 hash；一个存放键值对</li>
+<li>存放 hash 的数组是有序的，查找时使用二分法查找</li>
+<li>发生哈希冲突时键值对数组里连续存放，查找时也是通过 key.equals索引，找不到时先向后再向前遍历相同hash值的键值对数组</li>
+<li>扩容时不像 HashMap 直接 double，内存利用率高；也不需要重建哈希表，只需要调用 system.arraycopy 数组拷贝，性能较高</li>
+<li>不适合存大量数据（1000以下），因为数据量大的时候二分查找相比红黑树会慢很多</li>
+</ul>
+</li>
+<li><p>SparseArray</p>
+<ul>
+<li>基于 ArrayMap，key 只能是特定类型</li>
+</ul>
+</li>
+</ul>
+<h4 id="Concurrent-集合"><a href="#Concurrent-集合" class="headerlink" title="Concurrent 集合"></a>Concurrent 集合</h4><ul>
+<li>ConcurrentHashMap<ul>
+<li>数据结构跟 HashMap 一样，还是数组加链表</li>
+<li>采用 segment 分段锁技术，不像 HashTable 无脑直接同步 put 和 get 操作</li>
+<li>get 操作没有加锁，因为 value 用 volatile 修饰来保证可见行，性能很高</li>
+<li>java1.8 后去除分段锁，采用 CAS 乐观锁加 synchronized 来实现</li>
+</ul>
+</li>
+</ul>
+<h4 id="WeakHashMap-原理"><a href="#WeakHashMap-原理" class="headerlink" title="WeakHashMap 原理"></a>WeakHashMap 原理</h4><h4 id="LRUCache-原理"><a href="#LRUCache-原理" class="headerlink" title="LRUCache 原理"></a>LRUCache 原理</h4><ul>
+<li>基于访问顺序排序的 LinkedHashMap 实现，最近访问的会排在最后</li>
+</ul>
+<h4 id="Volatile-关键字"><a href="#Volatile-关键字" class="headerlink" title="Volatile 关键字"></a>Volatile 关键字</h4><ul>
+<li>只能用来修饰变量，适用修饰可能被多线程同时访问的变量</li>
+<li>相当于轻量级的 synchronized，volatitle 能保证有序性（禁用指令重排序）、可见性</li>
+<li>变量位于主内存中，每个线程还有自己的工作内存，变量在自己线程的工作内存中有份拷贝，线程直接操作的是这个拷贝</li>
+<li>被 volatile 修饰的变量改变后会立即同步到主内存，保持变量的可见性<blockquote>
+<p>双重检查单例，为什么要加 violate？<br>volatile想要解决的问题是，在另一个线程中想要使用instance，发现instance!=null，但是实际上instance还未初始化完毕这个问题。将instance =newInstance();拆分为3句话是。1.分配内存2.初始化3.将instance指向分配的内存空间，volatile可以禁止指令重排序，确保先执行2，后执行3</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="wait-和-sleep"><a href="#wait-和-sleep" class="headerlink" title="wait 和 sleep"></a>wait 和 sleep</h4><ul>
+<li>sleep 是 Thread 的静态方法，可以在任何地方调用</li>
+<li>wait 是 Object 的成员方法，只能在 synchronized 代码块中调用，否则会报 IllegalMonitorStateException 非法监控状态异常</li>
+<li>sleep 不会释放共享资源锁，wait 会释放共享资源锁</li>
+</ul>
+<h4 id="wait、notify、notifyAll"><a href="#wait、notify、notifyAll" class="headerlink" title="wait、notify、notifyAll"></a>wait、notify、notifyAll</h4><ul>
+<li>锁池：某个对象的锁已被线程A拥有，其他线程要执行该对象的 synchronized 方法获取锁时就会进入该对象的锁池，锁池中的线程回去竞争该对象的锁</li>
+<li>等待池：某个线程调用了某个对象的 wait 方法，该线程就会释放该对象的锁，进入该对象的等待池，等待池中的线程不会去竞争该对象的锁</li>
+<li>调用 notify 会随机唤醒等待池中的一个线程，唤醒后会进入到锁池</li>
+<li>调用 notifyAll 会唤醒等待池中的所有线程，唤醒后会都进入到锁池</li>
+</ul>
+<h4 id="lock-和-synchronized"><a href="#lock-和-synchronized" class="headerlink" title="lock 和 synchronized"></a>lock 和 synchronized</h4><ul>
+<li>synchronized 是 Java 关键字，内置特性；Lock 是一个接口</li>
+<li>synchronized 会自动释放锁；lock 需要手动释放，所以需要写到 try catch 块中并在 finally 中释放锁</li>
+<li>synchronized 无法中断等待锁；lock 可以中断</li>
+<li>Lock 可以提高多个线程进行读/写操作的效率</li>
+<li>竞争资源激烈时，lock 的性能会明显的优于 synchronized</li>
+</ul>
+<h4 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h4><ul>
+<li>定义：已经获取到锁后，再次调用同步代码块/尝试获取锁时不必重新去申请锁，可以直接执行相关代码</li>
+<li>ReentrantLock 和 synchronized 都是可重入锁</li>
+</ul>
+<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><ul>
+<li>定义：等待时间最久的线程会优先获得锁</li>
+<li>非公平锁无法保证哪个线程获取到锁，synchronized 就是非公平锁</li>
+<li>ReentrantLock 默认时非公平锁，可以设置为公平锁</li>
+</ul>
+<h4 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h4><ul>
+<li>悲观锁：线程一旦得到锁，其他线程就挂起等待，适用于写入操作频繁的场景；synchronized 就是悲观锁<br>乐观锁：假设没有冲突，不加锁，更新数据时判断该数据是否过期，过期的话则不进行数据更新，适用于读取操作频繁的场景</li>
+<li>乐观锁 CAS：Compare And Swap，更新数据时先比较原值是否相等，不相等则表示数据过去，不进行数据更新</li>
+<li>乐观锁实现：AtomicInteger、AtomicLong、AtomicBoolean</li>
+</ul>
+<h4 id="死锁-4-个必要条件"><a href="#死锁-4-个必要条件" class="headerlink" title="死锁 4 个必要条件"></a>死锁 4 个必要条件</h4><ul>
+<li>互斥</li>
+<li>占有且等待</li>
+<li>不可抢占</li>
+<li>循环等待</li>
+</ul>
+<h4 id="Synchronized-原理"><a href="#Synchronized-原理" class="headerlink" title="Synchronized 原理"></a>Synchronized 原理</h4><ul>
+<li>每个对象都有一个监视器锁：monitor，同步代码块会执行  monitorenter 开始，motnitorexit 结束 </li>
+<li>Wait/notify 就依赖 monitor 监视器，所以在非同步代码块中执行会报 IllegalMonitorStateException 异常</li>
+</ul>
+<h4 id="六大原则（DJ单开一里）"><a href="#六大原则（DJ单开一里）" class="headerlink" title="六大原则（DJ单开一里）"></a>六大原则（DJ单开一里）</h4><ul>
+<li>开闭原则：对拓展开放，对修改关闭</li>
+<li>单一指责原则：一个类指责单一</li>
+<li>里氏替换原则：引用基类的地方都能替换成子类对象</li>
+<li>依赖倒置原则：高层次模块不依赖低层次模块的具体实现，抽象不应该依赖细节</li>
+<li>接口隔离原则：类之间的依赖关系应该建立在最小的接口上</li>
+<li>迪米特原则：一个对象对其他对象应该有尽量少的了解</li>
+</ul>
+<h4 id="Java-23-种设计模式（按目的分类为：5-7-11）"><a href="#Java-23-种设计模式（按目的分类为：5-7-11）" class="headerlink" title="Java 23 种设计模式（按目的分类为：5+7+11）"></a>Java 23 种设计模式（按目的分类为：5+7+11）</h4><blockquote>
+<p>1995 年 GoF（四人组）出了一本设计模式的书，收录了 23 种设计模式，树立设计模式里程碑，也叫：GoF 设计模式</p>
+</blockquote>
+<ul>
+<li>创建型（5）：描述怎么创建对象<ul>
+<li>1.单例模式</li>
+<li>2.原型模式：对象的拷贝</li>
+<li>3.建造者模式</li>
+<li>4.工厂模式：建立一个工厂方法来制造新的对象</li>
+<li>5.抽象工厂模式：</li>
+</ul>
+</li>
+<li>结构型（7）：描述如何将类或对象按某种规则组成更大的结构（键盘记忆：qw sd zzx）<ul>
+<li>1.桥接模式：对于两个或以上纬度独立变化的场景，将抽象与具体实现分离，实例：用不同颜色画不同形状</li>
+<li>2.外观模式：对外有一个统一接口，外部不用关心内部子系统的具体实现，这是”迪米特原则”的典型应用</li>
+<li>3.适配器模式：改变类的接口，使原本由于接口不匹配而无法一起工作的两个类能够在一工作，实例：RecycleView 的 Adapter 不管什么类型的 View 都返回 ViewHolder</li>
+<li>4.代理模式：由代理对象控制对原对象的引用，包括静态代理和动态代理</li>
+<li>5.组合模式：将对象组成树形结构，用于对单个对象和组合对象的使用具有一致性，实例：ViewGroup</li>
+<li>6.装饰模式：对对象包装一层，动态的增加一些额外功能，实例：ContextWrapper 包装 Context</li>
+<li>7.享元模式：复用对象，实例：java 的常量池（比如 String），线程池，Message.obtain 等</li>
+</ul>
+</li>
+<li>行为型（11）：描述类或对象之间怎么相互协作，怎样分配指责（记忆：3者 3短 4长 1模版方法）<ul>
+<li>1.观察者模式：一对多依赖关系，多个观察者可以同时监听某一个对象，实例：jetpack 的 lifeCycle 添加生命周期观察者</li>
+<li>2.中介者模式：定义一个中介对象封装一系列对象的交互，解耦这些对象，实例：MVP 的 P</li>
+<li>3.访问者模式：将作用于某数据结构中各元素的操作分离出来封装成独立的类，对这些元素添加新的操作，但不改变原数据结构，实例：asm 中的 classVisitor 中再分别对类注解、变量、方法等进行处理</li>
+<li>4.状态模式：行为由状态决定，不同状态下由不同行为，与策略模式类似，实例：不同状态下有同一种操作的不同行为的子类实现</li>
+<li>5.命令模式：将一个请求封装为一个对象发出，交给别的对象去处理请求，实例：Handler 发送定义好的消息事件</li>
+<li>6.策略模式：将一系列的算法封装起来，方便替换，实例：动画的时间插值器</li>
+<li>7.责任链模式：让多个对象都有机会处理一个事件，实例：View 事件传递机制</li>
+<li>8.备忘录模式：保存对象之前的状态，方便后面恢复</li>
+<li>9.迭代器模式：提供一种方法遍历容器中的元素，而不需要暴露该对象的内部表示，实例：集合的迭代器</li>
+<li>10.解释器模式：多次出现的问题有一定规律，就可以归纳成一种简单的语言来解释，实例：AndroidManifest 文件、GLES 着色器语言</li>
+<li>11.模版方法模式：定义一套固定步骤，方便直接执行，实例：AsyncTask</li>
+</ul>
+</li>
+</ul>
+<h1 id="3-Java-虚拟机-amp-内存结构-amp-GC-amp-类加载-amp-四种引用-amp-动态代理"><a href="#3-Java-虚拟机-amp-内存结构-amp-GC-amp-类加载-amp-四种引用-amp-动态代理" class="headerlink" title="3.Java 虚拟机&amp;内存结构&amp;GC&amp;类加载&amp;四种引用&amp;动态代理"></a>3.Java 虚拟机&amp;内存结构&amp;GC&amp;类加载&amp;四种引用&amp;动态代理</h1><h4 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h4><ul>
+<li>定义：可以理解成一个虚构的计算机，解释自己的字节码指令集映射到本地 CPU 或 OS 的指令集，上层只需关注 Class 文件，与操作系统无关，实现跨平台</li>
+<li>Kotlin 就是能解释成 Class 文件，所以可以跑在 JVM 上</li>
+</ul>
+<h4 id="JVM-内存模型"><a href="#JVM-内存模型" class="headerlink" title="JVM 内存模型"></a>JVM 内存模型</h4><ul>
+<li>Java 多线程之间是通过共享内存来通信的，每个线程都有自己的本地内存</li>
+<li>共享变量存放于主内存中，线程会拷贝一份共享变量到本地内存</li>
+<li>volatile 关键字就是给内存模型服务的，用来保证内存可见性和顺序性</li>
+</ul>
+<h4 id="JVM-内存结构"><a href="#JVM-内存结构" class="headerlink" title="JVM 内存结构"></a>JVM 内存结构</h4><ul>
+<li>线程私有：<ul>
+<li>1.程序计数器：记录正在执行的字节码指令地址，若正在执行 Native 方法则为空</li>
+<li>2.虚拟机栈：执行方法时把方法所需数据存为一个栈帧入栈，执行完后出栈</li>
+<li>3.本地方法栈：同虚拟机栈，但是针对的是 Native 方法</li>
+</ul>
+</li>
+<li>线程共享：<ul>
+<li>1.堆：存储 Java 实例，GC 主要区域，分代收集 GC 方法会吧堆划分为新生代、老年代</li>
+<li>2.方法区：存储类信息，常量池，静态变量等数据</li>
+</ul>
+</li>
+</ul>
+<h4 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h4><ul>
+<li>回收区域：只针对堆、方法区；线程私有区域数据会随线程结束销毁，不用回收</li>
+<li>回收类型：<ul>
+<li>1.堆中的对象<ul>
+<li>分代收集 GC 方法会吧堆划分为新生代、老年代</li>
+<li>新生代：新建小对象会进入新生代；通过复制算法回收对象</li>
+<li>老年代：新建大对象及老对象会进入老年代；通过标记-清除算法回收对象</li>
+</ul>
+</li>
+<li>2.方法区中的类信息、常量池</li>
+</ul>
+</li>
+<li>判断一个对象是否可被回收：<ul>
+<li>1.引用计数法<ul>
+<li>缺点：循环引用</li>
+</ul>
+</li>
+<li>2.可达性分析法<ul>
+<li>定义：从 GC ROOT 开始搜索，不可达的对象都是可以被回收的</li>
+<li>GC ROOT ：<ul>
+<li>1.虚拟机栈/本地方法栈中引用的对象</li>
+<li>2.方法区中常量/静态变量引用的对象</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Minor-GC-Major-GC-Full-GC"><a href="#Minor-GC-Major-GC-Full-GC" class="headerlink" title="Minor GC/Major GC/Full GC"></a>Minor GC/Major GC/Full GC</h4><ul>
+<li>Minor GC（Young GC）：即新生代（分为一个 Eden 区和两个 Survivor 区）的垃圾回收<ul>
+<li>Eden 区无用对象被回收，存活对象会移到 Survivor 区</li>
+<li>Survivor 区的存活对象会被复制到另一个 Survivor 区，复制次数也记做年龄，年龄足够大时（15）会移到老年代</li>
+<li>如果 Survivor 区已满，则存活对象会被提前移动到老年代（过早提升），如果老年代也无法容纳，则会触发 Full GC（提升失败）</li>
+<li>老年代的对象可能引用新生代对象，所以这个引用会被作为 GC Roots</li>
+</ul>
+</li>
+<li>Major GC：通常是跟 Full GC 等价的，回收整个堆</li>
+<li>Full GC：回收整个堆，包括新生代和老年代<ul>
+<li>当要在老年代分配空间但无法容纳时触发</li>
+<li>当主动调用 System.gc 时触发</li>
+</ul>
+</li>
+</ul>
+<h4 id="四种引用"><a href="#四种引用" class="headerlink" title="四种引用"></a>四种引用</h4><ul>
+<li>强引用：不会被回收</li>
+<li>软引用：内存不足时会被回收</li>
+<li>弱引用：gc 时会被回收</li>
+<li>虚引用：无法通过虚引用得到对象，可以监听对象的回收</li>
+</ul>
+<h4 id="ClassLoader"><a href="#ClassLoader" class="headerlink" title="ClassLoader"></a>ClassLoader</h4><ul>
+<li>类的生命周期：<br>1.加载；2.验证；3.准备；4.解析；5.初始化；6.使用；7.卸载</li>
+<li>类加载过程：<br>1.加载：获取类的二进制字节流；生成方法区的运行时存储结构；在内存中生成 Class 对象<br>2.验证：确保该 Class 字节流符合虚拟机要求<br>3.准备：初始化静态变量<br>4.解析：将常量池的符号引用替换为直接引用<br>5.初始化：执行静态块代码、类变量赋值</li>
+<li>类加载时机：<br>1.实例化对象<br>2.调用类的静态方法<br>3.调用类的静态变量（放入常量池的常量除外）</li>
+<li>类加载器：负责加载 class 文件<br>1.引导类加载器 - 没有父类加载器<br>2.拓展类加载器 - 继承自引导类加载器<br>3.系统类加载器 - 继承自拓展类加载器</li>
+<li>双亲委托模型：<ul>
+<li>当要加载一个 class 时，会先逐层向上让父加载器先加载，加载失败才会自己加载</li>
+<li>为什么叫双亲？不考虑自定义加载器，系统类加载器需要网上询问两层，所以叫双亲</li>
+<li>判断是否是同一个类时，除了类信息，还必须时同一个类加载器</li>
+<li>优点：<ul>
+<li>防止重复加载，父加载器加载过了就没必要加载了</li>
+<li>安全，防止篡改核心库类</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="动态代理原理及实现"><a href="#动态代理原理及实现" class="headerlink" title="动态代理原理及实现"></a>动态代理原理及实现</h4><ul>
+<li>InvocationHandler 接口，动态代理类需要实现这个接口</li>
+<li>Proxy.newProxyInstance，用于动态创建代理对象</li>
+<li>Retrofit 应用： Retrofit 通过动态代理，为我们定义的请求接口都生成一个动态代理对象，实现请求</li>
+</ul>
+<h1 id="4-Android-基础-amp-性能优化-amp-Framwork"><a href="#4-Android-基础-amp-性能优化-amp-Framwork" class="headerlink" title="4.Android 基础&amp;性能优化&amp;Framwork"></a>4.Android 基础&amp;性能优化&amp;Framwork</h1><h4 id="Android-解析-XML"><a href="#Android-解析-XML" class="headerlink" title="Android 解析 XML"></a>Android 解析 XML</h4><ul>
+<li>SAX：流式解析</li>
+<li>DOM：先把 XML 全部读取到内存，再访问树形结构，很消耗内存</li>
+<li>PULL：流式解析，Android 内置的默认解析方式</li>
+</ul>
+<h4 id="Activity-生命周期"><a href="#Activity-生命周期" class="headerlink" title="Activity 生命周期"></a>Activity 生命周期</h4><ul>
+<li>A 打开 B 界面，会先执行 A 的 onPause，再执行 B 的 onCreate、onStart、onResume，再执行 A 的 onStop</li>
+<li>B 界面的打开依赖 A 界面 onPause 方法执行完，所以不要在 onPause 中做耗时操作</li>
+</ul>
+<h4 id="Activity-启动模式"><a href="#Activity-启动模式" class="headerlink" title="Activity 启动模式"></a>Activity 启动模式</h4><ul>
+<li>standard 标准模式</li>
+<li>singleTop 栈顶复用模式，<ul>
+<li>推送点击消息界面</li>
+</ul>
+</li>
+<li>singleTask 栈内复用模式，<ul>
+<li>首页</li>
+</ul>
+</li>
+<li>singleInstance 单例模式，单独位于一个任务栈中<ul>
+<li>拨打电话界面</li>
+</ul>
+</li>
+<li>细节：<ul>
+<li>taskAffinity：任务相关性，用于指定任务栈名称，默认为应用包名</li>
+<li>allowTaskReparenting：允许转移任务栈</li>
+</ul>
+</li>
+</ul>
+<h4 id="MeasureSpec-测量规则"><a href="#MeasureSpec-测量规则" class="headerlink" title="MeasureSpec 测量规则"></a>MeasureSpec 测量规则</h4><ul>
+<li>EXACTLY：父 View 指定了子 View 确切的大小</li>
+<li>AT_MOST：父 View 指定一个大小，子 View 不能超过这个值</li>
+<li>UNSPECIFIEND： 父 View 不对子 View 有任何限制</li>
+</ul>
+<h4 id="View-工作原理"><a href="#View-工作原理" class="headerlink" title="View 工作原理"></a>View 工作原理</h4><ul>
+<li>DecorView (FrameLayout)<ul>
+<li>LinearLayout<ul>
+<li>titlebar<ul>
+<li>Content</li>
+<li>调用 setContentView 设置的 View</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>ViewRoot 的 performTraversals 方法调用触发开始 View 的绘制，然后会依次调用:<ul>
+<li>performMeasure：遍历 View 的 measure 测量尺寸</li>
+<li>performLayout：遍历 View 的 layout 确定位置</li>
+<li>performDraw：遍历 View 的 draw 绘制</li>
+</ul>
+</li>
+</ul>
+<h4 id="事件分发机制"><a href="#事件分发机制" class="headerlink" title="事件分发机制"></a>事件分发机制</h4><ul>
+<li>一个 MotionEvent 产生后，按 Activity -&gt; Window -&gt; decorView -&gt; View 顺序传递，View 传递过程就是事件分发，主要依赖三个方法:</li>
+<li>dispatchTouchEvent：用于分发事件，只要接受到点击事件就会被调用，返回结果表示是否消耗了当前事件</li>
+<li>onInterceptTouchEvent：用于判断是否拦截事件，当 ViewGroup 确定要拦截事件后，该事件序列都不会再触发调用此 ViewGroup 的 onIntercept</li>
+<li>onTouchEvent：用于处理事件，返回结果表示是否处理了当前事件，未处理则传递给父容器处理</li>
+<li>细节：<ul>
+<li>一个事件序列只能被一个 View 拦截且消耗</li>
+<li>View 没有 onIntercept 方法，直接调用 onTouchEvent 处理</li>
+<li>OnTouchListener 优先级比 OnTouchEvent 高，onClickListener 优先级最低</li>
+<li>requestDisallowInterceptTouchEvent 可以屏蔽父容器 onIntercet 方法的调用</li>
+</ul>
+</li>
+</ul>
+<h4 id="Window-、-WindowManager、WMS、SurfaceFlinger"><a href="#Window-、-WindowManager、WMS、SurfaceFlinger" class="headerlink" title="Window 、 WindowManager、WMS、SurfaceFlinger"></a>Window 、 WindowManager、WMS、SurfaceFlinger</h4><ul>
+<li>WIndow：抽象概念不是实际存在的，而是以 View 的形式存在，通过 PhoneWindow 实现</li>
+<li>WindowManager：外界访问 Window 的入口，内部与 WMS 交互是个 IPC 过程</li>
+<li>WMS：管理窗口 Surface 的布局和次序，作为系统级服务单独运行在一个进程</li>
+<li>SurfaceFlinger：将 WMS 维护的窗口按一定次序混合后显示到屏幕上</li>
+</ul>
+<h4 id="View-动画、帧动画及属性动画"><a href="#View-动画、帧动画及属性动画" class="headerlink" title="View 动画、帧动画及属性动画"></a>View 动画、帧动画及属性动画</h4><ul>
+<li>View 动画：<ul>
+<li>作用对象是 View，可用 xml 定义，建议 xml 实现比较易读</li>
+<li>支持四种效果：平移、缩放、旋转、透明度</li>
+</ul>
+</li>
+<li>帧动画：<ul>
+<li>通过 AnimationDrawable 实现，容易 OOM</li>
+</ul>
+</li>
+<li>属性动画：<ul>
+<li>可作用于任何对象，可用 xml 定义，Android 3 引入，建议代码实现比较灵活</li>
+<li>包括 ObjectAnimator、ValuetAnimator、AnimatorSet</li>
+<li>时间插值器：根据时间流逝的百分比计算当前属性改变的百分比<ul>
+<li>系统预置匀速、加速、减速等插值器</li>
+</ul>
+</li>
+<li>类型估值器：根据当前属性改变的百分比计算改变后的属性值<ul>
+<li>系统预置整型、浮点、色值等类型估值器</li>
+</ul>
+</li>
+<li>使用注意事项：<ul>
+<li>避免使用帧动画，容易OOM</li>
+<li>界面销毁时停止动画，避免内存泄漏</li>
+<li>开启硬件加速，提高动画流畅性 ，硬件加速：<ul>
+<li>将 cpu 一部分工作分担给 gpu ，使用 gpu 完成绘制工作</li>
+<li>从工作分摊和绘制机制两个方面优化了绘制速度</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Handler、MessageQueue、Looper-及-postDelayed-原理"><a href="#Handler、MessageQueue、Looper-及-postDelayed-原理" class="headerlink" title="Handler、MessageQueue、Looper 及 postDelayed 原理"></a>Handler、MessageQueue、Looper 及 postDelayed 原理</h4><ul>
+<li>Handler：开发直接接触的类，内部持有 MessageQueue 和 Looper</li>
+<li>MessageQueue：消息队列，内部通过单链表存储消息</li>
+<li>Looper：内部持有 MessageQueue，循环查看是否有新消息，有就处理，没就阻塞</li>
+<li>postDelayed 其实就是调用 postAtTime 实现的，传入的时间戳基于 SystemClock.uptimeMillis，即 boot 时间</li>
+<li>进一步会调用 MessageQueue#enqueueMessage 将消息插入到队列</li>
+<li>插入消息时会根据消息执行时刻 Message#when 来决定插入到什么位置，when 为 0 或最早执行就会插入到链表头，否则按执行时刻排序插入</li>
+<li>插入后如果正在阻塞则会尝试唤醒，插入到头部则会唤醒，插入到队列中则再根据其他条件判断是否需要唤醒</li>
+<li>Looper#loop 中调用 MessageQueue#next 取消息，next 方法除非是即将销毁时会返回 null，否则就会返回消息，没有消息就阻塞。如果当前时刻还没到消息的执行时刻 when，就会再阻塞这个时间差的时间</li>
+<li>阻塞是调用 nativePollOnce 实现，基于 Linux epoll 事件管理机制，主线程不会因为 Looper 阻塞是因为系统每 16ms 会发送一个刷新 UI 消息唤醒 </li>
+<li>Looper#loop 中取出消息后通过 Message#target 拿到 handler，然后调用 Handler#dispatchMessage 分发处理消息</li>
+</ul>
+<h4 id="MVC、MVP、MVVM"><a href="#MVC、MVP、MVVM" class="headerlink" title="MVC、MVP、MVVM"></a>MVC、MVP、MVVM</h4><ul>
+<li>MVP：Model：处理数据；View：控制视图；Presenter：分离 Activity 和 Model</li>
+<li>MVVM：Model：处理获取保存数据；View：控制视图；ViewModel：数据容器<ul>
+<li>使用 Jetpack 组件架构的 LiveData、ViewModel 便捷实现 MVVM</li>
+</ul>
+</li>
+</ul>
+<h4 id="LiveData"><a href="#LiveData" class="headerlink" title="LiveData"></a>LiveData</h4><ul>
+<li>如何感知声明周期：像 Glide 一样给界面添加了无视图的 Fragment</li>
+</ul>
+<h4 id="ViewModel"><a href="#ViewModel" class="headerlink" title="ViewModel"></a>ViewModel</h4><ul>
+<li>界面旋转短暂销毁重建时如何保存 ViewModel ？<ul>
+<li>ViewModel 保存在 ViewModelStore 中</li>
+<li>当 Activity 配置变更销毁时，系统会调用 onRetainNonConfigurationInstance 保存 NonConfigurationInstances，而 ViewModel 就保存在 NonConfigurationInstances 中</li>
+<li>重建时 onCreate 方法通过 getLastNonConfigurationInstance 方法获取到 NonConfigurationInstances，从而获取到 ViewModelStore</li>
+</ul>
+</li>
+</ul>
+<h4 id="Serializable、Parcelable"><a href="#Serializable、Parcelable" class="headerlink" title="Serializable、Parcelable"></a>Serializable、Parcelable</h4><ul>
+<li>Serializable ：Java 序列化方式，适用于存储和网络传输，serialVersionUID 用于确定反序列化和类版本是否一致，不一致时反序列化回失败</li>
+<li>Parcelable ：Android 序列化方式，适用于组件通信数据传递，性能高，因为不像 Serializable 一样有大量反射操作，频繁 GC</li>
+</ul>
+<h4 id="Linux-IPC-方式"><a href="#Linux-IPC-方式" class="headerlink" title="Linux IPC 方式"></a>Linux IPC 方式</h4><ul>
+<li>管道：</li>
+<li>信号量：常作为一种锁机制，防止某进程正在访问共享资源时，其他进程也访问该资源。因此，主要作为进程间以及同一进程内不同线程之间的同步手段</li>
+<li>信号：不适用于信息交换，更适用于进程中断控制，比如非法内存访问，杀死某个进程等（Android中的Kill Process采用的就是signal（信号）机制）</li>
+<li>消息队列：信息复制两次，额外的CPU消耗；不合适频繁或信息量大的通信</li>
+<li>共享内存：无须复制，共享缓冲区直接付附加到进程虚拟地址空间，速度快；但进程间的同步问题操作系统无法实现，必须各进程利用同步工具解决</li>
+<li>socket：</li>
+</ul>
+<h4 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h4><ul>
+<li>Android 中基于 C/S 结构的一种面向对象的进程间通信的机制</li>
+<li>主要用在 system_server 进程与上层 App 层的 IPC 交互</li>
+<li>包含：Client,Server,Binder 驱动和 ServiceManager 四大组成部分</li>
+</ul>
+<h4 id="Android-为什么选择-binder"><a href="#Android-为什么选择-binder" class="headerlink" title="Android 为什么选择 binder"></a>Android 为什么选择 binder</h4><ul>
+<li>性能：使用 mmap 一次数据拷贝实现 IPC，传统 IPC：用户A空间-&gt;内核-&gt;用户B空间；mmap 将内核与用户B空间映射，实现直接从用户A空间-&gt;用户B空间，而 Linux 的管道、消息队列、Socket 都需要拷贝两次，binder 仅次于共享内存</li>
+<li>稳定性：基于C/S架构，架构清晰，稳定性好，不像共享内存实现方式复杂，需要充分考虑访问临界资源的并发同步问题</li>
+<li>安全：传统Linux IPC的接收方无法获得对方进程可靠的UID/PID，从而无法鉴别对方身份</li>
+</ul>
+<h4 id="Android-IPC-方式"><a href="#Android-IPC-方式" class="headerlink" title="Android IPC 方式"></a>Android IPC 方式</h4><ul>
+<li>Intent extras、Bundle：要求传递数据能被序列化，实现 Parcelable、Serializable ，适用于四大组件通信</li>
+<li>文件共享：适用于交换简单的数据实时性不高的场景</li>
+<li>AIDL：AIDL 接口实质上是系统提供给我们可以方便实现 BInder 的工具<ul>
+<li>Android Interface Definition Language，可实现跨进程调用方法</li>
+<li>服务端：将暴漏给客户端的接口声明在 AIDL 文件中，创建 Service 实现 AIDL 接口并监听客户端连接请求</li>
+<li>客户端：绑定服务端 Service ，绑定成功后拿到服务端 Binder 对象转为 AIDL 接口调用</li>
+<li>RemoteCallbackList 实现跨进程接口监听，同个 Binder 对象做 key 存储客户端注册的 listener</li>
+<li>监听 Binder 断开：1.Binder.linkToDeath 设置死亡代理；2. onServiceDisconnected 回调</li>
+</ul>
+</li>
+<li>Messenger：基于 AIDL 实现，服务端串行处理，主要用于传递消息，适用于低并发一对多通信</li>
+<li>ContentProvider：基于 Binder 实现，适用于一对多进程间数据共享</li>
+<li>Socket：TCP、UDP，适用于网络数据交换</li>
+</ul>
+<h4 id="Android-系统架构"><a href="#Android-系统架构" class="headerlink" title="Android 系统架构"></a>Android 系统架构</h4><p><img src="../img/20.jpg" alt></p>
+<ul>
+<li>Linux 内核</li>
+<li>HAL</li>
+<li>本地 Native 库和 Android 运行时环境</li>
+<li>Framework 框架层</li>
+<li>应用层</li>
+</ul>
+<h4 id="Android-系统启动流程"><a href="#Android-系统启动流程" class="headerlink" title="Android 系统启动流程"></a>Android 系统启动流程</h4><ul>
+<li>按电源键 -&gt; 加载引导程序 BootLoader 到 RAM -&gt; 执行 BootLoader 程序启动内核 -&gt; 启动 init 进程 -&gt; 启动 Zygote 和各种守护进程 -&gt;</li>
+<li>启动  System Server 服务进程开启 AMS、WMS 等 -&gt; 启动 Launcher 应用进程</li>
+</ul>
+<h4 id="App-启动流程"><a href="#App-启动流程" class="headerlink" title="App 启动流程"></a>App 启动流程</h4><ul>
+<li>Launcher 中点击一个应用图标 -&gt; 通过 AMS 查找应用进程，若不存在就通过 Zygote 进程 fork </li>
+</ul>
+<h4 id="进程保活"><a href="#进程保活" class="headerlink" title="进程保活"></a>进程保活</h4><ul>
+<li>进程优先级：1.前台进程 ；2.可见进程；3.服务进程；4.后台进程；5.空进程</li>
+<li>进程被 kill 场景：1.切到后台内存不足时被杀；2.切到后台厂商省电机制杀死；3.用户主动清理</li>
+<li>保活方式：<ul>
+<li>1.Activity 提权：挂一个 1像素 Activity 将进程优先级提高到前台进程</li>
+<li>2.Service 提权：启动一个前台服务（API&gt;18会有正在运行通知栏）</li>
+<li>3.广播拉活</li>
+<li>4.Service 拉活</li>
+<li>5.JobScheduler 定时任务拉活</li>
+<li>6.双进程拉活</li>
+</ul>
+</li>
+</ul>
+<h4 id="网络优化及检测"><a href="#网络优化及检测" class="headerlink" title="网络优化及检测"></a>网络优化及检测</h4><ul>
+<li>速度：1.GZIP 压缩（okhttp 自动支持）；2.Protocol Buffer 替代 json；3.优化图片/文件流量；4.IP 直连省去 DNS 解析时间</li>
+<li>成功率：1.失败重试策略；</li>
+<li>流量：1.GZIP 压缩（okhttp 自动支持）；2.Protocol Buffer 替代 json；3.优化图片/文件流量；5.文件下载断点续传 ；6.缓存</li>
+<li>协议层的优化，比如更优的 http 版本等</li>
+<li>监控：Charles 抓包、Network Monitor 监控流量</li>
+</ul>
+<h4 id="UI卡顿优化"><a href="#UI卡顿优化" class="headerlink" title="UI卡顿优化"></a>UI卡顿优化</h4><ul>
+<li>减少布局层级及控件复杂度，避免过度绘制</li>
+<li>使用 include、merge、viewstub</li>
+<li>优化绘制过程，避免在 Draw 中频繁创建对象、做耗时操作</li>
+</ul>
+<h4 id="内存泄漏场景及规避"><a href="#内存泄漏场景及规避" class="headerlink" title="内存泄漏场景及规避"></a>内存泄漏场景及规避</h4><ul>
+<li>1.静态变量、单例强引跟生命周期相关的数据或资源，包括 EventBus</li>
+<li>2.游标、IO 流等资源忘记主动释放</li>
+<li>3.界面相关动画在界面销毁时及时暂停</li>
+<li>4.内部类持有外部类引用导致的内存泄漏<ul>
+<li>handler 内部类内存泄漏规避：1.使用静态内部类+弱引用 2.界面销毁时清空消息队列</li>
+<li>检测：Android Studio Profiler </li>
+</ul>
+</li>
+</ul>
+<h4 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h4><ul>
+<li>内存问题<ul>
+<li>内存泄漏</li>
+<li>内存抖动：频繁创建临时对象</li>
+<li>Bitmap 大内存：规避位图超标</li>
+<li>代码质量：枚举代替 intdef，使用 SparseArray 代替 Hashmap</li>
+</ul>
+</li>
+<li>检测工具<ul>
+<li>MAT(Memory Analysis Tools) ，可分析 Java 堆数据，可查看实例占用空间、引用关系等</li>
+<li>Android Studio 自带的 Profiler</li>
+<li>LeakCanary</li>
+</ul>
+</li>
+</ul>
+<h4 id="LeakCanary-原理"><a href="#LeakCanary-原理" class="headerlink" title="LeakCanary 原理"></a>LeakCanary 原理</h4><ul>
+<li>通过弱引用和引用队列监控对象是否被回收</li>
+<li>比如 Activity 销毁时开始监控此对象，检测到未被回收则主动 gc ，然后继续监控</li>
+</ul>
+<h4 id="OOM-场景及规避"><a href="#OOM-场景及规避" class="headerlink" title="OOM 场景及规避"></a>OOM 场景及规避</h4><ul>
+<li>加载大图：减小图片</li>
+<li>内存泄漏：规避内存泄漏</li>
+</ul>
+<h4 id="ANR-问题及分析"><a href="#ANR-问题及分析" class="headerlink" title="ANR 问题及分析"></a>ANR 问题及分析</h4><ul>
+<li>anr 分类<ul>
+<li>主线程 5s 内没有处理完输入事件</li>
+<li>service 阻塞 20s</li>
+<li>前台广播阻塞 10s 或后台广告阻塞 20s</li>
+</ul>
+</li>
+<li>anr 发生过程<ul>
+<li>1.捕获到 anr，发送 linux 信号量 3</li>
+<li>2.进程接受到信号量将 anr 信息写入 data/anr/traces.txt 文件</li>
+<li>3.Log 打印 anr 信息</li>
+<li>4.进程进入 anr 状态，弹出 anr 提示框</li>
+</ul>
+</li>
+<li>监控 anr<ul>
+<li>1.Android 5.0 以下监听 traces.txt 文件写入</li>
+<li>2.每隔 5s 向主线程发送消息判断主线程是否阻塞</li>
+</ul>
+</li>
+<li>分析 anr<ul>
+<li>查看 cpu 负载是否是 cpu 资源紧张导致</li>
+<li>查看堆栈看是否是我们的代码耗时过长</li>
+</ul>
+</li>
+<li>避免 anr<ul>
+<li>主线程中不要做耗时操作，注意使用 IntentService </li>
+<li>降低子线程优先级，让主线程可以更多的获取到 cpu 资源</li>
+</ul>
+</li>
+</ul>
+<h1 id="5-Android-模块化-amp-热修复-amp-热更新-amp-打包-amp-混淆-amp-压缩-amp-AOP"><a href="#5-Android-模块化-amp-热修复-amp-热更新-amp-打包-amp-混淆-amp-压缩-amp-AOP" class="headerlink" title="5.Android 模块化&amp;热修复&amp;热更新&amp;打包&amp;混淆&amp;压缩&amp;AOP"></a>5.Android 模块化&amp;热修复&amp;热更新&amp;打包&amp;混淆&amp;压缩&amp;AOP</h1><h4 id="Dalvik-和-ART"><a href="#Dalvik-和-ART" class="headerlink" title="Dalvik 和 ART"></a>Dalvik 和 ART</h4><ul>
+<li>Dalvik<ul>
+<li>谷歌设计专用于 Android 平台的 Java 虚拟机，可直接运行 .dex 文件，适合内存和处理速度有限的系统 </li>
+<li>JVM 指令集是基于栈的；Dalvik 指令集是基于寄存器的，代码执行效率更优</li>
+</ul>
+</li>
+<li>ART<ul>
+<li>Dalvik 每次运行都要将字节码转换成机器码；ART 在应用安装时就会转换成机器码，执行速度更快</li>
+<li>ART 存储机器码占用空间更大，空间换时间</li>
+</ul>
+</li>
+</ul>
+<h4 id="APK-打包流程"><a href="#APK-打包流程" class="headerlink" title="APK 打包流程"></a>APK 打包流程</h4><ul>
+<li>1.aapt 打包资源文件生成 R.java 文件；aidl 生成 java 文件</li>
+<li>2.将 java 文件编译为 class 文件</li>
+<li>3.将工程及第三方的 class 文件转换成 dex 文件</li>
+<li>4.将 dex 文件、so、编译过的资源、原始资源等打包成 apk 文件</li>
+<li>5.签名</li>
+<li>6.资源文件对齐，减少运行时内存</li>
+</ul>
+<h4 id="App-安装过程"><a href="#App-安装过程" class="headerlink" title="App 安装过程"></a>App 安装过程</h4><ul>
+<li>首先要解压 APK，资源、so等放到应用目录</li>
+<li>Dalvik 会将 dex 处理成 ODEX ；ART 会将 dex 处理成 OAT；</li>
+<li>OAT 包含 dex 和安装时编译的机器码</li>
+</ul>
+<h4 id="瘦包"><a href="#瘦包" class="headerlink" title="瘦包"></a>瘦包</h4><ul>
+<li>1.资源方面：资源在线化、图片使用 webp 格式、tint 着色生成不同色调的切、使用 icon font</li>
+<li>2.so 库：保留一个 cpu 架构的 so 文件</li>
+<li>3.AS Inspect Code 清除无用代码和资源</li>
+<li>4.代码混淆：使用 ProGuard 可以移除无用的类、字段、方法（压缩），移除无用字节码指令 </li>
+<li>5.不保留行号：使用 ProGuard 配置不保留行号 </li>
+<li>6.开启 shrinkResources：移除无用资源 </li>
+<li>7.资源混淆：使用 AndResGuard 缩短资源长度，对资源进行 7z 压缩等（直接对apk操作）</li>
+<li>8.代码结构简化，比如用 intdef 代替 枚举(一个枚举有1~1.4kb大小)</li>
+<li>9.使用 compileOnly 在只需编译时依赖的场景，不会打到 apk 里</li>
+<li>10.使用 thinR 插件剔除 R 文件，将引用 R 字段的地方替换成对应常量</li>
+<li>11.Android 7.0 使用 V2(apksigner) 代替 V1(jarsigner) 签名工具</li>
+<li>12.动态加载 so 库(System.load加载绝对路径文件)、插件化技术、App Bundle</li>
+<li>13.使用 facebook 的 redex</li>
+</ul>
+<h4 id="Android-类加载器"><a href="#Android-类加载器" class="headerlink" title="Android 类加载器"></a>Android 类加载器</h4><ul>
+<li>BootClassLoader(加载 Franwork 级别的类)</li>
+<li>PathClassLoader(加载系统类和 data/app 应用目录下的 dex 文件)</li>
+<li>DexClassLoader(加载自定义的 dex 文件或 jar，支持从 sd 卡中进行加载)</li>
+</ul>
+<h4 id="插件化"><a href="#插件化" class="headerlink" title="插件化"></a>插件化</h4><ul>
+<li>DexClassLoader 动态加载</li>
+<li>VirtualAPK：动态加载，四大组件未注册问题通过 hook AMS、Instrumentation 等解决</li>
+</ul>
+<h4 id="热修复原理"><a href="#热修复原理" class="headerlink" title="热修复原理"></a>热修复原理</h4><ul>
+<li>Native Hook（AndFix）：直接在 native 层进行方法的结构体信息对换</li>
+<li>分包（QFix）：插入新 dex 到 dexElements[]，利用 ClassLoader 通过遍历 dexElements[] 来 findClass 的特性</li>
+<li>Java Hook（Robust）：hook 每个方法，在每个方法里埋好准备替换的逻辑</li>
+</ul>
+<h4 id="组件化"><a href="#组件化" class="headerlink" title="组件化"></a>组件化</h4><ul>
+<li>ARoute 路由实现：通过 APT 解析 @Route 等注解，结合 JavaPoet 生成路由表，即路由与 Activity 的映射关系</li>
+</ul>
+<h4 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h4><ul>
+<li>基于 Gradle Transform API 创建 TransForm ，其执行时机在 class 被打包成 dex 之前</li>
+<li>在 TransForm 中通过 javassist 或 asm 修改字节码</li>
+<li>基于 Gradle Plugin API 自定义插件，应用自定义的 TransForm</li>
+</ul>
+<h1 id="6-JNI-amp-音视频-amp-FFmpeg-amp-播放器"><a href="#6-JNI-amp-音视频-amp-FFmpeg-amp-播放器" class="headerlink" title="6.JNI&amp;音视频&amp;FFmpeg&amp;播放器"></a>6.JNI&amp;音视频&amp;FFmpeg&amp;播放器</h1><h4 id="SurfaceView、TextureView、SurfaceTexture、GLSurfaceView"><a href="#SurfaceView、TextureView、SurfaceTexture、GLSurfaceView" class="headerlink" title="SurfaceView、TextureView、SurfaceTexture、GLSurfaceView"></a>SurfaceView、TextureView、SurfaceTexture、GLSurfaceView</h4><ul>
+<li>SurfaceView：使用双缓冲机制，有自己的 surface，在一个独立的线程里绘制，Android7.0之前不能平移、缩放</li>
+<li>TextureView：持有 SurfaceTexture，将图像处理为 OpenGL 纹理更新到 HardwareLayer，必须开启硬件加速，Android5.0之前在主线程渲染，之后有独立的渲染线程，可以平移、旋转、缩放</li>
+<li>SurfaceTexture：将图像流转为 OpenGL 外部纹理，不直接显示</li>
+<li>GLSurfaceView：加入 EGL 管理，自带 GL 上下文和 GL 渲染线程</li>
+</ul>
+<h4 id="JNI"><a href="#JNI" class="headerlink" title="JNI"></a>JNI</h4><h4 id="Native-Crash"><a href="#Native-Crash" class="headerlink" title="Native Crash"></a>Native Crash</h4><ul>
+<li>崩溃过程：native crash 时操作系统会向进程发送信号，崩溃信息会写入到 data/tombstones 下，并在 logcat 输出崩溃日志</li>
+<li>定位：so 库剥离调试信息的话，只有相对位置没有具体行号，可以使用 NDK 提供的 addr2line 或 ndk-stack 来定位</li>
+<li>addr2line：根据有调试信息的 so 和相对位置定位实际的代码处</li>
+<li>ndk-stack：可以分析 tombstone 文件，得到实际的代码调用栈</li>
+</ul>
+<h4 id="FFmpeg"><a href="#FFmpeg" class="headerlink" title="FFmpeg"></a>FFmpeg</h4><ul>
+<li>基于命令方式实现了一个音视频编辑 App：<a href="https://github.com/yhaolpz/FFmpegCmd" target="_blank" rel="noopener">FFEditor</a></li>
+<li>集成编译了 AAC、MP3、H264 编码器</li>
+</ul>
+<h4 id="播放器原理"><a href="#播放器原理" class="headerlink" title="播放器原理"></a>播放器原理</h4><ul>
+<li>视频播放原理：（mp4、flv）-&gt; 解封装 -&gt; （mp3/aac、h264/h265）-&gt; 解码 -&gt; （pcm、yuv）-&gt; 音视频同步 -&gt; 渲染播放</li>
+<li>音视频同步：<ul>
+<li>选择参考时钟源：音频时间戳、视频时间戳和外部时间三者选择一个作为参考时钟源（一般选择音频，因为人对音频更敏感，ijk 默认也是音频）</li>
+<li>通过等待或丢帧将视频流与参考时钟源对齐，实现同步</li>
+</ul>
+</li>
+</ul>
+<h4 id="IjkPlayer-原理"><a href="#IjkPlayer-原理" class="headerlink" title="IjkPlayer 原理"></a>IjkPlayer 原理</h4><ul>
+<li>集成了 MediaPlayer、ExoPlayer 和 IjkPlayer 三种实现，其中 IjkPlayer 基于 FFmpeg 的 ffplay </li>
+<li>音频输出方式：AudioTrack、OpenSL ES；视频输出方式：NativeWindow、OpenGL ES</li>
+</ul>
+<h1 id="7-AndroidStudio-amp-Lint-amp-gradle-amp-maven-amp-CI-amp-CD"><a href="#7-AndroidStudio-amp-Lint-amp-gradle-amp-maven-amp-CI-amp-CD" class="headerlink" title="7.AndroidStudio&amp;Lint&amp;gradle&amp;maven&amp;CI&amp;CD"></a>7.AndroidStudio&amp;Lint&amp;gradle&amp;maven&amp;CI&amp;CD</h1><h4 id="Lint"><a href="#Lint" class="headerlink" title="Lint"></a>Lint</h4><ul>
+<li>Android Lint是Google提供给Android开发者的静态代码检查工具</li>
+<li>使用Lint对Android工程代码进行扫描和检查，可以发现代码潜在的问题，提醒程序员及早修正</li>
+<li>基于 Detector、IssueRegistry 实现，通过 lintChecks project 引入</li>
+</ul>
+<h4 id="CI-amp-CD"><a href="#CI-amp-CD" class="headerlink" title="CI&amp;CD"></a>CI&amp;CD</h4><ul>
+<li>Continuous integration（持续集成，简称CI）：频繁的将代码集成到主干，防止分支大幅偏离主干，方便快速发现错误</li>
+<li>Continuous delivery（持续交付）：频繁地将软件的新版本，交付给质量团队或者用户，以供评审</li>
+<li>Continuous deployment（持续部署）：持续交付的下一步，指的是代码通过评审以后，自动部署到生产环境</li>
+<li>交付后需要进行构建，将源码转换为可以运行的实际代码，常用的构建工具有 Jenkins、Strider</li>
+</ul>
+<blockquote>
+<h5 id="持续补充中…"><a href="#持续补充中…" class="headerlink" title="持续补充中…"></a>持续补充中…</h5></blockquote>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/c75061d/">http://yhaowa.gitee.io/c75061d/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/c75061d/">June 1st 2019, 8:42:37 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/c75061d/">March 14th 2020, 6:56:17 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/eeb650a2/" title= "Android OpenGL ES（一）开发入门">
+                    <div class="nextTitle">Android OpenGL ES（一）开发入门</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/f713728e/" title= "对 Android 开发的一点思考">
+                    <div class="prevTitle">对 Android 开发的一点思考</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-网络-amp-算法-amp-数据结构"><span class="toc-number">1.</span> <span class="toc-text">1.网络&amp;算法&amp;数据结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#网络协议模型"><span class="toc-number">1.0.0.1.</span> <span class="toc-text">网络协议模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP-和-UDP-区别"><span class="toc-number">1.0.0.2.</span> <span class="toc-text">TCP 和 UDP 区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP-三次握手"><span class="toc-number">1.0.0.3.</span> <span class="toc-text">TCP 三次握手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP-四次挥手"><span class="toc-number">1.0.0.4.</span> <span class="toc-text">TCP 四次挥手</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#POST-和-GET-区别"><span class="toc-number">1.0.0.5.</span> <span class="toc-text">POST 和 GET 区别</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP-请求过程"><span class="toc-number">1.0.0.6.</span> <span class="toc-text">HTTP 请求过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTPS"><span class="toc-number">1.0.0.7.</span> <span class="toc-text">HTTPS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#平衡二叉树、二叉查找树、红黑树"><span class="toc-number">1.0.0.8.</span> <span class="toc-text">平衡二叉树、二叉查找树、红黑树</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Java-基础-amp-容器-amp-同步-amp-设计模式"><span class="toc-number">2.</span> <span class="toc-text">2.Java 基础&amp;容器&amp;同步&amp;设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#StringBuilder、StringBuffer、-、String-concat-链接字符串："><span class="toc-number">2.0.0.1.</span> <span class="toc-text">StringBuilder、StringBuffer、+、String.concat 链接字符串：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-泛型擦除"><span class="toc-number">2.0.0.2.</span> <span class="toc-text">Java 泛型擦除</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Exception-和-Error"><span class="toc-number">2.0.0.3.</span> <span class="toc-text">Exception 和 Error</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IO-、-NIO、-OKIO"><span class="toc-number">2.0.0.4.</span> <span class="toc-text">IO 、 NIO、 OKIO</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ArrayList、LinkedList"><span class="toc-number">2.0.0.5.</span> <span class="toc-text">ArrayList、LinkedList</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#HashMap-、HashTable、HashSet"><span class="toc-number">2.0.0.6.</span> <span class="toc-text">HashMap 、HashTable、HashSet</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ArrayMap、SparseArray"><span class="toc-number">2.0.0.7.</span> <span class="toc-text">ArrayMap、SparseArray</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Concurrent-集合"><span class="toc-number">2.0.0.8.</span> <span class="toc-text">Concurrent 集合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#WeakHashMap-原理"><span class="toc-number">2.0.0.9.</span> <span class="toc-text">WeakHashMap 原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LRUCache-原理"><span class="toc-number">2.0.0.10.</span> <span class="toc-text">LRUCache 原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Volatile-关键字"><span class="toc-number">2.0.0.11.</span> <span class="toc-text">Volatile 关键字</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#wait-和-sleep"><span class="toc-number">2.0.0.12.</span> <span class="toc-text">wait 和 sleep</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#wait、notify、notifyAll"><span class="toc-number">2.0.0.13.</span> <span class="toc-text">wait、notify、notifyAll</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#lock-和-synchronized"><span class="toc-number">2.0.0.14.</span> <span class="toc-text">lock 和 synchronized</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#可重入锁"><span class="toc-number">2.0.0.15.</span> <span class="toc-text">可重入锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#公平锁"><span class="toc-number">2.0.0.16.</span> <span class="toc-text">公平锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#乐观锁和悲观锁"><span class="toc-number">2.0.0.17.</span> <span class="toc-text">乐观锁和悲观锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#死锁-4-个必要条件"><span class="toc-number">2.0.0.18.</span> <span class="toc-text">死锁 4 个必要条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Synchronized-原理"><span class="toc-number">2.0.0.19.</span> <span class="toc-text">Synchronized 原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#六大原则（DJ单开一里）"><span class="toc-number">2.0.0.20.</span> <span class="toc-text">六大原则（DJ单开一里）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Java-23-种设计模式（按目的分类为：5-7-11）"><span class="toc-number">2.0.0.21.</span> <span class="toc-text">Java 23 种设计模式（按目的分类为：5+7+11）</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Java-虚拟机-amp-内存结构-amp-GC-amp-类加载-amp-四种引用-amp-动态代理"><span class="toc-number">3.</span> <span class="toc-text">3.Java 虚拟机&amp;内存结构&amp;GC&amp;类加载&amp;四种引用&amp;动态代理</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM"><span class="toc-number">3.0.0.1.</span> <span class="toc-text">JVM</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM-内存模型"><span class="toc-number">3.0.0.2.</span> <span class="toc-text">JVM 内存模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JVM-内存结构"><span class="toc-number">3.0.0.3.</span> <span class="toc-text">JVM 内存结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#GC"><span class="toc-number">3.0.0.4.</span> <span class="toc-text">GC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Minor-GC-Major-GC-Full-GC"><span class="toc-number">3.0.0.5.</span> <span class="toc-text">Minor GC/Major GC/Full GC</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#四种引用"><span class="toc-number">3.0.0.6.</span> <span class="toc-text">四种引用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ClassLoader"><span class="toc-number">3.0.0.7.</span> <span class="toc-text">ClassLoader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动态代理原理及实现"><span class="toc-number">3.0.0.8.</span> <span class="toc-text">动态代理原理及实现</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-Android-基础-amp-性能优化-amp-Framwork"><span class="toc-number">4.</span> <span class="toc-text">4.Android 基础&amp;性能优化&amp;Framwork</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-解析-XML"><span class="toc-number">4.0.0.1.</span> <span class="toc-text">Android 解析 XML</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Activity-生命周期"><span class="toc-number">4.0.0.2.</span> <span class="toc-text">Activity 生命周期</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Activity-启动模式"><span class="toc-number">4.0.0.3.</span> <span class="toc-text">Activity 启动模式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MeasureSpec-测量规则"><span class="toc-number">4.0.0.4.</span> <span class="toc-text">MeasureSpec 测量规则</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-工作原理"><span class="toc-number">4.0.0.5.</span> <span class="toc-text">View 工作原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#事件分发机制"><span class="toc-number">4.0.0.6.</span> <span class="toc-text">事件分发机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Window-、-WindowManager、WMS、SurfaceFlinger"><span class="toc-number">4.0.0.7.</span> <span class="toc-text">Window 、 WindowManager、WMS、SurfaceFlinger</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View-动画、帧动画及属性动画"><span class="toc-number">4.0.0.8.</span> <span class="toc-text">View 动画、帧动画及属性动画</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Handler、MessageQueue、Looper-及-postDelayed-原理"><span class="toc-number">4.0.0.9.</span> <span class="toc-text">Handler、MessageQueue、Looper 及 postDelayed 原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MVC、MVP、MVVM"><span class="toc-number">4.0.0.10.</span> <span class="toc-text">MVC、MVP、MVVM</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LiveData"><span class="toc-number">4.0.0.11.</span> <span class="toc-text">LiveData</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ViewModel"><span class="toc-number">4.0.0.12.</span> <span class="toc-text">ViewModel</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Serializable、Parcelable"><span class="toc-number">4.0.0.13.</span> <span class="toc-text">Serializable、Parcelable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Linux-IPC-方式"><span class="toc-number">4.0.0.14.</span> <span class="toc-text">Linux IPC 方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Binder"><span class="toc-number">4.0.0.15.</span> <span class="toc-text">Binder</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-为什么选择-binder"><span class="toc-number">4.0.0.16.</span> <span class="toc-text">Android 为什么选择 binder</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-IPC-方式"><span class="toc-number">4.0.0.17.</span> <span class="toc-text">Android IPC 方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-系统架构"><span class="toc-number">4.0.0.18.</span> <span class="toc-text">Android 系统架构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-系统启动流程"><span class="toc-number">4.0.0.19.</span> <span class="toc-text">Android 系统启动流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#App-启动流程"><span class="toc-number">4.0.0.20.</span> <span class="toc-text">App 启动流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#进程保活"><span class="toc-number">4.0.0.21.</span> <span class="toc-text">进程保活</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#网络优化及检测"><span class="toc-number">4.0.0.22.</span> <span class="toc-text">网络优化及检测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UI卡顿优化"><span class="toc-number">4.0.0.23.</span> <span class="toc-text">UI卡顿优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存泄漏场景及规避"><span class="toc-number">4.0.0.24.</span> <span class="toc-text">内存泄漏场景及规避</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#内存优化"><span class="toc-number">4.0.0.25.</span> <span class="toc-text">内存优化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#LeakCanary-原理"><span class="toc-number">4.0.0.26.</span> <span class="toc-text">LeakCanary 原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#OOM-场景及规避"><span class="toc-number">4.0.0.27.</span> <span class="toc-text">OOM 场景及规避</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ANR-问题及分析"><span class="toc-number">4.0.0.28.</span> <span class="toc-text">ANR 问题及分析</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#5-Android-模块化-amp-热修复-amp-热更新-amp-打包-amp-混淆-amp-压缩-amp-AOP"><span class="toc-number">5.</span> <span class="toc-text">5.Android 模块化&amp;热修复&amp;热更新&amp;打包&amp;混淆&amp;压缩&amp;AOP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Dalvik-和-ART"><span class="toc-number">5.0.0.1.</span> <span class="toc-text">Dalvik 和 ART</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#APK-打包流程"><span class="toc-number">5.0.0.2.</span> <span class="toc-text">APK 打包流程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#App-安装过程"><span class="toc-number">5.0.0.3.</span> <span class="toc-text">App 安装过程</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#瘦包"><span class="toc-number">5.0.0.4.</span> <span class="toc-text">瘦包</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Android-类加载器"><span class="toc-number">5.0.0.5.</span> <span class="toc-text">Android 类加载器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#插件化"><span class="toc-number">5.0.0.6.</span> <span class="toc-text">插件化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#热修复原理"><span class="toc-number">5.0.0.7.</span> <span class="toc-text">热修复原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#组件化"><span class="toc-number">5.0.0.8.</span> <span class="toc-text">组件化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOP"><span class="toc-number">5.0.0.9.</span> <span class="toc-text">AOP</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#6-JNI-amp-音视频-amp-FFmpeg-amp-播放器"><span class="toc-number">6.</span> <span class="toc-text">6.JNI&amp;音视频&amp;FFmpeg&amp;播放器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SurfaceView、TextureView、SurfaceTexture、GLSurfaceView"><span class="toc-number">6.0.0.1.</span> <span class="toc-text">SurfaceView、TextureView、SurfaceTexture、GLSurfaceView</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JNI"><span class="toc-number">6.0.0.2.</span> <span class="toc-text">JNI</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Native-Crash"><span class="toc-number">6.0.0.3.</span> <span class="toc-text">Native Crash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FFmpeg"><span class="toc-number">6.0.0.4.</span> <span class="toc-text">FFmpeg</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#播放器原理"><span class="toc-number">6.0.0.5.</span> <span class="toc-text">播放器原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IjkPlayer-原理"><span class="toc-number">6.0.0.6.</span> <span class="toc-text">IjkPlayer 原理</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#7-AndroidStudio-amp-Lint-amp-gradle-amp-maven-amp-CI-amp-CD"><span class="toc-number">7.</span> <span class="toc-text">7.AndroidStudio&amp;Lint&amp;gradle&amp;maven&amp;CI&amp;CD</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lint"><span class="toc-number">7.0.0.1.</span> <span class="toc-text">Lint</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#CI-amp-CD"><span class="toc-number">7.0.0.2.</span> <span class="toc-text">CI&amp;CD</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#持续补充中…"><span class="toc-number">7.0.0.2.1.</span> <span class="toc-text">持续补充中…</span></a></li></ol></li></ol></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 34
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Android 9.0 Activity 启动流程分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
+    
+        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
+    
+        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
+    
+        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
+    
+        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
+    
+        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Ahab"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
