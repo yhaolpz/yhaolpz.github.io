@@ -371,12 +371,17 @@ height:50vh;
     <article class="index-post">
         <a class="abstract-title" href = "/a608ff50/" >
             
-                <span>Android 9.0 Activity 启动流程分析</span>
+                <span>Framework &amp; startActivity</span>
         </a>
         <div class="abstract-content">
-            <p>从一个问题出发：调用 startActivity 后系统到底做了什么事？</p>
-<p>如果让我回答这个问题，我的答案会是这样：Android 系统启动后会先启动一个 init 进程，init 进程启动 Zygote 进程，Zygote 进程进而会启动 system server 进程，在这个 system server 进程中，会启动 AMS、WMS 等系统服务。我们的 app 中调用 startActivity 后，需要通过 AMS 执行启动 Activity，而我们的 app 进程与 system server 是不同的进程，所以要跨进程，跨进程是通过 Binder 来实现的。 </p>
-<p>（？？？？？满脸问号脸），我这是回答了啥？</p>
+            
+源码基于 Android 10
+
+
+
+着重提炼了生命周期的部分
+
+Activity 首先会通过 Instrumentation 去调用，Instrumentation 中包含 callActivityOnCreate、callActivityOnPause、callApplicationOnCreate 等调用，具有强大的跟踪 Activity 及 Application 生命周期的功能，所以也被作为应用测试框架中的基类使用。一个进程有一个 ActivityThread 对象，ActivityThread 对象持有一个 Instrumentation 对象，每个 Activity 都持...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -1315,16 +1320,6 @@ height:50vh;
     
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 34
@@ -1343,7 +1338,7 @@ height:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Android 9.0 Activity 启动流程分析</a>
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
         </li>
     
     
