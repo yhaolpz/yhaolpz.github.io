@@ -29,7 +29,7 @@
 <meta property="og:description" content="源码基于 Android 10">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/startActivity-Android10.jpg">
-<meta property="og:updated_time" content="2020-03-18T15:23:27.221Z">
+<meta property="og:updated_time" content="2020-03-18T15:54:15.213Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Framework &amp; startActivity">
 <meta name="twitter:description" content="源码基于 Android 10">
@@ -293,7 +293,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">683</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">687</span>阅读时长: <span class="post-count reading-time">3 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -432,7 +432,7 @@ height:50vh;
 </li>
 <li><p>Activity 首先会通过 Instrumentation 去调用，Instrumentation 中包含 callActivityOnCreate、callActivityOnPause、callApplicationOnCreate 等调用，具有强大的跟踪 Activity 及 Application 生命周期的功能，所以也被作为应用测试框架中的基类使用。一个进程有一个 ActivityThread 对象，ActivityThread 对象持有一个 Instrumentation 对象，每个 Activity 都持有 Instrumentation。</p>
 </li>
-<li><p>Android 10 中 ActivityTaskManager 取代了 ActivityManager，所以 AMS 指的是 ActivityTaskManagerService，而不再是 ActivityManagerService。</p>
+<li><p>Android 10 中 新增了 ActivityTaskManager ，专门用于管理 Activity，接替了 ActivityManager 的一部分工作.</p>
 </li>
 <li><p>在 Instrumentation 中通过 IActivityTaskManager.aidl 接口由 App 进程进入到 system_server 进程；在 ClientTransaction 中通过 IApplicationThread.aidl 接口由 system_server 回到 App 进程。</p>
 </li>
@@ -455,13 +455,18 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/a608ff50/">http://yhaowa.gitee.io/a608ff50/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/a608ff50/">September 15th 2019, 7:42:33 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/a608ff50/">March 18th 2020, 11:23:27 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/a608ff50/">March 18th 2020, 11:54:15 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/dc26dc88/" title= "Framework & startService">
+                    <div class="nextTitle">Framework & startService</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -1050,9 +1055,32 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 34
+        Total : 35
         </div>
         <!-- search  -->
         
@@ -1062,6 +1090,20 @@ top:50vh;
     
     
     
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/18</span><a class="archive-post-title" href= "/dc26dc88/" >Framework & startService</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
@@ -1265,10 +1307,6 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
     
-        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
-    
-        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
-    
         <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
@@ -1276,6 +1314,10 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
     
         <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
     
         <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
     
@@ -1340,11 +1382,11 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
-        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
-    
         <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
     
         <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
     
