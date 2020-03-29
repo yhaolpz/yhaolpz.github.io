@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yhaowa.gitee.io/"/>
-  <updated>2020-03-22T14:49:53.962Z</updated>
+  <updated>2020-03-29T13:45:01.985Z</updated>
   <id>http://yhaowa.gitee.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>焦虑与知识输出</title>
+    <link href="http://yhaowa.gitee.io/af0c2fe0/"/>
+    <id>http://yhaowa.gitee.io/af0c2fe0/</id>
+    <published>2020-03-29T09:06:33.000Z</published>
+    <updated>2020-03-29T13:45:01.985Z</updated>
+    
+    <content type="html"><![CDATA[<p>今年很重要，对于工作年限将迈过两年、步入三年的程序员、我。</p><a id="more"></a><p>程序员岗位往往会以 3 年为分界点，一个任务你无法解决或不尽人意：</p><p>“他刚毕业两年，经验不太足，没关系”</p><p>“他都毕业三年多了，怎么跟刚毕业的一样，这都不懂，好菜啊”</p><p>这份焦虑从去年开始，伴随了我很久，直到现在，准确说是在本周它消失了。</p><p>它是什么时候来的呢？</p><p>去年身边的几个同事都成功进入心仪大厂而我却碰壁的时候，我是一个要强的人，认识到某方面不如别人会刺痛我，尤其是对程序员来说最重要的技术饭碗，那时候每当空下来的时候，就会意识我比别人菜的事实仍然是事实，焦虑不仅是焦虑，而是折磨。</p><p>大多数程序员都是很自信的，技术好的知道自己比别人懂得多，自然而然自信；技术差的不知道比别人懂得少，还是很自信。虽然我说出 “比别人菜的事实” 这种话，但我心底并不认同这是事实，不觉得我比同龄人差。</p><p>为什么会碰壁呢？</p><p>认清原因之前，尽管内心深处还是不认同 “比别人菜的事实”，但一直处于低谷找不到出口。逐渐开始怀疑我的不认同是错误的执念，为什么努力不比别人少，但是比别人菜，为什么呢？智商问题吗？ 不能再想下去，no! 智商问题就没救了！ 一定不是智商问题，一定不是智商问题！一定是因为不够努力，我这样告诉自己。</p><p><img src="../img/weixin.png" alt></p><p>复盘之后，终于找到了原因：我那业余而薄弱的音视频、JNI 技能点。我确实也花了时间在这上面，定制编译 FFmpeg、集成 mp3/h264 编码，实现变声、视频编辑等功能，但事实上这些东西毫无用处，还给我减了不少分。</p><p>我本想作为加分项，却减了分，为什么呢？</p><p>过多时间准备这个技能，却几乎没有问到，浪费时间浪费精力，从而其他准备不够充分，其实远不如学习其他技能点的收益高。</p><p>一旦被问到，便不会是业余浅显的问题，但我只是业余级别的了解，没在工作中实践，没有系统的认知，专业深入的问题回答上不来。</p><p>知道原因之后，雨过天晴，一切都释然了，我重新相信只要持续不断的付出、输入知识，我就没什么可怕的，但现在的状态还不够，远远不够，这份焦虑还在，最怕的是间歇性努力，持续性堕落。</p><p>解决焦虑的根本是认清自己的目标，并实施靠谱的计划不断向目标接近。之前目标只有一个模糊的样子，慢慢的，我的目标清晰起来，原来很简单。现在的待遇、心仪的大厂、当前的状况，这些都不是，也都不重要，都只是附属品而已，真正重要的东西从来都只有一个：技术实力。 稍长远点看就能明白，决定 3、5 年之后能否处于我理想状况的是技术实力；10 年之后呢？ 还是； 15 年之后呢？可能不再是直接原因，但绝对是主要的影响因素。</p><p>在三月份开始了学习计划，安排了学习内容并规划投入时间：</p><p>32.5h/周<br>工作日    21.30-24.00（2.5x5=12.5h）<br>周末    13.00-23.00（10x2=20h）</p><p>起初，写出来就笑了，间歇性努力的典型，坚持一周恐怕都难，万万没想到我竟快坚持过 3 月份了，并慢慢产生了一些惯性，甚至不再需要”坚持”这样的字眼，而仅是”日常”而已，这是一个好兆头。</p><p>期间就是大量的知识不断的输入，输入，当我越来越多的需要对一个知识点反复时，我意识到，是输入过多了，而学习留存最高的方式就是消化理解整理输出，所以我利用博客、公众号输出。</p><p>学生时代的输出就是课后练习、应试；程序员的输出就是应用、写博客、教学。知识的输入和输出需要找到一个平衡点，输入输出过多或过少都会影响学习效率。</p><p>常会看到鼓励程序员写博客的话：以输出的成就感为由，倒逼输入。这是我写博客的初衷，也是我一直以来笃信的。但现在发现这种方式是有问题的，首先它假定了人是处于堕落、懒散状态的，尽管它更符合人的本性，但它绝不是最大化学习效率的方式。</p><p>试想一下，如果老师不系统的讲授课本知识，而是直接给你练习题册去做，是不是不太合理？回想我的博客，就存在这样的问题，从而导致一个知识点的学习周期很长。</p><p>所以对于博客、公众号这样的输出方式，限死周更或月更都是不合理的，它应该结合你的输入状况寻找一个平衡点。当然前提是没有处于一个零输入的堕落状态，否则输出倒逼输入肯定是有利无弊的。</p><p>谨此深化当前状态。</p><p><img src="../img/qrcode.jpg" alt></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今年很重要，对于工作年限将迈过两年、步入三年的程序员、我。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="思考" scheme="http://yhaowa.gitee.io/categories/%E6%80%9D%E8%80%83/"/>
+    
+    
+      <category term="输出倒逼输入" scheme="http://yhaowa.gitee.io/tags/%E8%BE%93%E5%87%BA%E5%80%92%E9%80%BC%E8%BE%93%E5%85%A5/"/>
+    
+      <category term="焦虑" scheme="http://yhaowa.gitee.io/tags/%E7%84%A6%E8%99%91/"/>
+    
+  </entry>
   
   <entry>
     <title>Framework &amp; startActivity</title>
@@ -475,32 +499,6 @@
     
     
       <category term="glide" scheme="http://yhaowa.gitee.io/tags/glide/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Android 端音频变声方案</title>
-    <link href="http://yhaowa.gitee.io/785f874e/"/>
-    <id>http://yhaowa.gitee.io/785f874e/</id>
-    <published>2018-11-01T15:23:58.000Z</published>
-    <updated>2019-06-28T09:45:36.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>音频变声实质上是通过调整 PCM 数据的音调、节拍等属性，实现听感上的变化。如果是 mp3、aac 等压缩音频，则需提前解码成 PCM 数据，Android 端可以通过 MediaExtractor 及 MediaCodec 解码得到 PCM，但调整音调、节拍仅靠 Android api 就无能为力了，只能集成第三方库来实现，常见的音频处理库有 <a href="https://www.fmod.com" target="_blank" rel="noopener">Fmod</a> 、  <a href="http://www.surina.net/soundtouch/" target="_blank" rel="noopener">SoundTouch</a> 。</p><a id="more"></a><h3 id="Fmod"><a href="#Fmod" class="headerlink" title="Fmod"></a>Fmod</h3><p>Fmod 是一个跨平台的音频处理引擎，官网提供了各个平台的 <a href="https://www.fmod.com/resources/documentation-api" target="_blank" rel="noopener">接入文档</a>，可以实现变调、变速变声效果以及混响、颤音等高级效果。开发调用简单，sdk 对外提供了播放器接口，传入音频文件即可直接变声播放。但不支持保存处理后的音频到文件，商业用途需要购买许可证。</p><p>如果你不需要保存处理后的音频到文件，那就使用 Fmod 吧，你会发现音频变声是如此简单，而且还支持混响、颤音等高级变声效果！</p><p>如果需要保存处理后的音频到文件，那么……我就请你再认真的思考一下，你的需求真的必须要保存处理后的音频吗？假设一个聊天 app 要实现语音消息变声，那这段语音只会在你的应用中播放，那就都可以通过 Fmod 播放器变声播放啊，要知道 Fmod 可是一个跨平台的音频引擎，不论是 Android、IOS 还是 Web 端，只要知道变声参数就可以变声播放了，不需要保存处理后的音频到文件。</p><p>能否跃过不支持保存处理后的音频到文件这一缺点，关键是要确定用户能否直接接触到处理后的音频文件，若能接触到，就无法使用 Fmod 了。</p><p>关于集成使用 Fmod 库十分简单，网上也有很多，就不再展开了。</p><h3 id="SoundTouch"><a href="#SoundTouch" class="headerlink" title="SoundTouch"></a>SoundTouch</h3><p>SoundTouch 是一个开源免费的音频处理库，可以改变音调、节拍和播放速率。开发调用时需自行将音频文件解码成 PCM 数据，传入 SoundTouch 处理后，SoundTouch 会输出处理后的 PCM 数据。基于这种使用方式，我们可以对其自由定制以适用于自己的应用。</p><p>比如你要实现一个 mp3 的变声播放，可以先用 MediaCodec 将 mp3 解码成 PCM，通过 SoundTouch 处理得到变声后的 PCM，再结合 AudioTrack 实现播放；如果你要将一个 mp3 变声后保存下来，那就在得到变声后的 PCM 后，结合 MediaCodec 将其编码保存下来。</p><p>相比 Fmod，SoundTouch 的集成会复杂点，不是随便参考一篇教程就可以跑通的了，这里提供一份亲测可行的 <a href="https://github.com/yhaolpz/AndroidSoundTouch" target="_blank" rel="noopener">SoundTouch 源码</a>。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;音频变声实质上是通过调整 PCM 数据的音调、节拍等属性，实现听感上的变化。如果是 mp3、aac 等压缩音频，则需提前解码成 PCM 数据，Android 端可以通过 MediaExtractor 及 MediaCodec 解码得到 PCM，但调整音调、节拍仅靠 Android api 就无能为力了，只能集成第三方库来实现，常见的音频处理库有 &lt;a href=&quot;https://www.fmod.com&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Fmod&lt;/a&gt; 、  &lt;a href=&quot;http://www.surina.net/soundtouch/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;SoundTouch&lt;/a&gt; 。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="音视频" scheme="http://yhaowa.gitee.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
-    
-    
-      <category term="Android" scheme="http://yhaowa.gitee.io/tags/Android/"/>
-    
-      <category term="FFmpeg" scheme="http://yhaowa.gitee.io/tags/FFmpeg/"/>
-    
-      <category term="音视频" scheme="http://yhaowa.gitee.io/tags/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
   </entry>
   
