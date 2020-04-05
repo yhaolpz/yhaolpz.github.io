@@ -31,7 +31,8 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-7f134b34d7e6985d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-8e902d17b05028e8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-7a50898ce517cddb?imageMogr2/auto-orient/strip">
-<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-05T14:51:16.795Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度">
 <meta name="twitter:description" content="在以命令方式调用 FFmpeg 的时候，可能会执行一些比较耗时的任务，这时如果没有进度展示，用户可能会以为程序崩溃了，体验十分不好．能不能在以命令方式调用 FFmpeg 时实时获取执行进度呢？谷歌关键词 “Android FFmpeg 命令” 可以得到很多教程，但加上关键词 “进度”就没有相关文章了，看来以命令方式调用 FFmpeg 实时获取执行进度这个需求没有前人的肩膀可站，要开动自己的小脑筋了">
@@ -454,6 +455,7 @@ height:50vh;
 <p>有了当前已合成时长，再结合总时长，就能得到命令执行的百分比进度了，MainActivity.java 如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> TextView mTextView;</span><br><span class="line">    <span class="keyword">private</span> Button mButton;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        mTextView = (TextView) findViewById(R.id.textView);</span><br><span class="line">        mButton = (Button) findViewById(R.id.button);</span><br><span class="line">        <span class="keyword">if</span> (ActivityCompat.checkSelfPermission(<span class="keyword">this</span>,</span><br><span class="line">                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) &#123;</span><br><span class="line">            ActivityCompat.requestPermissions(<span class="keyword">this</span>, <span class="keyword">new</span> String[]&#123;Manifest.permission.WRITE_EXTERNAL_STORAGE&#125;, <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        mButton.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                        String dir = Environment.getExternalStorageDirectory().getPath() + <span class="string">"/ffmpegTest/"</span>;</span><br><span class="line">                        String srcAudio = dir + <span class="string">"paomo.mp3"</span>;</span><br><span class="line">                        String audio1 = dir + <span class="string">"tonghuazhen.mp3"</span>;</span><br><span class="line">                        String outputAudio = dir + <span class="string">"outputAudio.mp3"</span>;</span><br><span class="line">                        List&lt;String&gt; audioPaths = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                        audioPaths.add(audio1);</span><br><span class="line">                        <span class="keyword">final</span> <span class="keyword">int</span> duration = getDuration(srcAudio);</span><br><span class="line">                        FFmpegJni.mixAudio(srcAudio, audioPaths, outputAudio, <span class="keyword">new</span> FFmpegJni.OnAmixProgressListener() &#123;</span><br><span class="line">                            <span class="meta">@Override</span></span><br><span class="line">                            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onProgress</span><span class="params">(<span class="keyword">int</span> second)</span> </span>&#123;</span><br><span class="line">                                <span class="keyword">final</span> String percent = format((second / (<span class="keyword">float</span>) duration) * <span class="number">100</span>);</span><br><span class="line">                                Log.d(<span class="string">"FFMPEG"</span>, <span class="string">"second="</span> + second + <span class="string">" duration="</span> + duration +</span><br><span class="line">                                        <span class="string">" percent="</span> + percent);</span><br><span class="line">                                mTextView.post(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">                                    <span class="meta">@Override</span></span><br><span class="line">                                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                                        mTextView.setText(<span class="string">"已执行："</span> + percent);</span><br><span class="line">                                    &#125;</span><br><span class="line">                                &#125;);</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getDuration</span><span class="params">(String audioPath)</span> </span>&#123;</span><br><span class="line">        MediaPlayer player = <span class="keyword">new</span> MediaPlayer();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            player.setDataSource(audioPath);</span><br><span class="line">            player.prepare();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span> duration = (<span class="keyword">int</span>) Math.round(player.getDuration() / <span class="number">1000.0</span>);</span><br><span class="line">        player.release();</span><br><span class="line">        <span class="keyword">return</span> duration;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">format</span><span class="params">(<span class="keyword">float</span> value)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> String.format(<span class="string">"%.2f"</span>, value) + <span class="string">"%"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>进度效果如下：<br><img src="http://upload-images.jianshu.io/upload_images/4679478-7a50898ce517cddb?imageMogr2/auto-orient/strip" alt="这里写图片描述"></p>
+<p><img src="../img/qrcode.jpg" alt></p>
 
     </article>
     <!-- license  -->
@@ -462,7 +464,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/8837781/">http://yhaowa.gitee.io/8837781/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/8837781/">December 17th 2017, 3:18:03 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/8837781/">June 28th 2019, 5:45:36 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/8837781/">April 5th 2020, 10:51:16 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1081,6 +1083,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 35
@@ -1096,6 +1102,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1119,11 +1130,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
         </li>
     
     
@@ -1304,11 +1310,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1348,13 +1356,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="总结"><span class="iconfont-archer">&#xe606;</span>总结</span>
-    
         <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
     
         <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1389,9 +1395,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     

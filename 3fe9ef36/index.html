@@ -29,7 +29,8 @@
 <meta property="og:description" content="在展示 gif 时，即使不调用 asGif 方法，Glide 也能识别出 gif 类型并正常展示。解码逻辑位于 Downsampler 的 decode 方法中，我们先从这里开始，看看 Glide 是如何识别 gif 类型的。decode 方法中调用了 decodeFromWrappedStreams 方法开始实际解码逻辑：">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://upload-images.jianshu.io/upload_images/4679478-588f3a9d994f274a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-05T14:51:16.764Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Glide 源码分析 - 展示 gif 原理">
 <meta name="twitter:description" content="在展示 gif 时，即使不调用 asGif 方法，Glide 也能识别出 gif 类型并正常展示。解码逻辑位于 Downsampler 的 decode 方法中，我们先从这里开始，看看 Glide 是如何识别 gif 类型的。decode 方法中调用了 decodeFromWrappedStreams 方法开始实际解码逻辑：">
@@ -428,6 +429,7 @@ height:50vh;
 <p>查看代码，Glide 中便是通过 0x474946 文件头来判断的。</p>
 <p>Glide 中将 gif 类型图片封装成了 GifDrawable，在 ByteBufferGifDecoder 中可以看到 GifDrawable 的生成逻辑：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Nullable</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> GifDrawableResource <span class="title">decode</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    ByteBuffer byteBuffer, <span class="keyword">int</span> width, <span class="keyword">int</span> height, GifHeaderParser parser, Options options)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">long</span> startTime = LogTime.getLogTime();</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> GifHeader header = parser.parseHeader();</span><br><span class="line">    <span class="keyword">if</span> (header.getNumFrames() &lt;= <span class="number">0</span> || header.getStatus() != GifDecoder.STATUS_OK) &#123;</span><br><span class="line">      <span class="comment">// If we couldn't decode the GIF, we will end up with a frame count of 0.</span></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Bitmap.Config config = options.get(GifOptions.DECODE_FORMAT) == DecodeFormat.PREFER_RGB_565</span><br><span class="line">        ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> sampleSize = getSampleSize(header, width, height);</span><br><span class="line">    GifDecoder gifDecoder = gifDecoderFactory.build(provider, header, byteBuffer, sampleSize);</span><br><span class="line">    gifDecoder.setDefaultBitmapConfig(config);</span><br><span class="line">    gifDecoder.advance();</span><br><span class="line">    Bitmap firstFrame = gifDecoder.getNextFrame();</span><br><span class="line">    <span class="keyword">if</span> (firstFrame == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Transformation&lt;Bitmap&gt; unitTransformation = UnitTransformation.get();</span><br><span class="line"></span><br><span class="line">    GifDrawable gifDrawable =</span><br><span class="line">        <span class="keyword">new</span> GifDrawable(context, gifDecoder, unitTransformation, width, height, firstFrame);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> GifDrawableResource(gifDrawable);</span><br><span class="line">  &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (Log.isLoggable(TAG, Log.VERBOSE)) &#123;</span><br><span class="line">      Log.v(TAG, <span class="string">"Decoded GIF from stream in "</span> + LogTime.getElapsedMillis(startTime));</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>至此已经获取到 GifDrawable ，GifDrawable 中持有一个 GifFrameLoader，而 GifFrameLoader 中持有了 gif 解码器 StandardGifDecoder 。由此可以得出 gif 的展示逻辑就封装于 GifDrawable 中，主要通过 GifFrameLoader 实现。</p>
+<p><img src="../img/qrcode.jpg" alt></p>
 
     </article>
     <!-- license  -->
@@ -436,7 +438,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/3fe9ef36/">http://yhaowa.gitee.io/3fe9ef36/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/3fe9ef36/">February 17th 2019, 6:03:14 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/3fe9ef36/">June 28th 2019, 5:45:36 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/3fe9ef36/">April 5th 2020, 10:51:16 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1055,6 +1057,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 35
@@ -1070,6 +1076,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1093,11 +1104,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
         </li>
     
     
@@ -1278,11 +1284,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1322,13 +1330,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="总结"><span class="iconfont-archer">&#xe606;</span>总结</span>
-    
         <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
     
         <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1363,9 +1369,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     

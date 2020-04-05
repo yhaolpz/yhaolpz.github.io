@@ -36,7 +36,8 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-902d27920b246a4e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-b0c9a90b69ae013a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-01ba66a2014e6cf6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-05T14:51:16.688Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 集成 FFmpeg (一) 基础知识及简单调用">
 <meta name="twitter:description" content="前言网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
@@ -562,6 +563,7 @@ height:50vh;
 <p><img src="http://upload-images.jianshu.io/upload_images/4679478-01ba66a2014e6cf6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" "></p>
 <h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这篇文章较多篇幅介绍了 JNI 相关的基础知识，对 JNI 经验缺乏的人应该会有较多帮助，尤其是交叉编译和 CPU 架构部分，如果一个月前的我看到估计都感激涕零了，当初一脸茫然的按照网上的教程集成，殊不知不了解这些知识是真的愣头青。</p>
 <p>此文中仅仅实现了 Android 端获取 FFmpeg 编解码信息，而要实际使用的话，就要掌握 FFmpeg 提供的函数或者通过命令方式调用，后者难度较小，另外还有 libmp3lame 库的编译，下篇文章一起总结。</p>
+<p><img src="../img/qrcode.jpg" alt></p>
 
     </article>
     <!-- license  -->
@@ -570,7 +572,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/e0b4d9fc/">http://yhaowa.gitee.io/e0b4d9fc/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/e0b4d9fc/">September 21st 2017, 3:15:20 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/e0b4d9fc/">June 28th 2019, 5:45:36 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/e0b4d9fc/">April 5th 2020, 10:51:16 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1189,6 +1191,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 35
@@ -1204,6 +1210,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1227,11 +1238,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
         </li>
     
     
@@ -1412,11 +1418,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1456,13 +1464,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="总结"><span class="iconfont-archer">&#xe606;</span>总结</span>
-    
         <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
     
         <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1497,9 +1503,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     

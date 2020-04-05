@@ -32,7 +32,8 @@
 <meta property="og:image" content="http://yhaowa.gitee.io/img/4.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/3.jpg">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/5.png">
-<meta property="og:updated_time" content="2019-06-28T10:02:54.000Z">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-05T14:51:16.768Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ijkplayer 源码分析（上）">
 <meta name="twitter:description" content="本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。 ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。">
@@ -465,6 +466,7 @@ height:50vh;
 <p><a href="https://blog.csdn.net/leixiaohua1020/article/details/44279329" target="_blank" rel="noopener">FFmpeg源代码简单分析：结构体成员管理系统-AVOption</a></p>
 <h3 id="三、播放"><a href="#三、播放" class="headerlink" title="三、播放"></a><strong>三、播放</strong></h3><p>先来回顾下播放器的整体流程：<br><img src="../img/4.png" alt="播放器原理.png"><br>在 <a href="https://yhaolpz.github.io/322c0cad/" target="_blank" rel="noopener">视频相关的理论知识与基础概念</a> 中简单总结过视频播放原理，播放器必然是通过多线程同时进行解封装、解码、视频渲染等工作的，对于 Ijkplayer 来说，开辟的线程如下：<br><img src="../img/3.jpg" alt><br>所有的播放逻辑都位于 ff_ffplay.c 中，当对播放器设置视频源路径、解码方式、输出模式等播放选项后，就可以开始播放了， 播放入口方法为 ffp_prepare_async_l，此方法中调用了比较重要的两个方法：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 打开音频输出设备</span></span><br><span class="line">ffp-&gt;aout = ffpipeline_open_audio_output(ffp-&gt;pipeline, ffp);</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 创建音/视频数据解码前/后队列， 创建解封装和视频渲染线程</span></span><br><span class="line">VideoState *is = stream_open(ffp, file_name, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure></p>
 <p>在初始化时 IjkPlayer 将选择视频解码器、选择音频输出设备的方法以函数指针的形式记录下来，方便后面直接调用。ffpipeline_open_audio_output 方法即选择了音频输出方式为 opensles 或 AndroidTrack ，具体实现为 ffpipeline_android.c 的 func_open_audio_output 方法。<br>stream_open 方法则相当重要了，梳理一下该方法中涉及到的关键方法：<br><img src="../img/5.png" alt="stream_open (1).png"></p>
+<p><img src="../img/qrcode.jpg" alt></p>
 
     </article>
     <!-- license  -->
@@ -473,7 +475,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/186751e8/">http://yhaowa.gitee.io/186751e8/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/186751e8/">June 22nd 2018, 11:11:16 am</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/186751e8/">June 28th 2019, 6:02:54 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/186751e8/">April 5th 2020, 10:51:16 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1092,6 +1094,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 35
@@ -1107,6 +1113,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1130,11 +1141,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
         </li>
     
     
@@ -1315,11 +1321,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1359,13 +1367,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="总结"><span class="iconfont-archer">&#xe606;</span>总结</span>
-    
         <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
     
         <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1400,9 +1406,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     

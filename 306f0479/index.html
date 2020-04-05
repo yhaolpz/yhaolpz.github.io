@@ -28,10 +28,12 @@
 <meta property="og:site_name" content="Great hopes make great man">
 <meta property="og:description" content="笔记可能微乱，但大致清晰，可能会对他人有所帮助，故分享出来。 目录：  ijk概述mediacodec相关OpenGL相关filter相关setOption配置相关metadata相关h264编码器特有的设置域线程相关消息机制音频输出声道切换SDL_CreateCond 与 SDL_CreateThreadEx如何暂停">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-06-28T09:45:36.000Z">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-05T14:51:16.705Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ijkplayer 学习笔记">
 <meta name="twitter:description" content="笔记可能微乱，但大致清晰，可能会对他人有所帮助，故分享出来。 目录：  ijk概述mediacodec相关OpenGL相关filter相关setOption配置相关metadata相关h264编码器特有的设置域线程相关消息机制音频输出声道切换SDL_CreateCond 与 SDL_CreateThreadEx如何暂停">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
@@ -467,6 +469,7 @@ height:50vh;
 <hr>
 <h3 id="如何暂停"><a href="#如何暂停" class="headerlink" title="如何暂停"></a>如何暂停</h3><hr>
 <p>IjkMediaPlayer.java 中的 _pause 本地方法调用 ijkplayer_jni.c 中的 IjkMediaPlayer_pause<br>然后通过ijk的消息机制发送暂停信号： ffp_notify_msg1(mp-&gt;ffplayer, FFP_REQ_PAUSE);<br>然后调用到 ff_ffplay.c 的 ffp_pause_l 方法，最后调用到 stream_toggle_pause_l 方法<br>其中两个关键操作：1.is-&gt;paused 置 true ; 2.调用 SDL_AoutPauseAudio 方法<br>其实在读包、解码、渲染/播放这个工作线中，只要有一处停止工作，其他地方自然会阻塞住即可，<br>但是看代码发现多处都有根据is-&gt;paused来停止工作的逻辑，列一下自认为比较关键的地方：<br>对于视频：在视频渲染线程的 video_refresh 方法中：<br>  if (is-&gt;paused) goto display;<br>如果暂停了，就一直显示当前帧，跳过后面的取下一帧操作，不取下一帧，帧队列满后自然就会停止解码、读包操作。<br>对于音频： 调用 SDL_AoutPauseAudio 方法后不再回调 sdl_audio_callback 方法（参见上面的《音频输出》）</p>
+<p><img src="../img/qrcode.jpg" alt></p>
 
     </article>
     <!-- license  -->
@@ -475,7 +478,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/306f0479/">http://yhaowa.gitee.io/306f0479/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/306f0479/">May 1st 2018, 10:53:54 am</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/306f0479/">June 28th 2019, 5:45:36 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/306f0479/">April 5th 2020, 10:51:16 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1094,6 +1097,10 @@ top:50vh;
     
     
     
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 35
@@ -1109,6 +1116,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1132,11 +1144,6 @@ top:50vh;
     
         <li class="archive-post-item">
             <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/1008175c/" >Android OpenGL ES（三）简单图形变换</a>
         </li>
     
     
@@ -1317,11 +1324,13 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1361,13 +1370,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="总结"><span class="iconfont-archer">&#xe606;</span>总结</span>
-    
         <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
     
         <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1402,9 +1409,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     
