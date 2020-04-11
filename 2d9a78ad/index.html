@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ahab">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ahab">
+    
+    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="keywords" content="Android,读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
+<meta property="og:url" content="http://yhaowa.gitee.io/2d9a78ad/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-04-11T15:02:25.763Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
+<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
+    
+    <title>细读《深入理解 Android 内核设计思想》（二）内存管理 · Ahab&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/android.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">细读《深入理解 Android 内核设计思想》（二）内存管理</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Ahab's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            细读《深入理解 Android 内核设计思想》（二）内存管理
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "读书笔记">读书笔记</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">4.7k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/06</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
+<blockquote>
+<ol>
+<li>操作系统内存管理基础<ol>
+<li>虚拟内存</li>
+<li>内存分配与回收</li>
+<li>mmap</li>
+<li>Copy on Write</li>
+</ol>
+</li>
+<li>Android 内存管理<ol>
+<li>Low Memory Killer</li>
+<li>Ashmem 驱动</li>
+<li>MemoryFile 原理</li>
+</ol>
+</li>
+<li>总结</li>
+</ol>
+</blockquote>
+<h2 id="操作系统内存管理基础"><a href="#操作系统内存管理基础" class="headerlink" title="操作系统内存管理基础"></a>操作系统内存管理基础</h2><p>不论什么操作系统，内存管理都是绝对的重点和难点。内存管理旨在为系统中所有 Task 提供稳定可靠的内存分配、释放和保护机制。你可能会疑问，学习 Android 系统有必要了解 Linux Kernel 的内存管理机制吗？</p>
+<p>是的！不论是 Android 的音频系统、GUI 系统，还是 Binder 的实现机理等，都是和内存管理息息相关的。</p>
+<h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>虚拟内存就是当内存资源不足时，借用硬盘中的一部分的空间，充当内存使用。系统会挑选优先级低的内存数据放入硬盘，后续若要用到硬盘中的数据，系统会产生一次<strong>缺页中断</strong>，然后把数据交换回内存中。</p>
+<p>要理解虚拟内存机制，就要理解三种地址空间，分别是逻辑地址、线性地址和物理地址：</p>
+<p><strong>1.逻辑地址(Logical Address)</strong><br>逻辑地址是程序编译后产生的地址，也称为相对地址，由两部分组成：</p>
+<ul>
+<li>段选择子(Segment Selector)：描述逻辑地址所处的段</li>
+<li>Offset：描述所在段内的偏移值</li>
+</ul>
+<p><strong>2.线性地址(Linear Address)</strong><br>线性地址是由逻辑地址经过<strong>分段机制转换</strong>后得到的。</p>
+<p>大致转换过程为：通过段选择子确定段的基地址，然后结合 Offset 得到线性地址。</p>
+<p><strong>3.物理地址(Physical Address)</strong><br>物理地址就是指机器真实的物理内存地址，任何操作系统，最终都要通过物理地址来访问内存。</p>
+<p>若系统开启了分页机制，则在得到线性地址后需要通过<strong>分页机制转换</strong>后，才能得到物理地址。</p>
+<p>简单来说，由逻辑地址得到物理地址过程如下：</p>
+<ul>
+<li>逻辑地址 -&gt; 分段机制转换 -&gt; 线性地址 -&gt; 分页机制转换 -&gt; 物理地址</li>
+</ul>
+<h3 id="内存分配与回收"><a href="#内存分配与回收" class="headerlink" title="内存分配与回收"></a>内存分配与回收</h3><p>内存的分配与回收是操作系统的重要组成部分，需要解决的核心问题包括：</p>
+<ul>
+<li>操作系统应保证应用程序的硬件无关性，硬件差异不能体现在应用程序上</li>
+<li>内存划分的区域、分配粒度、最小单位，管理区分已使用和未使用的内存，回收等等</li>
+<li>优化内存碎片，考虑整体机制的高效性</li>
+</ul>
+<h3 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h3><p>mmap(Memory Map) 可以将某个设备或文件映射到应用进程的内存空间中，这样应用程序访问这块内存，相当于直接对设备/文件读写，不再需要 read、write 等 IO 操作。</p>
+<p>mmap 函数如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//映射成功返回0，否则返回错误码</span></span><br><span class="line"><span class="keyword">void</span> *mmap(<span class="keyword">void</span> *addr, size_t len, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd, off_t offset);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>addr：指文件/设备应该映射到进程空间的哪个起始地址</li>
+<li>len：指被映射到进程空间的内存块大小</li>
+<li>prot：指定被映射内存的访问权限，包括 PROT_READ(可读)、PROT_WRITE(可写) 等</li>
+<li>flags：指定程序对内存块所做改变造成的影响，包括 MAP_SHARED(保存到文件) 等</li>
+<li>fd：被映射到进程空间的文件描述符</li>
+<li>offset：指定从文件的哪一部分开始映射</li>
+</ul>
+<p>源码见 <a href="http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp</a> 。mmap 可用于跨进程通信，Linux Kernel 和 Android 中就频繁的用到了这个函数，比如 Android 的 Binder 驱动，下面分析 MemoryFile 原理时还会提到这个函数。</p>
+<h3 id="Copy-on-Write"><a href="#Copy-on-Write" class="headerlink" title="Copy on Write"></a>Copy on Write</h3><p>Copy on Write(写时拷贝) 是指如果有多个调用者要请求同一资源，他们会获取到相同的指向这一资源的指针，直到某个调用者需修改资源时，系统才会复制一份副本给该调用者，而其他调用者仍使用最初的资源。</p>
+<p>如果调用者不需要修改资源，就不会建立副本，多个调用者共享读取同一份资源。</p>
+<p>Linux 的 fork() 函数就是 Copy on Write 的，实际开销很小，主要是给子进程创建进程描述符等，并且推迟甚至免除了数据拷贝操作。比如 fork() 后子进程需立即调用 exec() 装载新程序到进程的内存空间，即不需要父进程的任何数据，这种情况 Copy on Write 技术就避免了不必要的数据拷贝，从而提升了运行速度。</p>
+<h2 id="Android-内存管理"><a href="#Android-内存管理" class="headerlink" title="Android 内存管理"></a>Android 内存管理</h2><h3 id="Low-Memory-Killer"><a href="#Low-Memory-Killer" class="headerlink" title="Low Memory Killer"></a>Low Memory Killer</h3><p>Linux Kernel 有自己的内存监控机制，即 OOMKiller。当系统的可用内存达到临界值时，OOMKiller 就会按照优先级从低到高杀掉进程。优先级该如何衡量呢？OOMKiller 会综合进程当前消耗内存、进程占用 CPU 时间、进程类型等因素，对进程实时评分。分值存储在 /proc/{PID}/oom_score 中，可通过 cat 命令查看。分值越低的进程，优先级越高，被杀死的概率越小。</p>
+<p>基于 Linux 内核 OOMKiller 的核心思想，Android 系统拓展出了自己的内存监控体系，相比 Linux 达到临界值才触发，Android 实现了<strong>不同梯级</strong>的 Killer。Android 系统为此开发了专门的驱动，名为 Low Memory Killer，源码在内核的 /drivers/staging/android/Lowmemorykiller.c 中。</p>
+<p>Lowmemorykiller.c 中有如下定义：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> lowmem_adj[<span class="number">6</span>] = &#123;<span class="number">0</span>, <span class="number">1</span>, <span class="number">6</span>, <span class="number">12</span>&#125;;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> lowmem_adj_size = <span class="number">4</span>; <span class="comment">//页大小</span></span><br><span class="line"><span class="keyword">static</span> size_t lowmem_minfree[<span class="number">6</span>] = &#123; <span class="comment">//元素使用时以 lowmem_adj_size 为单位</span></span><br><span class="line">    <span class="number">3</span> * <span class="number">512</span>, <span class="comment">//6MB</span></span><br><span class="line">    <span class="number">2</span> * <span class="number">1024</span>, <span class="comment">//8MB</span></span><br><span class="line">    <span class="number">4</span> * <span class="number">1024</span>, <span class="comment">//16MB</span></span><br><span class="line">    <span class="number">16</span> * <span class="number">1024</span>，<span class="comment">//64MB</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>lowmem_minfree 定义了可用内存容量对应的不同梯级。lowmem_adj 与 lowmem_minfree 中的梯级一一对应，表示处于某梯级时需要被处理的 adj 值。adj 值用来描述进程的优先级，取值范围为 -17~15，数字越小表示进程优先级越高，被杀死的概率越小。</p>
+<p>比如当可用内存低于 64MB 时，即 lowmem_minfree 第 4 梯级，对应于 lowmem_adj 的 12，那就会清理掉优先级低于 12（即 adj&gt;12）的进程。</p>
+<p>上面这两个数组中梯级的定义只是系统的预定义值，Android 系统还提供了相应的文件供我们修改这两组值，路径为：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/sys/module/lowmemorykiller/parameters/adj</span><br><span class="line">/sys/module/lowmemorykiller/parameters/minfree</span><br></pre></td></tr></table></figure>
+<p>可以在 init.rc(系统启动时由 init 进程解析的一个脚本) 中，这样修改：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">write /sys/module/lowmemorykiller/parameters/adj        <span class="number">0</span>, <span class="number">8</span></span><br><span class="line">write /sys/module/lowmemorykiller/parameters/minfree <span class="number">1024</span>, <span class="number">4096</span></span><br></pre></td></tr></table></figure></p>
+<p>另外 ActivityManagerService 中有一个 updateOomLevels 方法也是通过修改这两个文件来实现的，AMS 在运行时会根据当前的系统配置自动调整 adj 和 minfree，以尽可能适配不同的硬件设备。 </p>
+<p>了解了 Low Memory Killer 的梯级规则后，来看下 Android 进程的 adj 值含义：</p>
+<table>
+<thead>
+<tr>
+<th>ADJ</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HIDDEN_APP_MAX_AD = 15</td>
+<td>只运行了不可见 Activity 的进程</td>
+</tr>
+<tr>
+<td>HIDDEN_APP_MIN_ADJ = 9</td>
+<td>只运行了不可见 Activity 的进程</td>
+</tr>
+<tr>
+<td>SERVICE_B_ADJ = 8</td>
+<td>B list of Service</td>
+</tr>
+<tr>
+<td>PREVIOUS_APP_ADJ = 7</td>
+<td>用户的上一个产生交互的进程</td>
+</tr>
+<tr>
+<td>HOME_APP_ADJ = 6</td>
+<td>Launcher 进程</td>
+</tr>
+<tr>
+<td>SERVICE_ADJ = 5</td>
+<td>当前运行了 application service 的进程</td>
+</tr>
+<tr>
+<td>BACKUP_APP_ADJ = 4</td>
+<td>用于承载 backup 相关操作的进程</td>
+</tr>
+<tr>
+<td>HEAVY_WEIGHT_APP_ADJ = 3</td>
+<td>重量级应用程序进程</td>
+</tr>
+<tr>
+<td>PERCEPTIBLE_APP_ADJ = 2</td>
+<td>能被用户感觉但不可见，如后台运行的音乐播放器</td>
+</tr>
+<tr>
+<td>VISIBLE_APP_ADJ = 1</td>
+<td>有前台可见的 Activity</td>
+</tr>
+<tr>
+<td>FOREGROUND_APP_ADJ = 0</td>
+<td>当前正在前台运行与用户交互的进程</td>
+</tr>
+<tr>
+<td>PERSISTENT_PROC_ADJ = -12</td>
+<td>Persistent 性质的进程，如 telephony</td>
+</tr>
+<tr>
+<td>SYSTEM_ADJ = -16</td>
+<td>系统进程</td>
+</tr>
+</tbody>
+</table>
+<p>除了表格中系统的评定标准，有没有办法改变某一进程的 adj 值呢？和修改上面的 adj、minfree 梯级类似，进程的 adj 值也可以通过写文件的方式来修改，路径为 /proc/{PID}/oom_adj，比如 init.rc 中：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write /proc/<span class="number">1</span>/oom_adj <span class="number">-16</span></span><br></pre></td></tr></table></figure></p>
+<p>另外还可以在 AndroidManifest.xml 中给 application 添加 “android:persistent=true” 属性。</p>
+<h3 id="Ashmem-驱动"><a href="#Ashmem-驱动" class="headerlink" title="Ashmem 驱动"></a>Ashmem 驱动</h3><p>Anonymous Shared Memory 匿名共享内存是 Android 特有的内存共享机制，它可以将指定的物理内存分别映射到各个进程自己的虚拟地址空间中，从而便捷的实现进程间内存共享，Ashmem 的实现依赖 Ashmem 设备节点。</p>
+<p>怎么理解设备节点呢？Linux 抽象了对硬件的处理，所有的硬件设备都可以当作普通文件一样来看待，设备节点文件是设备驱动的逻辑文件，其中对设备的描述包括文件操作函数集合，应用程序可以通过这些函数来访问硬件设备。</p>
+<p>除了磁盘等真正的硬件设备，还可以通过内存抽象，使用设备节点文件的方式来描述一个”设备”并使用它，Ashmem、Binder 驱动都是属于这种内存抽象的”设备”。</p>
+<p>介绍 Ashmem 设备节点前，先了解下 ueventd 进程。ueventd 就是 Android 中负责创建和管理设备节点的进程，创建设备节点文件有两种方式：<br><strong>1</strong>.静态节点文件：以预先定义的设备信息为基础，当 ueventd 进程启动后，统一创建设备节点文件<br><strong>2</strong>.动态节点文件：即在系统运行中，当有设备插入 USB 端口时，ueventd 进程就会接收到这一事件，为插入的设备动态创建设备节点文件</p>
+<p>Ashmem 设备节点就属于静态节点文件，创建过程如下：<br><strong>1</strong>.Android 系统启动，解析 init.rc，启动 ueventd 进程<br><strong>2</strong>.ueventd 进程会去解析 ueventd.rc，读取 ashmem 设备节点信息到系统中</p>
+<p>其中 ueventd.rc 文件格式如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/dev/null                 <span class="number">0666</span>   root       root</span><br><span class="line">/dev/zero                 <span class="number">0666</span>   root       root</span><br><span class="line">/dev/random               <span class="number">0666</span>   root       root</span><br><span class="line">/dev/ashmem               <span class="number">0666</span>   root       root</span><br><span class="line">/dev/binder               <span class="number">0666</span>   root       root</span><br></pre></td></tr></table></figure></p>
+<p>可以看到包括 binder、ashmem 在内的一系列设备节点信息都会在这里读取到系统中。</p>
+<p>随后 ashmem 会调用 ashmem.c 文件的 ashmem_init 进行初始化：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> _init ashmem_init(<span class="keyword">void</span>)&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    ashmem_area_cachep = kmem_cache_create(<span class="string">"ashmem_area_cache"</span>,<span class="keyword">sizeof</span>(<span class="keyword">struct</span> ashmem_area),<span class="number">0</span>,<span class="number">0</span>,<span class="literal">NULL</span>); </span><br><span class="line">    ashmem_range_cachep = kmem_cache_create(<span class="string">"ashmem_range_cache"</span>,<span class="keyword">sizeof</span>(<span class="keyword">struct</span> ashmem_range),<span class="number">0</span>,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">    ret = misc_register(&amp;ashmem_misc);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过 kmem_cache_create() 函数创建了两个 cache，后面申请内存时需要用到。对于 kmem_cache_create() 函数，书中提及 Slab、Slub、Slob 三种机制，这里不再延伸，仅理解： kmem_cache_create() 并没有真正的分配内存，后续还要调用 kmem_cache_alloc() 。</p>
+<p>由于 ashmem 属于 misc 杂项设备，所以调用 misc_register(&amp;ashmem_misc) 进行设备注册。ashmem_misc 就是 Ashmem 的设备描述，定义如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> miscdevice ashmem_misc = &#123;</span><br><span class="line">    .minor = MISC_DYNAMIC_MINOR, <span class="comment">//自动分配次设备号</span></span><br><span class="line">    .name = <span class="string">"ashmem"</span>, <span class="comment">//设备节点的名称</span></span><br><span class="line">    .fops = &amp;ashmem_fops, <span class="comment">//文件操作集合</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>.fops 就是上面提到的”文件操作函数集合”，即 Ashmem 设备的操作函数集，如下<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">struct</span> file_operations ashmem_fops = &#123;</span><br><span class="line">    .owner = THIS_MODULE,</span><br><span class="line">    .open = ashmem_open,</span><br><span class="line">    .release = ashmem_release,</span><br><span class="line">    .read = ashmem_read,</span><br><span class="line">    .llseek = ashmem_llseek,</span><br><span class="line">    .mmap = ashmem_mmap,</span><br><span class="line">    .unlocked_ioctl = ashmem_ioctl,</span><br><span class="line">    .compat_ioctl = ashmem_ioctl,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>其中 ashmem_open、ashmem_mmap 及 ashmem_ioctl 函数比较重要，依次来看：</p>
+<p><strong>1.ashmem_open</strong><br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> ashmem_open(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *file)&#123;</span><br><span class="line">    <span class="keyword">struct</span> ashmem_area *asma;</span><br><span class="line">    ...</span><br><span class="line">    asma = kmem_cache_zalloc(ashmem_area_cachep, GFP_KERNEL)；</span><br><span class="line">    ...</span><br><span class="line">    file-&gt;private_data = asma;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>; <span class="comment">//申请成功</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ashmem_open 主要做了两个工作，1.调用 kmem_cache_zalloc 方法从 ashmem_area_cachep 分配了一块内存，这个方法和 cache 上面都提到过；2.将 ashmem_area 记录在 file 中 。</p>
+<p><strong>2.ashmem_mmap</strong><br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> ashmem_mmap(<span class="keyword">struct</span> file *file, <span class="keyword">struct</span> vm_area_struct *vma)&#123;</span><br><span class="line">    <span class="keyword">struct</span> ashmem_area *asma = file-&gt;private_data;</span><br><span class="line">    ...</span><br><span class="line">    mutex_lock(&amp;ashmem_mutex);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">if</span>(!asma-&gt;file)&#123;</span><br><span class="line">        shmem_file_setup(name, asma-&gt;size, vma-&gt;vm_flags);</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    shmem_set_file(vma, asma-&gt;file);</span><br><span class="line">    ...</span><br><span class="line">    mutex_unlock(&amp;ashmem_mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>首先拿到在 ashmem_open 函数中创建的 ashmem_area，然后判断如果 asma-&gt;file 为空，说明这是第一个访问该共享内存的进程，调用 shmem_file_setup() 函数在 tmpfs 中创建一个临时文件，用于进程间的内存共享；如果 asma-&gt;file 不为空，直接调用 shmem_set_file 进行内存映射。</p>
+<p><strong>3.ashmem_ioctl</strong><br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">long</span> ashmem_ioctl(<span class="keyword">struct</span> file *file, <span class="keyword">unsigned</span> <span class="keyword">int</span> cmd, <span class="keyword">unsigned</span> <span class="keyword">long</span> arg)&#123;</span><br><span class="line">    <span class="keyword">struct</span> ashmem_area * asma = file-&gt;private_data;</span><br><span class="line">    <span class="keyword">switch</span>(cmd)&#123;</span><br><span class="line">    <span class="keyword">case</span> ASHMEM_SET_NAME:<span class="comment">//设置名称</span></span><br><span class="line">    set_name(asma, (<span class="keyword">void</span> __user *) arg);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> ASHMEM_GET_NAME:<span class="comment">//获取名称</span></span><br><span class="line">    get_name(asma, (<span class="keyword">void</span> __user *) arg);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> ASHMEM_SET_NAME:<span class="comment">//设置大小</span></span><br><span class="line">    <span class="keyword">if</span>(!asma-&gt;file)&#123;</span><br><span class="line">        asma-&gt;size = (size_t) arg;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">    ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ashmem_ioctl 即根据 ioctl 命令做相应的操作，设置或获取 size、名称等。</p>
+<h3 id="MemoryFile-原理"><a href="#MemoryFile-原理" class="headerlink" title="MemoryFile 原理"></a>MemoryFile 原理</h3><p>书中通过 MemoryDealer 讲解了 Ashmem 示例，触类旁通，我来分析一下 Ashmem 的另一个应用示例：MemoryFile。MemoryFile 是 Java 层对 Ashmem 的一个封装，使用方法大致如下：</p>
+<p><strong>进程 A 中申请一块共享内存写入数据，并准备好文件描述符：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MemoryFile memoryFile = <span class="keyword">new</span> MemoryFile(name, size);</span><br><span class="line">memoryFile.getOutputStream().write(data);</span><br><span class="line">Method method = MemoryFile.class.getDeclaredMethod("getFileDescriptor");</span><br><span class="line">FileDescriptor des = (FileDescriptor) method.invoke(memoryFile);</span><br><span class="line">ParcelFileDescriptor pfd = ParcelFileDescriptor.dup(des);</span><br></pre></td></tr></table></figure></p>
+<p><strong>进程 B 中通过 binder 拿到 A 进程中准备好的文件描述符，然后直接读取数据：</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FileDescriptor descriptor = pfd.getFileDescriptor();</span><br><span class="line">FileInputStream fileInputStream = <span class="keyword">new</span> FileInputStream(descriptor);</span><br><span class="line">fileInputStream.read(data);</span><br></pre></td></tr></table></figure></p>
+<p>使用起来和文件读写一样很简单，如果不了解 Ashmem 机制，也就只能停留在仅会使用的浅显层面了。现在有了 Ashmem 驱动知识的铺垫，来看 MemoryFile 是怎么从 Java API 调用到 Ashmem 驱动函数的，先来看 MemoryFile 的构造函数：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MemoryFile</span><span class="params">(String name, <span class="keyword">int</span> length)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        mSharedMemory = SharedMemory.create(name, length);</span><br><span class="line">        mMapping = mSharedMemory.mapReadWrite();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (ErrnoException ex) &#123;</span><br><span class="line">        ex.rethrowAsIOException();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到构造 MemoryFile 时通过 SharedMemory create 方法申请了一块匿名共享内存，SharedMemory create 方法中调用了 nCreate native 方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> FileDescriptor <span class="title">nCreate</span><span class="params">(String name, <span class="keyword">int</span> size)</span> <span class="keyword">throws</span> ErrnoException</span>;</span><br></pre></td></tr></table></figure></p>
+<p>对应的 native 实现在 android_os_SharedMemory.cpp 中，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/jni/android_os_SharedMemory.cpp" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/jni/android_os_SharedMemory.cpp</a> ，具体 native 实现如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> jobject SharedMemory_create(JNIEnv* env, jobject, jstring jname, jint size) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* name = jname ? env-&gt;GetStringUTFChars(jname, nullptr) : nullptr;</span><br><span class="line">    <span class="keyword">int</span> fd = ashmem_create_region(name, size); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> jniCreateFileDescriptor(env, fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ashmem_create_region 方法的对应实现在 ashmem-dev.cpp 中，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/system/core/libcutils/ashmem-dev.cpp#ashmem_create_region" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/system/core/libcutils/ashmem-dev.cpp#ashmem_create_region</a> ，其中 ashmem_create_region 的后续调用链如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ASHMEM_DEVICE <span class="meta-string">"/dev/ashmem"</span> <span class="comment">//Ashmem 设备驱动</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> ashmem_create_region(<span class="keyword">const</span> <span class="keyword">char</span> *name, size_t size)&#123;</span><br><span class="line">    <span class="keyword">int</span> ret, save_errno;</span><br><span class="line">    <span class="keyword">int</span> fd = __ashmem_open(); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> fd;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (name) &#123;</span><br><span class="line">        <span class="keyword">char</span> buf[ASHMEM_NAME_LEN] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        strlcpy(buf, name, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">        ret = TEMP_FAILURE_RETRY(ioctl(fd, ASHMEM_SET_NAME, buf)); <span class="comment">//设置 Ashmem 名字</span></span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">goto</span> error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __ashmem_open()&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    pthread_mutex_lock(&amp;__ashmem_lock);</span><br><span class="line">    fd = __ashmem_open_locked(); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    pthread_mutex_unlock(&amp;__ashmem_lock);</span><br><span class="line">    <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __ashmem_open_locked()&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">struct</span> stat st;</span><br><span class="line">    <span class="keyword">int</span> fd = TEMP_FAILURE_RETRY(open(ASHMEM_DEVICE, O_RDWR | O_CLOEXEC)); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>直到 __ashmem_open_locked 方法中调用到 open(ASHMEM_DEVICE, O_RDWR | O_CLOEXEC) 方法，终于是到 Ashmem 设备驱动函数了，对应于上面的 <strong>ashmem_open</strong> 函数。另外 <strong>ashmem_ioctl</strong> 函数也被调用到了，即 ioctl(fd, ASHMEM_SET_NAME, buf)。</p>
+<p>通过上面的分析知道 Asheme 驱动的 ashmem_open 函数是由 SharedMemory 的 create 方法触发一步一步调用到的，那 ashmem_mmap 驱动函数是怎么被调用到的呢？看 MemoryFile 的构造方法，只可能是通过 SharedMemory 的 mapReadWrite 方法触发，下面来分析这个过程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//android.os.SharedMemory.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@NonNull</span> <span class="function">ByteBuffer <span class="title">mapReadWrite</span><span class="params">()</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> map(OsConstants.PROT_READ | OsConstants.PROT_WRITE, <span class="number">0</span>, mSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@NonNull</span> <span class="function">ByteBuffer <span class="title">map</span><span class="params">(<span class="keyword">int</span> prot, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">long</span> address = Os.mmap(<span class="number">0</span>, length, prot, OsConstants.MAP_SHARED, mFileDescriptor, offset);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DirectByteBuffer(length, address, mFileDescriptor, unmapper, readOnly);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>比较关键的是 mFileDescriptor，它是执行 SharedMemory create 方法申请匿名共享内存后，返回的文件描述符。SharedMemory 中直接调用了系统的通用 mmap 函数，并没有对应的 native 实现，那它最终真的能调用到 ashmem_mmap 函数吗？ 继续来跟踪 mmap 调用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//android.system.Os.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">mmap</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> byteCount, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, FileDescriptor fd, <span class="keyword">long</span> offset)</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Libcore.os.mmap(address, byteCount, prot, flags, fd, offset);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//libcore.io.Libcore.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Libcore</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Libcore</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Os rawOs = <span class="keyword">new</span> Linux();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Os os = <span class="keyword">new</span> BlockGuardOs(rawOs);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//libcore.io.Linux.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">mmap</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> byteCount, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, FileDescriptor fd, <span class="keyword">long</span> offset)</span> <span class="keyword">throws</span> ErrnoException</span>;</span><br></pre></td></tr></table></figure></p>
+<p>Libcore 中使用 BlockGuardOs 对 Linux 进行了一层包装，但实际还是通过 Linux 来执行的，最后调用到 Linux 中的 native mmap 方法，native 中对应的实现是 mmap.cpp，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp#mmap" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp#mmap</a> ：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span>* mmap(<span class="keyword">void</span>* addr, size_t size, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd, off_t offset) &#123;</span><br><span class="line">    <span class="keyword">return</span> mmap64(addr, size, prot, flags, fd, static_cast&lt;off64_t&gt;(offset));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>到此为止，由 SharedMemory 的 mapReadWrite 方法调用到 native mmap 函数，传递的关键参数是文件描述符，后续它将这样调用到 ashmem_mmap：<br><strong>1.</strong>通过 fd 可以找到所属设备，也就是 Ashmem 设备<br><strong>2.</strong>调用 Ashmem 设备的 ashmem_mmap 驱动函数</p>
+<p>这属于 mmap 函数的内部实现，调用链比较复杂就不再具体展开，关键代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(file)&#123;</span><br><span class="line">    ...</span><br><span class="line">    error = file-&gt;f_op-&gt;mmap(file,vma);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>file 代表文件或设备驱动，这里指的就是 Ashmem 设备，f_op 就是 Ashmem 设备驱动函数集，也就是上文提过的通过 misc_register 注册的 Ashmem 设备描述，至此便是 ashmem_mmap 驱动函数的调用过程。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>不知你是否会觉得本文介绍的虚拟内存无用，起初我有这样的想法，作者在原书中是这样描述的：本小节为读者完整地还原了操作系统虚拟地址的概念与转换原理，相信大家会在后续<strong> Android 各子系统的学习中受益匪浅</strong>。 这让我想到前几天看到的一个问题 “为什么要分析算法的时间复杂度和空间复杂度，是因为现在的计算机都是冯诺依曼结构吗？”，基于基础知识能有自己的理解和发散才是可贵的。</p>
+<p>所以谦虚一点别自以为是，对知识保持敬畏、渴望。技术知识的价值不在于是否会被用到，而在于它能否对你的技术体系建设有帮助，能否让你对本质有更清晰的认知，能否让你的上层建筑更牢固。如果只盯着自己的那一点墨水坐井观天，实力没随年龄上涨，迟早会迎来焦虑的中年危机，被行业淘汰。</p>
+<p>那本文涉及的知识点对上层建筑有什么帮助呢？比如学习了 Ashmem 后，再遇到跨进程传输大数据的问题，是不是更有底气了呢？比如学习了 Android 的 Low Memory Killer 机制原理后，才知道应用保活本质到底是在解决什么问题，相比只是知道从网上搜来的几个保活方案，是不是更加胸有成竹呢？比如在阅读本文涉及的源码时发现 mutex_lock 随处可见，是不是很庆幸自己掌握了本系列第一章中的 <strong>进程间同步机制</strong> 呢？</p>
+<blockquote>
+<p>链接：<a href="http://mp.weixin.qq.com/mp/homepage?__biz=MzA5OTAxNDEyNg==&amp;hid=1&amp;sn=ebe1c61ff758e51e9e92fd907a99f342&amp;scene=18#wechat_redirect" target="_blank" rel="noopener">细读《深入理解 Android 内核设计思想》系列</a></p>
+</blockquote>
+<p><img src="../img/qrcode.jpg" alt></p>
+<center>关注公众号，Get 更多知识点</center>
+
+
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/2d9a78ad/">http://yhaowa.gitee.io/2d9a78ad/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">四月 6日 2020, 2:18:55 下午</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">April 11th 2020, 11:02:25 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/12a8b16b/" title= "细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">
+                    <div class="prevTitle">细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#操作系统内存管理基础"><span class="toc-number">1.</span> <span class="toc-text">操作系统内存管理基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#虚拟内存"><span class="toc-number">1.1.</span> <span class="toc-text">虚拟内存</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#内存分配与回收"><span class="toc-number">1.2.</span> <span class="toc-text">内存分配与回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mmap"><span class="toc-number">1.3.</span> <span class="toc-text">mmap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Copy-on-Write"><span class="toc-number">1.4.</span> <span class="toc-text">Copy on Write</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Android-内存管理"><span class="toc-number">2.</span> <span class="toc-text">Android 内存管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Low-Memory-Killer"><span class="toc-number">2.1.</span> <span class="toc-text">Low Memory Killer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Ashmem-驱动"><span class="toc-number">2.2.</span> <span class="toc-text">Ashmem 驱动</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MemoryFile-原理"><span class="toc-number">2.3.</span> <span class="toc-text">MemoryFile 原理</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 36
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/06</span><a class="archive-post-title" href= "/2d9a78ad/" >细读《深入理解 Android 内核设计思想》（二）内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/af0c2fe0/" >焦虑与知识输出</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
+    
+        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
+    
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+    
+        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
+    
+        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
+    
+        <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
+    
+        <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
+    
+        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="思考"><span class="iconfont-archer">&#xe60a;</span>思考</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Ahab"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
