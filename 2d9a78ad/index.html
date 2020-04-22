@@ -29,7 +29,7 @@
 <meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
-<meta property="og:updated_time" content="2020-04-11T15:02:25.763Z">
+<meta property="og:updated_time" content="2020-04-12T15:24:38.120Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
 <meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
@@ -576,7 +576,7 @@ height:50vh;
 <p>对应的 native 实现在 android_os_SharedMemory.cpp 中，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/jni/android_os_SharedMemory.cpp" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/frameworks/base/core/jni/android_os_SharedMemory.cpp</a> ，具体 native 实现如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> jobject SharedMemory_create(JNIEnv* env, jobject, jstring jname, jint size) &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* name = jname ? env-&gt;GetStringUTFChars(jname, nullptr) : nullptr;</span><br><span class="line">    <span class="keyword">int</span> fd = ashmem_create_region(name, size); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> jniCreateFileDescriptor(env, fd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>ashmem_create_region 方法的对应实现在 ashmem-dev.cpp 中，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/system/core/libcutils/ashmem-dev.cpp#ashmem_create_region" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/system/core/libcutils/ashmem-dev.cpp#ashmem_create_region</a> ，其中 ashmem_create_region 的后续调用链如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ASHMEM_DEVICE <span class="meta-string">"/dev/ashmem"</span> <span class="comment">//Ashmem 设备驱动</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> ashmem_create_region(<span class="keyword">const</span> <span class="keyword">char</span> *name, size_t size)&#123;</span><br><span class="line">    <span class="keyword">int</span> ret, save_errno;</span><br><span class="line">    <span class="keyword">int</span> fd = __ashmem_open(); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> fd;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (name) &#123;</span><br><span class="line">        <span class="keyword">char</span> buf[ASHMEM_NAME_LEN] = &#123;<span class="number">0</span>&#125;;</span><br><span class="line">        strlcpy(buf, name, <span class="keyword">sizeof</span>(buf));</span><br><span class="line">        ret = TEMP_FAILURE_RETRY(ioctl(fd, ASHMEM_SET_NAME, buf)); <span class="comment">//设置 Ashmem 名字</span></span><br><span class="line">        <span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">goto</span> error;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __ashmem_open()&#123;</span><br><span class="line">    <span class="keyword">int</span> fd;</span><br><span class="line"></span><br><span class="line">    pthread_mutex_lock(&amp;__ashmem_lock);</span><br><span class="line">    fd = __ashmem_open_locked(); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    pthread_mutex_unlock(&amp;__ashmem_lock);</span><br><span class="line">    <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span> __ashmem_open_locked()&#123;</span><br><span class="line">    <span class="keyword">int</span> ret;</span><br><span class="line">    <span class="keyword">struct</span> stat st;</span><br><span class="line">    <span class="keyword">int</span> fd = TEMP_FAILURE_RETRY(open(ASHMEM_DEVICE, O_RDWR | O_CLOEXEC)); <span class="comment">//创建匿名共享内存</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> fd;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>直到 __ashmem_open_locked 方法中调用到 open(ASHMEM_DEVICE, O_RDWR | O_CLOEXEC) 方法，终于是到 Ashmem 设备驱动函数了，对应于上面的 <strong>ashmem_open</strong> 函数。另外 <strong>ashmem_ioctl</strong> 函数也被调用到了，即 ioctl(fd, ASHMEM_SET_NAME, buf)。</p>
-<p>通过上面的分析知道 Asheme 驱动的 ashmem_open 函数是由 SharedMemory 的 create 方法触发一步一步调用到的，那 ashmem_mmap 驱动函数是怎么被调用到的呢？看 MemoryFile 的构造方法，只可能是通过 SharedMemory 的 mapReadWrite 方法触发，下面来分析这个过程：</p>
+<p>通过上面的分析知道 Ashmem 驱动的 ashmem_open 函数是由 SharedMemory 的 create 方法触发一步一步调用到的，那 ashmem_mmap 驱动函数是怎么被调用到的呢？看 MemoryFile 的构造方法，只可能是通过 SharedMemory 的 mapReadWrite 方法触发，下面来分析这个过程：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//android.os.SharedMemory.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@NonNull</span> <span class="function">ByteBuffer <span class="title">mapReadWrite</span><span class="params">()</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> map(OsConstants.PROT_READ | OsConstants.PROT_WRITE, <span class="number">0</span>, mSize);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@NonNull</span> <span class="function">ByteBuffer <span class="title">map</span><span class="params">(<span class="keyword">int</span> prot, <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">long</span> address = Os.mmap(<span class="number">0</span>, length, prot, OsConstants.MAP_SHARED, mFileDescriptor, offset);</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> DirectByteBuffer(length, address, mFileDescriptor, unmapper, readOnly);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>比较关键的是 mFileDescriptor，它是执行 SharedMemory create 方法申请匿名共享内存后，返回的文件描述符。SharedMemory 中直接调用了系统的通用 mmap 函数，并没有对应的 native 实现，那它最终真的能调用到 ashmem_mmap 函数吗？ 继续来跟踪 mmap 调用：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//android.system.Os.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">mmap</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> byteCount, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, FileDescriptor fd, <span class="keyword">long</span> offset)</span> <span class="keyword">throws</span> ErrnoException </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Libcore.os.mmap(address, byteCount, prot, flags, fd, offset);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//libcore.io.Libcore.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Libcore</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Libcore</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Os rawOs = <span class="keyword">new</span> Linux();</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Os os = <span class="keyword">new</span> BlockGuardOs(rawOs);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//libcore.io.Linux.java</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">mmap</span><span class="params">(<span class="keyword">long</span> address, <span class="keyword">long</span> byteCount, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, FileDescriptor fd, <span class="keyword">long</span> offset)</span> <span class="keyword">throws</span> ErrnoException</span>;</span><br></pre></td></tr></table></figure></p>
 <p>Libcore 中使用 BlockGuardOs 对 Linux 进行了一层包装，但实际还是通过 Linux 来执行的，最后调用到 Linux 中的 native mmap 方法，native 中对应的实现是 mmap.cpp，源码见 <a href="http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp#mmap" target="_blank" rel="noopener">http://androidxref.com/9.0.0_r3/xref/bionic/libc/bionic/mmap.cpp#mmap</a> ：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span>* mmap(<span class="keyword">void</span>* addr, size_t size, <span class="keyword">int</span> prot, <span class="keyword">int</span> flags, <span class="keyword">int</span> fd, off_t offset) &#123;</span><br><span class="line">    <span class="keyword">return</span> mmap64(addr, size, prot, flags, fd, static_cast&lt;off64_t&gt;(offset));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
@@ -601,13 +601,18 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/2d9a78ad/">http://yhaowa.gitee.io/2d9a78ad/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">April 6th 2020, 2:18:55 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">April 11th 2020, 11:02:25 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">April 12th 2020, 11:24:38 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/a7541469/" title= "细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]">
+                    <div class="nextTitle">细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -1230,9 +1235,26 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 36
+        Total : 37
         </div>
         <!-- search  -->
         
@@ -1245,6 +1267,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/a7541469/" >细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1332,12 +1359,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
         </li>
     
     
