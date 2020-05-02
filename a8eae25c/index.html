@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ahab">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ahab">
+    
+    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="keywords" content="Android,读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">
+<meta property="og:url" content="http://yhaowa.gitee.io/a8eae25c/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/binder_proc.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/BinderProxy.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/transact.jpg">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-05-02T16:06:19.631Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">
+<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/img/binder_proc.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
+    
+    <title>细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中] · Ahab&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/android.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Ahab's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "读书笔记">读书笔记</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.8k</span>阅读时长: <span class="post-count reading-time">15 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/04/23</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
+<blockquote>
+<ol>
+<li>智能指针</li>
+<li>binder 驱动中的结构体</li>
+<li>ProcessState</li>
+<li>IPCThreadState</li>
+<li>BpBinder</li>
+<li>BinderProxy</li>
+<li>ServiceManager getService 流程</li>
+</ol>
+</blockquote>
+<h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2><p>在 binder 相关源码可以看到 sp、wp 类型的引用：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sp&lt;IBinder&gt; result = new BpBinder(handle);</span><br><span class="line"></span><br><span class="line">wp&lt;IBinder&gt; result = new BpBinder(handle);</span><br></pre></td></tr></table></figure></p>
+<p>sp 即 strong pointer 强指针引用；wp 是 weak pointer 弱指针引用。在 Java 中我们不用关心对象的销毁及内存释放，GC 机制会自动辨别回收无用对象，而<strong>智能指针</strong>就是 native 层一个小型的 GC 实现。</p>
+<p>智能指针以引用计数的方式来标识无用对象，使用智能指针的对象需继承自 RefBase，RefBase 中维护了此对象被强引用数量和弱引用数量。</p>
+<p>强引用 sp 重载了 “=” 运算符，在引用其他对象时将强引用计数 +1，在 sp 析构函数中将强引用计数 -1，当强引用计数减至 0 时销毁引用的对象。这样就实现了对象的自动释放，但若只靠强引用计数方式，会存在循环引用的问题，导致对象永远无法被释放，弱引用就是专门用来解决循环引用问题的。</p>
+<p>若在 A 中强引用了 B，那 B 需要引用 A 时就使用弱引用，当判断对象是否无用时仅考虑强引用计数是否为 0，不关心弱引用计数的数量。当 B 要访问 A 时，若发现 A 已经被销毁，那就表示 A 已经不存在了，需要进行重新创建等其他操作。</p>
+<p>RefBase 提供了 extendObjectLifetime() 方法，可以用来设置引用计数器的规则，不同规则对删除目标对象的时机判断也是不一样的，包括以下三种规则：</p>
+<p><strong>OBJECT_LIFETIME_STRONG</strong>：只有在这个对象内存空间中的强计数器值为 0 的时候才会销毁对象）</p>
+<p><strong>OBJECT_LIFETIME_WEAK</strong>：只有在这个对象内存空间中的强计数器和弱计数器的值都为 0 的时候才会销毁对象</p>
+<p><strong>OBJECT_LIFETIME_MASK</strong>：不管这两个计数器是不是都为 0，都不销毁对象，即与一般指针无异，还是要自己手动去释放对象</p>
+<h2 id="binder-驱动相关的结构体"><a href="#binder-驱动相关的结构体" class="headerlink" title="binder 驱动相关的结构体"></a>binder 驱动相关的结构体</h2><table>
+<thead>
+<tr>
+<th>结构体</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>binder_proc</td>
+<td>描述使用 binder 的进程，当调用 binder_open 函数时会创建</td>
+</tr>
+<tr>
+<td>binder_thread</td>
+<td>描述使用 binder 的线程，当调用 binder_ioctl 函数时会创建</td>
+</tr>
+<tr>
+<td>binder_node</td>
+<td>描述 binder 实体节点，对应于一个 serve，即用户态的 BBinder 对象</td>
+</tr>
+<tr>
+<td>binder_ref</td>
+<td>描述对 binder 实体节点的引用，关联到一个 binder_node</td>
+</tr>
+<tr>
+<td>binder_buffer</td>
+<td>描述 binder 通信过程中存储数据的Buffer</td>
+</tr>
+<tr>
+<td>binder_work</td>
+<td>描述一个 binder 任务</td>
+</tr>
+<tr>
+<td>binder_transaction</td>
+<td>描述一次 binder 任务相关的数据信息</td>
+</tr>
+<tr>
+<td>binder_ref_death</td>
+<td>描述 binder_node 即 binder server 的死亡信息</td>
+</tr>
+</tbody>
+</table>
+<p>其中主要结构体引用关系如下：</p>
+<p><img src="../img/binder_proc.png" alt></p>
+<p>以上结构体仅存在于 binder 驱动内部，还有一类结构体是与用户态共用的：</p>
+<table>
+<thead>
+<tr>
+<th>结构体</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>flat_binder_object</td>
+<td>描述在 binder IPC 过程传递的对象</td>
+</tr>
+<tr>
+<td>binder_write_read</td>
+<td>描述存储读写操作的数据</td>
+</tr>
+<tr>
+<td>binder_version</td>
+<td>描述 binder 的版本号</td>
+</tr>
+<tr>
+<td>transaction_flags</td>
+<td>描述事务的 flag，例如是否是异步请求，是否支持 fd</td>
+</tr>
+<tr>
+<td>binder_transaction_data</td>
+<td>描述一次事务的相关数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>参考： <a href="http://www.codeceo.com/article/android-binder-part-one.html" target="_blank" rel="noopener">http://www.codeceo.com/article/android-binder-part-one.html</a></strong></p>
+<h2 id="ProcessState"><a href="#ProcessState" class="headerlink" title="ProcessState"></a>ProcessState</h2><p>ProcessState 专门管理每个应用进程的 Binder 操作，同一个进程中只有一个 ProcessState 实例存在，且只在 ProcessState 对象创建时才打开 Binder 设备以及内存映射。相关代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">///frameworks/native/libs/binder/ProcessState.cpp</span></span><br><span class="line">sp&lt;ProcessState&gt; ProcessState::<span class="keyword">self</span>()&#123;</span><br><span class="line">    Mutex::Autolock _l(gProcessMutex);</span><br><span class="line">    <span class="keyword">if</span> (gProcess != <span class="literal">NULL</span>) &#123; <span class="comment">//如果创建过 ProcessState 就直接返回</span></span><br><span class="line">        <span class="keyword">return</span> gProcess;</span><br><span class="line">    &#125;</span><br><span class="line">    gProcess = new ProcessState;</span><br><span class="line">    <span class="keyword">return</span> gProcess;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>外部统一通过 ProcessState::self() 方法获取 ProcessState，以此保证 ProcessState 的进程单例，ProcessState 的构造函数如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BINDER_VM_SIZE ((1*1024*1024) - (4096 *2))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEFAULT_MAX_BINDER_THREADS 15</span></span><br><span class="line"></span><br><span class="line">ProcessState::ProcessState()</span><br><span class="line">    : mDriverFD(open_driver()) <span class="comment">//打开 binder 设备</span></span><br><span class="line">    , mVMStart(MAP_FAILED) <span class="comment">//初始化为 MAP_FAILED，映射成功后会变更</span></span><br><span class="line">    , mThreadCountLock(PTHREAD_MUTEX_INITIALIZER)</span><br><span class="line">    , mThreadCountDecrement(PTHREAD_COND_INITIALIZER)</span><br><span class="line">    , mExecutingThreadsCount(<span class="number">0</span>)</span><br><span class="line">    , mMaxThreads(DEFAULT_MAX_BINDER_THREADS) <span class="comment">//binder 线程最大数量</span></span><br><span class="line">    , mStarvationStartTimeMs(<span class="number">0</span>)</span><br><span class="line">    , mManagesContexts(<span class="literal">false</span>)</span><br><span class="line">    , mBinderContextCheckFunc(<span class="literal">NULL</span>)</span><br><span class="line">    , mBinderContextUserData(<span class="literal">NULL</span>)</span><br><span class="line">    , mThreadPoolStarted(<span class="literal">false</span>)</span><br><span class="line">    , mThreadPoolSeq(<span class="number">1</span>)&#123;</span><br><span class="line">       <span class="keyword">if</span> (mDriverFD &gt;= <span class="number">0</span>) &#123; <span class="comment">//已经成功打开 binder 驱动设备</span></span><br><span class="line">           <span class="comment">// 将应用进程一块虚拟内存空间与 binder 驱动映射，在此内存块上进行数据通信</span></span><br><span class="line">           mVMStart = mmap(<span class="number">0</span>, BINDER_VM_SIZE, PROT_READ, MAP_PRIVATE | MAP_NORESERVE, mDriverFD, <span class="number">0</span>);</span><br><span class="line">           <span class="keyword">if</span> (mVMStart == MAP_FAILED) &#123; <span class="comment">//映射失败处理</span></span><br><span class="line">               ALOGE(<span class="string">"Using /dev/binder failed: unable to mmap transaction memory.\n"</span>);</span><br><span class="line">               close(mDriverFD);</span><br><span class="line">               mDriverFD = <span class="number">-1</span>;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ProcessState 的构造函数初始化了一些重要的变量，包括调用 open_driver() 打开 binder 设备，初始化 binder 线程最大数量，将 BINDER_VM_SIZE (接近 1M ) 的内存与 binder 驱动 mmap.</p>
+<p>除了 ProcessState 的初始化，ProcessState 中还有一些比较重要的方法，比如 getStrongProxyForHandle()、getWeakProxyForHandle() 等，可以通过 handle 值获取对应 IBinder 对象，getWeakProxyForHandle() 方法如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">wp&lt;IBinder&gt; ProcessState::getWeakProxyForHandle(int32_t handle)&#123;</span><br><span class="line">    wp&lt;IBinder&gt; result;</span><br><span class="line">    AutoMutex _l(mLock);</span><br><span class="line">    <span class="comment">//查找 IBinder 是否已经创建过 </span></span><br><span class="line">    handle_entry* e = lookupHandleLocked(handle);</span><br><span class="line">    <span class="keyword">if</span> (e != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        IBinder* b = e-&gt;binder;</span><br><span class="line">        <span class="keyword">if</span> (b == <span class="literal">NULL</span> || !e-&gt;refs-&gt;attemptIncWeak(<span class="keyword">this</span>)) &#123;</span><br><span class="line">            b = new BpBinder(handle); <span class="comment">//没创建过就新建 BpBinder</span></span><br><span class="line">            result = b;</span><br><span class="line">            e-&gt;binder = b;</span><br><span class="line">            <span class="keyword">if</span> (b) e-&gt;refs = b-&gt;getWeakRefs();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result = b;</span><br><span class="line">            e-&gt;refs-&gt;decWeak(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>lookupHandleLocked() 方法用于查找本进程中是否已经创建过要获取的 IBinder，如果没有获取到，就创建一个，lookupHandleLocked() 内部通过一个 Vector 来存放创建过的 IBinder：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Vector&lt;handle_entry&gt; mHandleToObject;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> handle_entry&#123;</span><br><span class="line">    IBinder* binder;</span><br><span class="line">    RefBase::weakref_type* refs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如上代码所示，每个 IBinder 对象通过一个 handle_entry 结构体存放，也就是说，ProcessState 中有一个全局列表来记录所有的 IBinder 对象。</p>
+<h2 id="IPCThreadState"><a href="#IPCThreadState" class="headerlink" title="IPCThreadState"></a>IPCThreadState</h2><p>ProcessState 对应于一个进程，是进程内单例，而 IPCThreadState 对应于一个线程，是线程单例(Thread Local)。</p>
+<p>ProcessState 中打开了 binder 驱动、进行 mmap 映射，虽然调用了 ioctl() 函数，但主要是一些初始化配置。而具体的 BR_TRANSACTION 等命令都是由 IPCThreadState 负责执行的，当上层传来一个命令，会调用它的 transact 函数，该函数精简后如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">status_t IPCThreadState::transact(int32_t handle,</span><br><span class="line">                                  uint32_t code, <span class="keyword">const</span> Parcel&amp; data,</span><br><span class="line">                                  Parcel* reply, uint32_t flags)&#123;</span><br><span class="line">    <span class="comment">//检查数据是否有效</span></span><br><span class="line">    status_t err = data.errorCheck();</span><br><span class="line">    <span class="keyword">if</span> (err == NO_ERROR) &#123;</span><br><span class="line">        <span class="comment">//将数据打包塞到 mOut 里</span></span><br><span class="line">        err = writeTransactionData(BC_TRANSACTION, flags, handle, code, data, <span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((flags &amp; TF_ONE_WAY) == <span class="number">0</span>) &#123; <span class="comment">//不是 one way 调用，需要等待回复</span></span><br><span class="line">        <span class="keyword">if</span> (reply) &#123;</span><br><span class="line">            err = waitForResponse(reply);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Parcel fakeReply;</span><br><span class="line">            err = waitForResponse(&amp;fakeReply);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">//one way 调用，不用等待回复</span></span><br><span class="line">        err = waitForResponse(<span class="literal">NULL</span>, <span class="literal">NULL</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>IPCThreadState 中有 mIn、mOut 两个 Parcel 数据，mIn 用来存放从别处读取而来的数据，mOut 存放要写入到别处的数据，在 writeTransactionData() 方法中将数据存放到 mOut，准备写入到 binder 驱动。</p>
+<p>waitForResponse() 方法去实际执行写入到 binder 驱动，简化后的 waitForResponse() 方法如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">status_t IPCThreadState::waitForResponse(Parcel *reply, status_t *acquireResult)&#123;</span><br><span class="line">    uint32_t cmd;</span><br><span class="line">    int32_t err;</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">        <span class="comment">//进一步调用 talkWithDriver 去执行写入数据到 binder 驱动</span></span><br><span class="line">        <span class="keyword">if</span> ((err=talkWithDriver()) &lt; NO_ERROR) <span class="keyword">break</span>; </span><br><span class="line">        err = mIn.errorCheck(); <span class="comment">//检查数据有效性</span></span><br><span class="line">        <span class="keyword">if</span> (err &lt; NO_ERROR) <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">if</span> (mIn.dataAvail() == <span class="number">0</span>) <span class="keyword">continue</span>; <span class="comment">//检查数据有效性</span></span><br><span class="line">        cmd = (uint32_t)mIn.readInt32(); <span class="comment">//拿到 binder 驱动发过来的命令</span></span><br><span class="line">        <span class="keyword">switch</span> (cmd) &#123;</span><br><span class="line">            <span class="comment">//处理命令</span></span><br><span class="line">            <span class="keyword">case</span> BR_TRANSACTION_COMPLETE:&#123;...&#125;</span><br><span class="line">            <span class="keyword">case</span> BR_DEAD_REPLY:&#123;...&#125;</span><br><span class="line">            <span class="keyword">case</span> BR_FAILED_REPLY:&#123;...&#125;</span><br><span class="line">            <span class="keyword">case</span> BR_ACQUIRE_RESULT:&#123;...&#125;</span><br><span class="line">            <span class="keyword">case</span> BR_REPLY:&#123;...&#125;</span><br><span class="line">            <span class="keyword">default</span>:</span><br><span class="line">                <span class="comment">//其他命令在 executeCommand 方法中处理</span></span><br><span class="line">                err = executeCommand(cmd);</span><br><span class="line">                <span class="keyword">if</span> (err != NO_ERROR) <span class="keyword">goto</span> finish;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到 waitForResponse() 中并没有直接执行写入数据到 binder，而是进一步调用 talkWithDriver 去处理，随后 waitForResponse() 方法处理了由 binder 驱动发送过来的命令，比如 BR_TRANSACTION_COMPLETE ：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> BR_TRANSACTION_COMPLETE:</span><br><span class="line">       <span class="keyword">if</span> (!reply &amp;&amp; !acquireResult) <span class="keyword">goto</span> finish;</span><br><span class="line">       <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure></p>
+<p>在 transact() 方法中判断如果是 one way 调用，reply 及 acquireResult 都传入 NULL，所以上面条件成立，直接退出循环，不用再等待 binder 驱动的回复。在上一篇文章<a href="https://yhaowa.gitee.io/a7541469/">细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a> 中 IPC 调用中提到过 BR_TRANSACTION_COMPLETE 命令，再来回顾下：</p>
+<div id="sequence-0"></div>
+
+<p>到目前为止，由 transact() 到 waitForResponse()，已经将要发送的数据准备好，并对后续 binder 驱动的回复也做了处理，但还没看到真正写入数据给 binder 驱动的代码，但已经知道就在 talkWithDriver() 方法中，此方法中主要做了三个工作：1.准备 binder_write_read 数据，2.写入 binder 驱动 3.处理驱动回复。以此将 talkWithDriver() 代码简化分为对应的三部分来看，首先是准备 binder_write_read 数据：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">status_t IPCThreadState::talkWithDriver(<span class="keyword">bool</span> doReceive)&#123;</span><br><span class="line">    binder_write_read bwr; <span class="comment">//binder 驱动接受的数据格式</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">bool</span> needRead = mIn.dataPosition() &gt;= mIn.dataSize();</span><br><span class="line">    <span class="keyword">const</span> size_t outAvail = (!doReceive || needRead) ? mOut.dataSize() : <span class="number">0</span>;</span><br><span class="line">    bwr.write_size = outAvail; <span class="comment">//要写入的数据量</span></span><br><span class="line">    bwr.write_buffer = (uintptr_t)mOut.data(); <span class="comment">//要写入的数据</span></span><br><span class="line">    <span class="comment">// This is what we'll read.</span></span><br><span class="line">    <span class="keyword">if</span> (doReceive &amp;&amp; needRead) &#123;</span><br><span class="line">        bwr.read_size = mIn.dataCapacity(); <span class="comment">//要读取的数据量</span></span><br><span class="line">        bwr.read_buffer = (uintptr_t)mIn.data(); <span class="comment">//存放读取数据的内存空间</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        bwr.read_size = <span class="number">0</span>;</span><br><span class="line">        bwr.read_buffer = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 如果不需要读也不需要写，那就直接返回</span></span><br><span class="line">    <span class="keyword">if</span> ((bwr.write_size == <span class="number">0</span>) &amp;&amp; (bwr.read_size == <span class="number">0</span>)) <span class="keyword">return</span> NO_ERROR;</span><br></pre></td></tr></table></figure></p>
+<p>在 IPCThreadState.h 中声明了 talkWithDriver() 方法的参数 doReceive 默认为 true，waitForResponse() 中没有传入参数，所以这里的 doReceive 为 true。</p>
+<p>在上文 binder 驱动相关的结构体 中提到过 binder_write_read，它是 binder 驱动与用户态共用的、存储读写操作的数据，在 binder 驱动内部依赖 binder_write_read 决定是要读取还是写入数据：其内部变量 read_size&gt;0 则代表要读取数据，write_size&gt;0 代表要写入数据，若都大于 0 则先写入，后读取。</p>
+<p>准备好 binder_write_read 后，再来看是怎么写入 binder 驱动的，其实很简单，真正执行写入的操作就一行代码：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ioctl(mProcess-&gt;mDriverFD, BINDER_WRITE_READ, &amp;bwr)</span><br></pre></td></tr></table></figure></p>
+<p>对应的会调用到 binder 驱动的 binder_ioctl() 函数，这里不延伸此函数，接着看 talkWithDriver() 方法的第三个工作，处理驱动的回复：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">     <span class="keyword">if</span> (bwr.write_consumed &gt; <span class="number">0</span>) &#123; <span class="comment">//成功写入了数据</span></span><br><span class="line">         <span class="keyword">if</span> (bwr.write_consumed &lt; mOut.dataSize())</span><br><span class="line">             mOut.remove(<span class="number">0</span>, bwr.write_consumed);</span><br><span class="line">         <span class="keyword">else</span></span><br><span class="line">             mOut.setDataSize(<span class="number">0</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (bwr.read_consumed &gt; <span class="number">0</span>) &#123; <span class="comment">//成功读取到了数据</span></span><br><span class="line">         mIn.setDataSize(bwr.read_consumed);</span><br><span class="line">         mIn.setDataPosition(<span class="number">0</span>);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">return</span> NO_ERROR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>bwr.write_consumed &gt; 0 代表 binder 驱动消耗了 mOut 中的数据，所以要把这部分已经处理过的数据移除调；bwr.read_consumed &gt; 0 代表 binder 驱动成功的返回了数据给我们，并写入了上面通过 bwr.read_buffer 指定的内存地址，即 mIn 中，所以要对 mIn 对相关的修正。</p>
+<p>到这里 talkWithDriver 执行完毕，读取到的数据放到了 mIn 中，也正好对应于上面 waitForResponse() 方法中从 mIn 中取数据的逻辑。</p>
+<h2 id="BpBinder"><a href="#BpBinder" class="headerlink" title="BpBinder"></a>BpBinder</h2><p>上文介绍 ProcessState 中的 getWeakProxyForHandle() 方法时，构造了一个 BpBinder 对象返回：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new BpBinder(handle)</span><br></pre></td></tr></table></figure></p>
+<p>IPCThreadState 作为主要与 binder 驱动交互的对象，它的 transact 方法第一个参数就是 handle 值：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">status_t IPCThreadState::transact(int32_t handle,</span><br><span class="line">                                  uint32_t code, <span class="keyword">const</span> Parcel&amp; data,</span><br><span class="line">                                  Parcel* reply, uint32_t flags)</span><br></pre></td></tr></table></figure></p>
+<p>注意这两个线索：一是将 handle 交给 BpBinder 持有，二是在调用 IPCThreadState transact 方法时需要传入 handle，这意味着什么呢？<strong>一个 BpBinder 对象就是关联了一个远程 handle 的操作封装，其内部是通过 IPCThreadState 来实现的</strong> 。但这个仅是猜想，下面通过 BpBinder 源码来验证是否属实，首先是构造函数：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">BpBinder::BpBinder(int32_t handle)</span><br><span class="line">   : mHandle(handle)</span><br><span class="line">   , mAlive(<span class="number">1</span>)</span><br><span class="line">   , mObitsSent(<span class="number">0</span>)</span><br><span class="line">   , mObituaries(<span class="literal">NULL</span>)</span><br><span class="line"></span><br><span class="line">   ALOGV(<span class="string">"Creating BpBinder %p handle %d\n"</span>, <span class="keyword">this</span>, mHandle);</span><br><span class="line"></span><br><span class="line">   extendObjectLifetime(OBJECT_LIFETIME_WEAK);</span><br><span class="line">   IPCThreadState::<span class="keyword">self</span>()-&gt;incWeakHandle(handle);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在上文<strong>智能指针</strong>介绍过 OBJECT_LIFETIME_WEAK，其代表 BpBinder 对象的强计数器和弱计数器的值都为 0 时才会被销毁。另外可以看到通过内部变量 mHandle 持有 handle 值，在 BpBinder 的 transact 方法中使用了 mHandle：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">status_t BpBinder::transact(</span><br><span class="line">    uint32_t code, <span class="keyword">const</span> Parcel&amp; data, Parcel* reply, uint32_t flags)&#123;</span><br><span class="line">    <span class="keyword">if</span> (mAlive) &#123;</span><br><span class="line">        status_t status = IPCThreadState::<span class="keyword">self</span>()-&gt;transact(</span><br><span class="line">            mHandle, code, data, reply, flags);</span><br><span class="line">        <span class="keyword">if</span> (status == DEAD_OBJECT) mAlive = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> status;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> DEAD_OBJECT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其内部确实是调用了 IPCThreadState 的 transact 方法，这便验证了 “一个 BpBinder 对象就是关联了一个远程 handle 的操作封装，其内部是通过 IPCThreadState 来实现的” 的描述是正确的。</p>
+<h2 id="BinderProxy"><a href="#BinderProxy" class="headerlink" title="BinderProxy"></a>BinderProxy</h2><p>先给出结论：BinderProxy 就是 BpBinder，”BpBinder” 中的 “p” 即 Proxy，只不过 BpBinder 是 Native 层的，BinderProxy 是 Java 层的。BinderProxy 和 BpBinder 分别继承自 Java 和 Native 层的 IBinder 接口，即 IBinder.h 和 IBinder.java，它们可以看作同一个接口，都定义了 transact 等方法。</p>
+<p>下面根据源码来验证这个结论，ServiceManager.java 中获取 Service Manager 的代码如下：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> IServiceManager <span class="title">getIServiceManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (sServiceManager != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> sServiceManager;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// Find the service manager</span></span><br><span class="line">    sServiceManager = ServiceManagerNative.asInterface(BinderInternal.getContextObject());</span><br><span class="line">    <span class="keyword">return</span> sServiceManager;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中 asInterface 方法接收的参数就是一个 IBinder 类型对象，可想而知，BinderInternal 的 getContextObject() 方法返回的是一个 BinderProxy 对象：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Return the global "context object" of the system.  This is usually</span></span><br><span class="line"><span class="comment"> * an implementation of IServiceManager, which you can use to find</span></span><br><span class="line"><span class="comment"> * other services.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">native</span> IBinder <span class="title">getContextObject</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>这里保留了注释，因为书中专门对为什么将 Service Manager 命名为 Context Object 做了解释：每个进程都需要 IPC 操作，IPC 是作为进程的基础配置存在的。而上面代码的注释更直接的描述了此方法，有助于我们理解。</p>
+<p>接着看这个方法，对应的 native 实现在 android_util_Binder.cpp 中：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> jobject android_os_BinderInternal_getContextObject(JNIEnv* env, jobject clazz)&#123;</span><br><span class="line">    sp&lt;IBinder&gt; b = ProcessState::<span class="keyword">self</span>()-&gt;getContextObject(<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">return</span> javaObjectForIBinder(env, b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ProcessState 的 getContextObject() 方法如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sp&lt;IBinder&gt; ProcessState::getContextObject(<span class="keyword">const</span> sp&lt;IBinder&gt;&amp; <span class="comment">/*caller*/</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> getStrongProxyForHandle(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>上文介绍过 ProcessState 的 getWeakProxyForHandle() 方法，其内部构造了一个 BpBinder 对象返回，getStrongProxyForHandle() 方法跟 getWeakProxyForHandle() 一样，也是返回了一个 BpBinder 对象，只不过是强引用类型。</p>
+<p>javaObjectForIBinder() 方法不再展开，它根据 BpBinder 对象构造了一个 BinderProxy 对象，并且记录了 BpBinder 的内存地址，以便后续从 Java-&gt;Native 时，可以根据 BinderProxy 获取到对应的 BpBinder 对象。与 javaObjectForIBinder() 对应， 由 BinderProxy -&gt; BpBinder 调用的是  android_util_Binder.cpp 的 ibinderForJavaObject() 方法。</p>
+<h2 id="ServiceManager-getService-流程"><a href="#ServiceManager-getService-流程" class="headerlink" title="ServiceManager getService 流程"></a>ServiceManager getService 流程</h2><p>在对 binder 驱动、ProcessState、IPCThreadState、BpBinder、BinderProxy 一一单点突破之后，通过一个示例将它们串联起来。对于 ServiceManager getService 流程，首先需要获取 handle 值为 0 的 IBinder 对象：</p>
+<p><img src="../img/BinderProxy.png" alt></p>
+<p>然后调用 transact() 函数进行 IPC 通信：</p>
+<p><img src="../img/transact.jpg" alt></p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>Service Manager 自身也是一个 Server，相当于 DNS 服务器本身也要提供 IP 地址才能被访问一样，只不过 Service Manager 的 IP 地址是预先就设定好的，句柄值固定为 0。所以任何 Binder Client 都可以直接通过 0 这个 binder 句柄值创建一个 BpBinder，再通过 Binder 驱动去使用 Service Manager 的服务。具体来说，就是调用 BinderInternal 的 getContextObject() 方法来获取 Service Manager 的 BpBinder。</p>
+<p>Android 系统同时支持 Java 与 Native 层的 Binder 机制，所以很多对象都有 “双重身份”，比如 IBinder 在 Java 层用 BinderProxy 表示，在 Native 层用 BpBinder 表示。</p>
+<p>大多数程序都有 IPC 的需要，而且进程间通信本身又是非常繁琐的，所以 Android 系统特别为 Binder 机制封装了两个类：ProcessState 和 IPCThreadState，分别对应于进程和线程。ProcessState 负责打开 Binder 驱动设备及 mmap；IPCThreadState 负责与 binder 驱动进行具体的命令通信。</p>
+<blockquote>
+<p>链接：<a href="http://mp.weixin.qq.com/mp/homepage?__biz=MzA5OTAxNDEyNg==&amp;hid=1&amp;sn=ebe1c61ff758e51e9e92fd907a99f342&amp;scene=18#wechat_redirect" target="_blank" rel="noopener">细读《深入理解 Android 内核设计思想》系列</a></p>
+</blockquote>
+<p><img src="../img/qrcode.jpg" alt></p>
+<p><center>关注公众号，Get 更多知识点</center></p>
+<p><script src="https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js"></script><script src="https://cdn.bootcss.com/raphael/2.2.8/raphael.min.js"></script><script src="https://cdn.bootcss.com/snap.svg/0.5.1/snap.svg-min.js"></script><script src="https://cdn.bootcss.com/underscore.js/1.9.1/underscore-min.js"></script><script src="https://cdn.bootcss.com/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script><textarea id="sequence-0-code" style="display: none">Client->Binder Driver:BC_TRANSACTION
+Binder Driver->Client:BR_TRANSACTION_COMPLETE
+Binder Driver->Server:BR_TRANSACTION
+Server->Binder Driver:BC_REPLY
+Binder Driver->Server:BR_TRANSACTION_COMPLETE
+Binder Driver->Client:BR_REPLY</textarea><textarea id="sequence-0-options" style="display: none">{"theme":"simple"}</textarea><script>  var code = document.getElementById("sequence-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("sequence-0-options").value));  var diagram = Diagram.parse(code);  diagram.drawSVG("sequence-0", options);</script></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/a8eae25c/">http://yhaowa.gitee.io/a8eae25c/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/a8eae25c/">四月 23日 2020, 11:24:46 晚上</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/a8eae25c/">May 3rd 2020, 12:06:19 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/a7541469/" title= "细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]">
+                    <div class="prevTitle">细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#智能指针"><span class="toc-number">1.</span> <span class="toc-text">智能指针</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#binder-驱动相关的结构体"><span class="toc-number">2.</span> <span class="toc-text">binder 驱动相关的结构体</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ProcessState"><span class="toc-number">3.</span> <span class="toc-text">ProcessState</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IPCThreadState"><span class="toc-number">4.</span> <span class="toc-text">IPCThreadState</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BpBinder"><span class="toc-number">5.</span> <span class="toc-text">BpBinder</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BinderProxy"><span class="toc-number">6.</span> <span class="toc-text">BinderProxy</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ServiceManager-getService-流程"><span class="toc-number">7.</span> <span class="toc-text">ServiceManager getService 流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">8.</span> <span class="toc-text">最后</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 38
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/23</span><a class="archive-post-title" href= "/a8eae25c/" >细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/a7541469/" >细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/06</span><a class="archive-post-title" href= "/2d9a78ad/" >细读《深入理解 Android 内核设计思想》（二）内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/af0c2fe0/" >焦虑与知识输出</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
+    
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
+        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
+    
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
+    
+        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
+    
+        <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
+    
+        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
+    
+        <span class="sidebar-category-name" data-categories="思考"><span class="iconfont-archer">&#xe60a;</span>思考</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Ahab"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
