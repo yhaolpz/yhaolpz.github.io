@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://yhaowa.gitee.io/img/BinderProxy.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/transact.jpg">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
-<meta property="og:updated_time" content="2020-05-02T16:06:19.631Z">
+<meta property="og:updated_time" content="2020-05-15T14:17:29.679Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">
 <meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
@@ -462,7 +462,7 @@ height:50vh;
 </tr>
 <tr>
 <td>binder_node</td>
-<td>描述 binder 实体节点，对应于一个 serve，即用户态的 BBinder 对象</td>
+<td>描述 binder 实体节点，对应于一个 serve，即用户态的 BpBinder 对象</td>
 </tr>
 <tr>
 <td>binder_ref</td>
@@ -579,14 +579,19 @@ Binder Driver->Client:BR_REPLY</textarea><textarea id="sequence-0-options" style
         <div class="license-wrapper">
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/a8eae25c/">http://yhaowa.gitee.io/a8eae25c/</a>
-            <p>发表日期：<a href="http://yhaowa.gitee.io/a8eae25c/">四月 23日 2020, 11:24:46 晚上</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/a8eae25c/">May 3rd 2020, 12:06:19 am</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/a8eae25c/">April 23rd 2020, 11:24:46 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/a8eae25c/">May 15th 2020, 10:17:29 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
     <!-- paginator  -->
     <ul class="post-paginator">
         <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/c74cb1a3/" title= "细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">
+                    <div class="nextTitle">细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</div>
+                </a>
             
         </li>
         <li class="previous">
@@ -1245,9 +1250,32 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 38
+        Total : 39
         </div>
         <!-- search  -->
         
@@ -1260,6 +1288,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/c74cb1a3/" >细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1362,11 +1395,6 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
             <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
         </li>
     
@@ -1377,12 +1405,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
         </li>
     
     
@@ -1483,11 +1516,11 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
-    
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
     
@@ -1507,8 +1540,6 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
     
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
-    
         <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
     
         <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
@@ -1517,9 +1548,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
     
-        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
     
         <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
     
@@ -1568,9 +1601,9 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
-    
         <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     
@@ -1580,9 +1613,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
     
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
-    
         <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
     
