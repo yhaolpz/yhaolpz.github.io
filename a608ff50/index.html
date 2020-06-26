@@ -32,8 +32,7 @@
 <meta property="og:image" content="http://yhaowa.gitee.io/img/startActivity-Android10-2.jpg">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/startActivity-Android10-3.jpg">
 <meta property="og:image" content="http://yhaowa.gitee.io/img/startActivity-Android10-4.jpg">
-<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
-<meta property="og:updated_time" content="2020-04-07T15:34:42.847Z">
+<meta property="og:updated_time" content="2020-05-23T02:57:30.359Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Framework &amp; startActivity">
 <meta name="twitter:description" content="源码基于 Android 10">
@@ -460,9 +459,6 @@ height:50vh;
 <p>hook ActivityThread：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">ActivityThread activityThread = ActivityThread.currentActivityThread();</span><br><span class="line">Field mH1 = activityThread.getClass().getDeclaredField(<span class="string">"mH"</span>);</span><br><span class="line">mH1.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">final</span> Handler mH = (Handler) mH1.get(activityThread);</span><br><span class="line">Field mCallBackField = Handler.class.getDeclaredField("mCallback");</span><br><span class="line">mCallBackField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">mCallBackField.set(mH, <span class="keyword">new</span> Handler.Callback() &#123;</span><br><span class="line"> <span class="meta">@Override</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">handleMessage</span><span class="params">(Message msg)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">   <span class="keyword">if</span> (msg.what == <span class="number">159</span>) &#123; <span class="comment">// ActivityThread.H.EXECUTE_TRANSACTION</span></span><br><span class="line">    <span class="keyword">final</span> ClientTransaction transaction = (ClientTransaction) msg.obj;</span><br><span class="line">    Field mActivityCallbacksField = transaction</span><br><span class="line">               .getClass().getDeclaredField(<span class="string">"mActivityCallbacks"</span>);</span><br><span class="line">    mActivityCallbacksField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    List&lt;ClientTransactionItem&gt; clientTransactionItems = </span><br><span class="line">        (List&lt;ClientTransactionItem&gt;) mActivityCallbacksField.get(transaction);</span><br><span class="line">    <span class="keyword">if</span> (clientTransactionItems != <span class="keyword">null</span>) &#123;</span><br><span class="line">     <span class="keyword">for</span> (ClientTransactionItem c : clientTransactionItems) &#123;</span><br><span class="line">      <span class="keyword">if</span> (c <span class="keyword">instanceof</span> LaunchActivityItem) &#123;</span><br><span class="line">       <span class="comment">//修正 Activity 启动事件实体 LaunchActivityItem</span></span><br><span class="line">       LaunchActivityItem item = (LaunchActivityItem) c;</span><br><span class="line">       Field intentField = item.getClass().getDeclaredField(<span class="string">"mIntent"</span>);</span><br><span class="line">       intentField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       Intent intent = (Intent) intentField.get(item);</span><br><span class="line">       Field mInfoField = item.getClass().getDeclaredField(<span class="string">"mInfo"</span>);</span><br><span class="line">       mInfoField.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">       ActivityInfo aInfo = (ActivityInfo) mInfoField.get(item);</span><br><span class="line">       Intent realIntent = intent.getParcelableExtra(EXTRA_TARGET_INTENT);</span><br><span class="line">       <span class="keyword">if</span> (realIntent != <span class="keyword">null</span>) &#123;</span><br><span class="line">         <span class="comment">//将占位 FakeActivity 改回未注册的 UnRegisterActivity</span></span><br><span class="line">         intent.setComponent(realIntent.getComponent());</span><br><span class="line">         aInfo.packageName = realIntent.getComponent().getPackageName();</span><br><span class="line">         aInfo.name = realIntent.getComponent().getClassName();</span><br><span class="line">       &#125;</span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br><span class="line">    &#125;</span><br><span class="line">   &#125;</span><br><span class="line">  &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">false</span>; <span class="comment">//返回 false 正好可以让 ActivityThread 继续处理</span></span><br><span class="line"> &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
 <p>实现启动未注册 Activity 的前提必然是已掌握 startActivity 流程，这也是插件化的入门，实际应用需要去兼容各个 Android 版本</p>
 <h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>带着问题去分析、学习源码，自然的就会聚焦出一条主线</p>
-<p><img src="../img/qrcode.jpg" alt></p>
-<center>关注公众号，Get 更多知识点</center>
-
 <div style="display: none"><br>participant Activity<br>participant Instrumentation<br>participant ActivityTaskManager<br>participant IActivityTaskManager<br>Note over IActivityTaskManager:AIDL<br>participant ActivityTaskManagerService<br>participant ActivityStartController<br>participant ActivityStarter<br>participant RootActivityContainer<br>participant ActivityStack<br>participant ActivityStackSupervisor<br>participant ClientLifecycleManager<br>participant ClientTransaction<br>participant IApplicationThread<br>Note over IApplicationThread:AIDL<br>participant ApplicationThread<br>participant ActivityThread<br>participant ActivityThread.H<br>participant TransactionExecutor<br>participant PauseActivityItem<br>participant LaunchActivityItem<br>participant ResumeActivityItem<br>Activity-&gt; Instrumentation:startActivityAsUser()<br>Instrumentation-&gt; ActivityTaskManager:execStartActivity()<br>ActivityTaskManager-&gt; IActivityTaskManager:startActivity()<br><br>IActivityTaskManager-&gt; ActivityTaskManagerService:startActivity()<br>ActivityTaskManagerService-&gt; ActivityStartController:getActivityStartController()<br>ActivityStartController-&gt; ActivityStarter:obtainStarter()<br>ActivityStarter-&gt; ActivityStarter:startActivityMayWait()<br>ActivityStarter-&gt; ActivityStarter:startActivity()<br>ActivityStarter-&gt;RootActivityContainer:startActivityUnchecked()<br>RootActivityContainer-&gt;ActivityStack:resumeFocusedStacksTopActivities()<br>ActivityStack-&gt;ActivityStack: resumeTopActivityUncheckedLocked()<br>ActivityStack–&gt;ClientLifecycleManager:startPausingLocked()<br>ClientLifecycleManager-&gt;ClientTransaction:scheduleTransaction(PauseActivityItem)<br>ClientTransaction-&gt;IApplicationThread:schedule()<br>IApplicationThread-&gt;ApplicationThread:scheduleTransaction()<br>ApplicationThread-&gt;ActivityThread:scheduleTransaction()<br>ActivityThread-&gt;ActivityThread.H:sendMessage(EXECUTE_TRANSACTION)<br>ActivityStack-&gt;ActivityStackSupervisor:resumeTopActivityInnerLocked()<br>ActivityStackSupervisor-&gt;ActivityStackSupervisor:startSpecificActivityLocked()<br>ActivityStackSupervisor-&gt;ClientLifecycleManager:realStartActivityLocked()<br>ClientLifecycleManager-&gt;ClientTransaction:scheduleTransaction(ResumeActivityItem)<br>ClientTransaction-&gt;IApplicationThread:schedule()<br>IApplicationThread-&gt;ApplicationThread:scheduleTransaction()<br>ApplicationThread-&gt;ActivityThread:scheduleTransaction()<br>ActivityThread-&gt;ActivityThread.H:sendMessage(EXECUTE_TRANSACTION)<br><br>ActivityThread.H-&gt;TransactionExecutor:handleMessage()<br>TransactionExecutor-&gt;TransactionExecutor:execute()<br>TransactionExecutor-&gt;PauseActivityItem:executeLifecycleState()<br>PauseActivityItem–&gt;ActivityThread:execute()<br>ActivityThread-&gt;ActivityThread:handlePauseActivity()<br>ActivityThread-&gt;ActivityThread:performPauseActivity()<br>ActivityThread–&gt;Instrumentation:performPauseActivityIfNeeded()<br>Instrumentation-&gt;Activity:callActivityOnPause()<br>Activity-&gt;Activity:performPause()<br>Activity-&gt;Activity:onPause()<br><br>ActivityThread.H-&gt;TransactionExecutor:handleMessage()<br>TransactionExecutor-&gt;TransactionExecutor:execute()<br>TransactionExecutor–&gt;LaunchActivityItem:executeCallbacks()<br>LaunchActivityItem–&gt;ActivityThread:execute()<br>ActivityThread-&gt;ActivityThread:handleLaunchActivity()<br>ActivityThread–&gt;Instrumentation:performLaunchActivity()<br>Instrumentation-&gt;Activity:callActivityOnCreate()<br>Activity-&gt;Activity:performCreate()<br>Activity-&gt;Activity:onCreate()<br><br>TransactionExecutor–&gt;ResumeActivityItem:executeLifecycleState()<br>ResumeActivityItem–&gt;ActivityThread:execute()<br>ActivityThread-&gt;ActivityThread:handleResumeActivity()<br>ActivityThread–&gt;Activity:performResumeActivity()<br>Activity-&gt;Instrumentation:performResume()<br>Instrumentation-&gt;Activity:callActivityOnResume()<br>Activity-&gt;Activity:onResume()<br></div>
 
 
@@ -496,7 +492,7 @@ ZygoteProcess->ZygoteProcess:zygoteSendArgsAndGetResult()</textarea><textarea id
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/a608ff50/">http://yhaowa.gitee.io/a608ff50/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/a608ff50/">September 15th 2019, 7:42:33 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/a608ff50/">April 7th 2020, 11:34:42 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/a608ff50/">May 23rd 2020, 10:57:30 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1189,9 +1185,20 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 39
+        Total : 40
         </div>
         <!-- search  -->
         
@@ -1204,6 +1211,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/38614e33/" >细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1306,12 +1318,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
         </li>
     
     
@@ -1321,17 +1333,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
         </li>
     
     
@@ -1432,9 +1444,11 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
     
@@ -1442,29 +1456,29 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
     
-        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
-    
         <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
     
         <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
     
         <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
     
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
         <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
     
         <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
-    
-        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
     
         <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
     
         <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
     
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
         <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
     
         <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
-    
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
     
@@ -1481,8 +1495,6 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
         <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
-    
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1517,15 +1529,15 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     
-        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
-    
         <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
     
         <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
     

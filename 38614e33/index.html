@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ahab">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ahab">
+    
+    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="keywords" content="Android,读书笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">
+<meta property="og:url" content="http://yhaowa.gitee.io/38614e33/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/ape_fwk_graphics.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/bufferqueue.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/img/Gralloc.jpg">
+<meta property="og:updated_time" content="2020-06-26T06:35:37.353Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">
+<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/img/ape_fwk_graphics.png">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
+    
+    <title>细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上] · Ahab&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/android.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Ahab's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "读书笔记">读书笔记</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.6k</span>阅读时长: <span class="post-count reading-time">15 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/05/17</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
+<blockquote>
+<ol>
+<li>GUI 系统综述</li>
+<li>BufferQueue 与图像数据流</li>
+<li>Gralloc</li>
+<li>ANativeWindow</li>
+<li>FrameBufferNativeWindow</li>
+<li>FramebufferSurface</li>
+<li>最后</li>
+</ol>
+</blockquote>
+<h2 id="GUI-系统综述"><a href="#GUI-系统综述" class="headerlink" title="GUI 系统综述"></a>GUI 系统综述</h2><p>GUI（Graphical User Interface）即图形用户界面，官方架构图如下：</p>
+<p><img src="../img/ape_fwk_graphics.png" alt></p>
+<p><strong>IMAGE STREAM PRODUCERS 图像流生产方</strong>：生成图形缓冲区以供消耗的任何内容，例如 OpenGL ES、Canvas 2D 和 mediaserver 视频解码器都是图像流生产方。</p>
+<p><strong>IMAGE STREAM CONSUMERS 图像流消耗方</strong>：图像流最常见的消耗方是 SurfaceFlinger，该系统服务接收来自于多个源的数据缓冲区，组合它们，并将它们发送给显示设备。除了 SurfaceFlinger，OpenGL ES 应用也可以消耗图像流，例如相机应用会消耗相机预览图像流，另外非 GL 应用也可以消耗图像流，例如 ImageReader 类。SurfaceFlinger 使用 OpenGL 和 Hardware Composer 来合成一组 Surface。</p>
+<p><strong>WindowManager</strong>：WindowManager 会控制 window 对象，window 是用于容纳视图对象的容器。window 对象由 Surface 对象提供支持。WindowManager 会监督生命周期、输入和聚焦事件、屏幕方向、转换、动画、位置、变形、Z 轴顺序等窗口事件。WindowManager 会将所有窗口元数据发送到 SurfaceFlinger，以便 SurfaceFlinger 可以使用这些数据合成 Surface。</p>
+<p><strong>Surface</strong>：无论开发者使用什么渲染 API，一切内容都会渲染到 Surface 上，Surface 即供 UI 应用程序绘制图像的 “画板”，承载应用要渲染的图像数据。应用端可以使用 OpenGL ES 、Vulkan 或 Canvas API 渲染到 Surface 上。</p>
+<p><strong>Hardware Composer 硬件混合渲染器(HWC)</strong>：用于确定组合缓冲区的最有效方式，作为 HAL 硬件抽象层，其实现是基于特定设备的，通常由屏幕硬件设备制造商 (OEM) 完成。SurfaceFlinger 在收集可见层的所有缓冲区后，便会询问 HWC 应如何进行合成。如果 HWC 将层合成类型标记为客户端合成，则 SurfaceFlinger 会合成这些层，然后 SurfaceFlinger 会将输出缓冲区传递给 HWC。</p>
+<p><strong>Gralloc</strong>：包括 fb 和 gralloc 两个设备，fb 负责打开内核中的 FrameBuffer、初始化配置，并提供了 post、setSwapInterval 等操作接口；gralloc 负责管理帧缓冲区的分配和释放。作为 HAL，上层都会通过 Gralloc 来访问内核显示设备的帧缓冲区。</p>
+<h2 id="BufferQueue-与图像数据流"><a href="#BufferQueue-与图像数据流" class="headerlink" title="BufferQueue 与图像数据流"></a>BufferQueue 与图像数据流</h2><p>图像流由生产方流向消耗方，这种典型的生产者-消费者模型都是需要一个缓冲区队列的，BufferQueue 就是这个队列，它将图像流生产方与消耗方结合在一起，并且可以调解图像流从生产方到消耗方的固定周期。</p>
+<p><img src="../img/bufferqueue.png" alt></p>
+<p>如图，生产方通过 dequeue 向 BufferQueue 申请空闲的缓冲区，将图像数据存放进去，然后通过 queue 移交给 BufferQueue。消耗方通过 acquire 从 BufferQueue 中获取图像数据缓冲区，然后进行合成显示或处理后，再将缓冲区交还给 BufferQueue。</p>
+<p>对应到显示场景，应用程序作为生产方将图像数据交给 BufferQueue；SurfaceFlinger 则作为消耗方从 BufferQueue 中取出来，然后合成图像数据。</p>
+<h2 id="Gralloc"><a href="#Gralloc" class="headerlink" title="Gralloc"></a>Gralloc</h2><p>FrameBuffer 是 Linux 内核中图像硬件的抽象描述，是一块包含屏幕显示信息的缓冲区。FrameBuffer 对上层提供了统一的显示驱动，设备节点为 /dev/graphics/fb<em> 或 /dev/fb</em>，其中 fb0 标示第一个 Monitor，当前系统实现中只用到了一个显示屏。</p>
+<p>Android 的各个子系统通常不会直接使用硬件的内核驱动，而是通过 HAL 层间接使用。显示系统也是如此，上层统一通过 HAL 层的 Gralloc 来操作内核的帧缓冲区。</p>
+<p>先来看 Gralloc 模块的加载，它是在 FramebufferNativeWindow（OpenGL ES 的本地窗口之一，下面还会提到）的构造函数中加载的：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/ui/FramebufferNativeWindow.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GRALLOC_HARDWARE_MODULE_ID <span class="meta-string">"gralloc"</span></span></span><br><span class="line"></span><br><span class="line">framebufferNativeWindow::framebufferNativeWindow() </span><br><span class="line">    : BASE(),fbDev(<span class="number">0</span>),grDev(<span class="number">0</span>),mUpdateOnDemand(<span class="literal">false</span>)&#123;</span><br><span class="line">    hw_module_t <span class="keyword">const</span>* module;</span><br><span class="line">    <span class="comment">//加载 Gralloc 模块</span></span><br><span class="line">    <span class="keyword">if</span>(hw_get_module(GRALLOC_HARDWARE_MODULE_ID, &amp;module) == <span class="number">0</span>)&#123;</span><br><span class="line">        ...</span><br><span class="line">        err = framebuffer_open(module, &amp;fbDev); <span class="comment">//打开 fb 设备</span></span><br><span class="line">        err = gralloc_open(module, &amp;grDev); <span class="comment">//打开 gralloc 设备</span></span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p>hw_get_module 函数是上层加载 HAL 库的统一入口，不论是哪个硬件厂商提供的 HAL 库，都是通过此函数来加载的。hw_get_module 方法会在指定的路径下查找与 GRALLOC_HARDWARE_MODULE_ID 匹配的库，默认会使用 Android 原生态的实现：gralloc.default.so，此 so 主要由 gralloc.cpp，framebuffer.cpp，mapper.cpp 三个源文件编译生成。</p>
+<p>加载 Gralloc 后，会分别打开 fb（frameBuffer） 和 gralloc（gpu）设备，framebuffer_open 和 gralloc_open 最终都会调用到 gralloc.cpp 的 gralloc_device_open 方法，只不过传入的设备名不一样：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GRALLOC_HARDWARE_FB0 <span class="meta-string">"fb0"</span> <span class="comment">//fb 设备名</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> GRALLOC_HARDWARE_GPU0 <span class="meta-string">"gpu0"</span> <span class="comment">//gralloc 设备名</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//hardware/libhardware/modules/gralloc/gralloc.cpp</span></span><br><span class="line"><span class="keyword">int</span> gralloc_device_open(<span class="keyword">const</span> hw_module_t* module, <span class="keyword">const</span> <span class="keyword">char</span>* name,</span><br><span class="line">                            hw_device_t** device)&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<p>书中分析了 fb 及 gralloc 设备的打开过程源码，本文不再分析，源码见：<a href="http://androidxref.com/7.0.0_r1/xref/hardware/libhardware/modules/gralloc/gralloc.cpp#gralloc_device_open" target="_blank" rel="noopener">http://androidxref.com/7.0.0_r1/xref/hardware/libhardware/modules/gralloc/gralloc.cpp#gralloc_device_open</a> 。直接来看 fb 及 gralloc 设备的主要功能：</p>
+<p><img src="../img/Gralloc.jpg" alt></p>
+<p>gralloc 设备比较简单，主要负责图形缓冲区的分配与释放。下面来看下 fb 设备的方法说明：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将 buffer 数据 post 到显示屏上，要求 buffer 必须与屏幕尺寸一致,</span></span><br><span class="line"><span class="comment">//并且没有被 locked。这样 buffer 内容将在下一次 VSYNC 中被显示出来</span></span><br><span class="line"><span class="keyword">int</span>(*post)(<span class="keyword">struct</span> framebuffer_device_t* dev, buffer_handle_t buffer);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置两个缓冲区交换的时间间隔</span></span><br><span class="line"><span class="keyword">int</span>(*setSwapInterval)(<span class="keyword">struct</span> framebuffer_device_t* window, <span class="keyword">int</span> interval);</span><br><span class="line"></span><br><span class="line"><span class="comment">//设置刷新区域，需要 framebuffer 驱动支持 update-on-demand。</span></span><br><span class="line"><span class="comment">//也就是说，在这个区域外的数据很可能被认为是无效的</span></span><br><span class="line"><span class="keyword">int</span>(*setUpdateRect)(<span class="keyword">struct</span> framebuffer_device_t* window, </span><br><span class="line">                        <span class="keyword">int</span> left, <span class="keyword">int</span> top, <span class="keyword">int</span> width, <span class="keyword">int</span> height);</span><br></pre></td></tr></table></figure>
+<h2 id="ANativeWindow"><a href="#ANativeWindow" class="headerlink" title="ANativeWindow"></a>ANativeWindow</h2><p>Android 的 GUI 基于 OpenGL ES，而 OpenGL ES 是跨平台的，并不是针对某一个特定的操作系统平台设计的。这就需要一个本地窗口来适配特定的系统环境，充当 OpenGL ES 与特定系统的中介。</p>
+<p>EGLNativeWindowType 是 EGL 中定义的平台相关类型，它在不同系统中对应的是不同的数据类型，而在 Android 中对应的是 ANativeWindow 指针：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//framework/native/opengl/include/egl/Eglplatform.h //Android 系统</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">elif</span> defined(__ANDROID__) || defined(ANDROID)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> ANativeWindow;</span><br><span class="line"><span class="keyword">struct</span> egl_native_pixmap_t;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> ANativeWindow*           EGLNativeWindowType;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> egl_native_pixmap_t*     EGLNativePixmapType;</span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">void</span>*                           EGLNativeDisplayType;</span><br></pre></td></tr></table></figure>
+<p>ANativeWindow 结构如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> ANativeWindow&#123;</span><br><span class="line">    uint32_t flags;</span><br><span class="line">    <span class="keyword">int</span>   minSwapInterval; <span class="comment">//支持的最小交换间隔时间</span></span><br><span class="line">    <span class="keyword">int</span>   maxSwapInterval; <span class="comment">//支持的最大交换间隔时间</span></span><br><span class="line">    <span class="keyword">float</span> xdpi; <span class="comment">//水平方向的密度，以 dp 为单位</span></span><br><span class="line">    <span class="keyword">float</span> ydpi; <span class="comment">//竖直方向的密度，以 dp 为单位</span></span><br><span class="line">    intptr_t    oem[<span class="number">4</span>]; <span class="comment">//为 OEM 定制驱动所保留的空间</span></span><br><span class="line">    <span class="comment">//设置交换间隔时间</span></span><br><span class="line">    <span class="keyword">int</span> (*setSwapInterval)(<span class="keyword">struct</span> ANativeWindow* window, <span class="keyword">int</span> interval);</span><br><span class="line">    <span class="comment">//申请一个 buffer，即出队一个空闲缓冲区</span></span><br><span class="line">    <span class="keyword">int</span> (*dequeueBuffer)(<span class="keyword">struct</span> ANativeWindow* window, </span><br><span class="line">                        <span class="keyword">struct</span> ANativeWindowBuffer** buffer);</span><br><span class="line">    <span class="comment">//当 EGL 渲染完一块 buffer 后，调用此接口来 unlock 和 post buffer</span></span><br><span class="line">    <span class="keyword">int</span> (*queueBuffer)(<span class="keyword">struct</span> ANativeWindow* window, </span><br><span class="line">                        <span class="keyword">struct</span> ANativeWindowBuffer* buffer);</span><br><span class="line">    <span class="comment">//取消一个已经 dequeued 的 buffer</span></span><br><span class="line">    <span class="keyword">int</span> (*cancelBuffer)(<span class="keyword">struct</span> ANativeWindow* window, </span><br><span class="line">                        <span class="keyword">struct</span> ANativeWindowBuffer* buffer);</span><br><span class="line">    <span class="comment">//用于向本地窗口查询相关信息</span></span><br><span class="line">    <span class="keyword">int</span> (*query)(<span class="keyword">const</span> <span class="keyword">struct</span> ANativeWindow* window, <span class="keyword">int</span> what, <span class="keyword">int</span>* value);</span><br><span class="line">    <span class="comment">//用于执行本地窗口支持的各种操作，比如</span></span><br><span class="line">    <span class="comment">//NATIVE_WINDOW_SET_CROP、NATIVE_WINDOW_SET_BUFFER_COUNT 等等</span></span><br><span class="line">    <span class="keyword">int</span> (*perform)(<span class="keyword">struct</span> ANativeWindow* window, <span class="keyword">int</span> operation, ... );</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>从 ANativeWindow 的结构可以看出，它更像是一份协议，规定了一个本地窗口的形态和功能。FrameBufferNativeWindow 和 Surface 都履行了这份协议，可以看作 ANativeWindow 的两个实现。</p>
+<h2 id="FrameBufferNativeWindow"><a href="#FrameBufferNativeWindow" class="headerlink" title="FrameBufferNativeWindow"></a>FrameBufferNativeWindow</h2><p>在介绍 Gralloc 时提到 Gralloc 设备是在 FrameBufferNativeWindow 的构造函数中打开的，这代表 FrameBufferNativeWindow 可以直接通过 Gralloc 操控屏幕帧内容的展示；在介绍 ANativeWindow 时提到 FrameBufferNativeWindow 实现了 ANativeWindow 接口，这代表上层可以通过 ANativeWindow 中定义的方法来调用 FrameBufferNativeWindow。</p>
+<p>FrameBufferNativeWindow 的构造函数关键代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//frameworks/native/libs/ui/FramebufferNativeWindow.cpp</span></span><br><span class="line">framebufferNativeWindow::framebufferNativeWindow() </span><br><span class="line">    : BASE(),fbDev(<span class="number">0</span>),grDev(<span class="number">0</span>),mUpdateOnDemand(<span class="literal">false</span>)&#123;</span><br><span class="line">    hw_module_t <span class="keyword">const</span>* module;</span><br><span class="line">    <span class="comment">//加载 Gralloc 模块</span></span><br><span class="line">    <span class="keyword">if</span>(hw_get_module(GRALLOC_HARDWARE_MODULE_ID, &amp;module) == <span class="number">0</span>)&#123;</span><br><span class="line">        ...</span><br><span class="line">        err = framebuffer_open(module, &amp;fbDev); <span class="comment">//打开 fb 设备</span></span><br><span class="line">        err = gralloc_open(module, &amp;grDev); <span class="comment">//打开 gralloc 设备</span></span><br><span class="line">        ...</span><br><span class="line">        <span class="comment">//初始化帧缓冲区相关的变量 </span></span><br><span class="line">        mNumBuffers = NUM_FRAME_BUFFERS; </span><br><span class="line">        mNumFreeBuffers = NUM_FRAME_BUFFERS;</span><br><span class="line">        mBufferHead = mNumBuffers<span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; mNumBuffers; i++)&#123; <span class="comment">//创建 NativeBuffer  </span></span><br><span class="line">            buffers[i] = new NativeBuffer(fbDev-&gt;width, fbDev-&gt;height, </span><br><span class="line">                                fbDev-&gt;format, GRALLOC_USAGE_HW_FB);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; mNumBuffers; i++)&#123;<span class="comment">//为 NativeBuffer 分配空间  </span></span><br><span class="line">                err = grDev-&gt;alloc(grDev,fbDev-&gt;width, fbDev-&gt;height, </span><br><span class="line">                        fbDev-&gt;format, GRALLOC_USAGE_HW_FB, </span><br><span class="line">                        &amp;buffers[i]-&gt;handle, &amp;buffers[i]-&gt;stride);  </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//初始化本地窗口 ANativeWindow 的相关属性  </span></span><br><span class="line">        const_cast&lt;uint32_t&amp;&gt;(ANativeWindow::flags) = fbDev-&gt;flags;   </span><br><span class="line">        const_cast&lt;<span class="keyword">float</span>&amp;&gt;(ANativeWindow::xdpi) = fbDev-&gt;xdpi;  </span><br><span class="line">        const_cast&lt;<span class="keyword">float</span>&amp;&gt;(ANativeWindow::ydpi) = fbDev-&gt;ydpi;  </span><br><span class="line">        const_cast&lt;<span class="keyword">int</span>&amp;&gt;(ANativeWindow::minSwapInterval) = fbDev-&gt;minSwapInterval;  </span><br><span class="line">        const_cast&lt;<span class="keyword">int</span>&amp;&gt;(ANativeWindow::maxSwapInterval) = fbDev-&gt;maxSwapInterval;  </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">        ALOGE(<span class="string">"Couldn't get gralloc module"</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="comment">//本地窗口 ANativeWindow 的接口函数实现  </span></span><br><span class="line">    ANativeWindow::setSwapInterval = setSwapInterval;  </span><br><span class="line">    ANativeWindow::dequeueBuffer = dequeueBuffer;  </span><br><span class="line">    ANativeWindow::lockBuffer = lockBuffer;  </span><br><span class="line">    ANativeWindow::queueBuffer = queueBuffer;  </span><br><span class="line">    ANativeWindow::query = query;  </span><br><span class="line">    ANativeWindow::perform = perform;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>FrameBufferNativeWindow 的构造函数主要做了以下工作：</p>
+<ol>
+<li>加载 Gralloc 模块，分别打开 fb 和 gralloc 设备</li>
+<li>根据 fb 设备描述来初始化 FrameBufferNativeWindow，包括申请缓冲区及初始化本地窗口属性值</li>
+<li>根据 FrameBufferNativeWindow 的实现来填充 ANativeWindow 中的”协议”</li>
+</ol>
+<p>可以看到帧缓冲区的数量为 mNumBuffers，FrameBufferNativeWindow 对应的是 1 个真实的物理屏幕，那为什么要准备多个 buffer 呢？这就是所谓的双缓冲/多缓冲技术，至少 2 个buffer，一个为 screen-buffer（用户直接看到的东西），一个为 off-screen-buffer（即将呈现给用户的东西），通过 swap buffer 交替显示，避免屏幕撕裂现象，以保证用户任何时候看到的都是完整的画面。</p>
+<p>再来看 FrameBufferNativeWindow 中另一个重要的 dequeueBuffer 函数，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> FramebufferNativeWindow::dequeueBuffer(ANativeWindow* window,</span><br><span class="line">        ANativeWindowBuffer** buffer)&#123;</span><br><span class="line">    <span class="comment">//将 ANativeWindow 强转为 FramebufferNativeWindow</span></span><br><span class="line">    FramebufferNativeWindow* <span class="keyword">self</span> = getSelf(window);</span><br><span class="line">    Mutex::Autolock _l(<span class="keyword">self</span>-&gt;mutex); <span class="comment">//函数执行结束后自动释放锁</span></span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//计算 mBufferHead，超出 mNumBuffers 时重指向 0 循环</span></span><br><span class="line">    <span class="keyword">int</span> index = <span class="keyword">self</span>-&gt;mBufferHead++;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">self</span>-&gt;mBufferHead &gt;= <span class="keyword">self</span>-&gt;mNumBuffers)</span><br><span class="line">        <span class="keyword">self</span>-&gt;mBufferHead = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">    <span class="comment">//如果当前没有空闲的 buffer，即 mNumFreeBuffers = 0，则睡眠等待 buffer 的释放</span></span><br><span class="line">    <span class="keyword">while</span> (!<span class="keyword">self</span>-&gt;mNumFreeBuffers) &#123;</span><br><span class="line">        <span class="keyword">self</span>-&gt;mCondition.wait(<span class="keyword">self</span>-&gt;mutex);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 存在了空闲 buffer 线程被唤醒，由于此时要申请一块 buffer，因此空闲 buffer 数减 1</span></span><br><span class="line">    <span class="keyword">self</span>-&gt;mNumFreeBuffers--;</span><br><span class="line">    <span class="comment">// 保存当前申请的 buffer 在缓冲区数组中的索引位置</span></span><br><span class="line">    <span class="keyword">self</span>-&gt;mCurrentBufferIndex = index;</span><br><span class="line">    <span class="comment">// 得到 buffer 数组中的 NativeBuffer 对象指针</span></span><br><span class="line">    *buffer = <span class="keyword">self</span>-&gt;buffers[index].get();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>dequeueBuffer 函数就是从 FramebufferNativeWindow 创建的缓冲区队列中取出一块空闲可用的 buffer，如果当前缓冲区队列中没有空闲的 buffer，则当前线程阻塞等待，等待其他线程释放图形缓冲区。</p>
+<p>mNumFreeBuffers 用来描述可用的空闲 buffer 个数，mBufferHead 指向下一次申请的图形 buffer 的位置。由于是循环利用缓冲区，所以如果 mBufferHead 的值超过 mNumBuffers，就需要置 0。</p>
+<p>再来看与之对应的 queueBuffer 函数：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> FramebufferNativeWindow::queueBuffer(ANativeWindow* window, </span><br><span class="line">                    ANativeWindowBuffer* buffer)&#123;</span><br><span class="line">    FramebufferNativeWindow* <span class="keyword">self</span> = getSelf(window);</span><br><span class="line">    Mutex::Autolock _l(<span class="keyword">self</span>-&gt;mutex);</span><br><span class="line">    framebuffer_device_t* fb = <span class="keyword">self</span>-&gt;fbDev;</span><br><span class="line">    buffer_handle_t handle = static_cast&lt;NativeBuffer*&gt;(buffer)-&gt;handle;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> index = <span class="keyword">self</span>-&gt;mCurrentBufferIndex;</span><br><span class="line">    <span class="comment">//调用 fb 设备的 post 函数将绘制好的 buffer 渲染到 framebuffer</span></span><br><span class="line">    <span class="keyword">int</span> res = fb-&gt;post(fb, handle);</span><br><span class="line">    <span class="keyword">self</span>-&gt;front = static_cast&lt;NativeBuffer*&gt;(buffer);</span><br><span class="line">    <span class="comment">//当前 buffer 已经渲染完，将当前 buffer 入列，从而可以被申请</span></span><br><span class="line">    <span class="keyword">self</span>-&gt;mNumFreeBuffers++;</span><br><span class="line">    <span class="comment">//唤醒申请 buffer 被阻塞等待的线程，表示已有空闲 buffer 可以被申请</span></span><br><span class="line">    <span class="keyword">self</span>-&gt;mCondition.broadcast();</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里将调用 fb 设备的 post 方法将 buffer 渲染到屏幕上，然后修改空闲 buffer 个数，最后唤醒正在申请图形 buffer 出列却因无空闲 buffer 而睡眠的线程。</p>
+<h2 id="FramebufferSurface"><a href="#FramebufferSurface" class="headerlink" title="FramebufferSurface"></a>FramebufferSurface</h2><p>Android 4.2 版本后不再使用 FramebufferNativeWindow，随着版本的升级，相关的代码一直在变动，从 FramebufferNativeWindow 到 SurfaceTextureClient，再到 FramebufferSurface… 变动历史可参考：<a href="https://www.cnblogs.com/bbqzsl/p/7826141.html" target="_blank" rel="noopener">https://www.cnblogs.com/bbqzsl/p/7826141.html</a> 。</p>
+<p>本以为 FramebufferSurface 已经稳定，可发现即使是 FramebufferSurface，在 7.0 和 9.0 版本上的实现也不相同。这里就不再纠结各版本的 API 变动，只对比下 FramebufferNativeWindow 与 FramebufferSurface 的送显逻辑。</p>
+<p>FramebufferNativeWindow 被 FramebufferSurface 代替后，原本 FramebufferNativeWindow 中的 fb 设备交由 HWComposer 管理，FramebufferSurface 中不再直接持有 fb 设备，而是通过 HWComposer 去控制屏幕显示。</p>
+<p>对上层来说，FramebufferNativeWindow 与 FramebufferSurface 可以看作真实的物理屏幕，它们都直接或间接的与 fb 设备交互。所谓的 “上层”，一般就是指 SurfaceFlinger，在较早版本，它可以这样通过 FramebufferNativeWindow 将内容送显：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Android 2.3.7 版本</span></span><br><span class="line"><span class="comment">//frameworks/base/services/surfaceflinger/SurfaceFlinger.cpp</span></span><br><span class="line"><span class="keyword">bool</span> SurfaceFlinger::handleBypassLayer()&#123;</span><br><span class="line">    sp&lt;Layer&gt; bypassLayer(mBypassLayer.promote());</span><br><span class="line">    <span class="keyword">if</span> (bypassLayer != <span class="number">0</span>) &#123;</span><br><span class="line">        sp&lt;GraphicBuffer&gt; buffer(bypassLayer-&gt;getBypassBuffer());</span><br><span class="line">        <span class="keyword">if</span> (buffer!=<span class="number">0</span> &amp;&amp; (buffer-&gt;usage &amp; GRALLOC_USAGE_HW_FB)) &#123;</span><br><span class="line">            <span class="keyword">const</span> DisplayHardware&amp; hw(graphicPlane(<span class="number">0</span>).displayHardware());</span><br><span class="line">            <span class="comment">//调用 DisplayHardware 送显</span></span><br><span class="line">            hw.postBypassBuffer(buffer-&gt;handle);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/base/services/surfaceflinger/DisplayHardware/DisplayHardware.cpp</span></span><br><span class="line"><span class="keyword">void</span> DisplayHardware::init(uint32_t dpy)&#123;</span><br><span class="line">    <span class="comment">// FramebufferNativeWindow 封装在 DisplayHardware 中</span></span><br><span class="line">    mNativeWindow = new FramebufferNativeWindow();</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">status_t DisplayHardware::postBypassBuffer(<span class="keyword">const</span> native_handle_t* handle) <span class="keyword">const</span>&#123;</span><br><span class="line">   <span class="comment">//获取 FramebufferNativeWindow 中打开的 fb 设备</span></span><br><span class="line">   framebuffer_device_t *fbDev = (framebuffer_device_t *)mNativeWindow-&gt;getDevice();</span><br><span class="line">   <span class="comment">//调用 fb 设备送显</span></span><br><span class="line">   <span class="keyword">return</span> fbDev-&gt;post(fbDev, handle);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到上面通过 FramebufferNativeWindow 送显的逻辑比较简单，调用链为： SurfaceFlinger -&gt; DisplayHardware -&gt; FramebufferNativeWindow -&gt; fb 设备 。</p>
+<p>下面来看 FramebufferSurface 的送显逻辑，它便没那么直观了：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Android 7.0</span></span><br><span class="line"><span class="comment">//frameworks/native/services/surfaceflinger/SurfaceFlinger.cpp</span></span><br><span class="line"><span class="keyword">void</span> SurfaceFlinger::doDisplayComposition(<span class="keyword">const</span> sp&lt;<span class="keyword">const</span> DisplayDevice&gt;&amp; hw,</span><br><span class="line">        <span class="keyword">const</span> Region&amp; inDirtyRegion)&#123;</span><br><span class="line">    <span class="comment">// ...省略 doComposeSurfaces 等合成工作</span></span><br><span class="line">    <span class="comment">// 合成后通过 swap buffers 送显</span></span><br><span class="line">    hw-&gt;swapBuffers(getHwComposer());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/services/surfaceflinger/DisplayHardware/FramebufferSurface.cpp</span></span><br><span class="line"><span class="keyword">void</span> FramebufferSurface::onFrameAvailable(<span class="keyword">const</span> BufferItem&amp; <span class="comment">/* item */</span>) &#123;</span><br><span class="line">    sp&lt;GraphicBuffer&gt; buf;</span><br><span class="line">    sp&lt;Fence&gt; acquireFence;</span><br><span class="line">    status_t err = nextBuffer(buf, acquireFence);</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">//调用 HWComposer</span></span><br><span class="line">    err = mHwc.fbPost(mDisplayType, acquireFence, buf);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//frameworks/native/services/surfaceflinger/DisplayHardware/HWComposer_hwc1.cpp</span></span><br><span class="line"><span class="keyword">int</span> HWComposer::fbPost(int32_t <span class="keyword">id</span>,</span><br><span class="line">        <span class="keyword">const</span> sp&lt;Fence&gt;&amp; acquireFence, <span class="keyword">const</span> sp&lt;GraphicBuffer&gt;&amp; buffer) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mHwc &amp;&amp; hwcHasApiVersion(mHwc, HWC_DEVICE_API_VERSION_1_1)) &#123;</span><br><span class="line">        <span class="keyword">return</span> setFramebufferTarget(<span class="keyword">id</span>, acquireFence, buffer);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        acquireFence-&gt;waitForever(<span class="string">"HWComposer::fbPost"</span>);</span><br><span class="line">        <span class="comment">//调用 fb 设备送显</span></span><br><span class="line">        <span class="keyword">return</span> mFbDev-&gt;post(mFbDev, buffer-&gt;handle);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>你可能会有疑问，swapBuffers 是怎么触发 FramebufferSurface 的 onFrameAvailable 回调的呢？它是通过生产者-消费者模式通知调用 onFrameAvailable 的，具体代码就不再列出，可以参考： <a href="https://www.cnblogs.com/ztguang/p/12645201.html" target="_blank" rel="noopener">https://www.cnblogs.com/ztguang/p/12645201.html</a> 。</p>
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>Android 手机屏幕内容是怎么显示的，底层的显示原理到底是怎样的？强烈的好奇心驱使，开始 GUI 系统的学习，跟预想的一样，它很复杂、有难度。但只要不停止，对 GUI 系统的认知就必然会越来越清晰。目前已大概学习了从 SurfaceFlinger 到物理屏幕的显示过程，后面继续由底而上，学习 SurfaceFlinger、Surface、Vsnyc、Choreographer 等，打通到 View 的 draw，相信就会有 “拨开云雾见天日” 的感觉了。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/38614e33/">http://yhaowa.gitee.io/38614e33/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/38614e33/">五月 17日 2020, 5:37:42 下午</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/38614e33/">June 26th 2020, 2:35:37 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/c74cb1a3/" title= "细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">
+                    <div class="prevTitle">细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#GUI-系统综述"><span class="toc-number">1.</span> <span class="toc-text">GUI 系统综述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#BufferQueue-与图像数据流"><span class="toc-number">2.</span> <span class="toc-text">BufferQueue 与图像数据流</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Gralloc"><span class="toc-number">3.</span> <span class="toc-text">Gralloc</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ANativeWindow"><span class="toc-number">4.</span> <span class="toc-text">ANativeWindow</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FrameBufferNativeWindow"><span class="toc-number">5.</span> <span class="toc-text">FrameBufferNativeWindow</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#FramebufferSurface"><span class="toc-number">6.</span> <span class="toc-text">FramebufferSurface</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最后"><span class="toc-number">7.</span> <span class="toc-text">最后</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 40
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/38614e33/" >细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/c74cb1a3/" >细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/23</span><a class="archive-post-title" href= "/a8eae25c/" >细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/a7541469/" >细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/06</span><a class="archive-post-title" href= "/2d9a78ad/" >细读《深入理解 Android 内核设计思想》（二）内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/29</span><a class="archive-post-title" href= "/af0c2fe0/" >焦虑与知识输出</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
+    
+        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
+    
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
+        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
+    
+        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="输出倒逼输入"><span class="iconfont-archer">&#xe606;</span>输出倒逼输入</span>
+    
+        <span class="sidebar-tag-name" data-tags="焦虑"><span class="iconfont-archer">&#xe606;</span>焦虑</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
+    
+        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
+    
+        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
+    
+        <span class="sidebar-category-name" data-categories="思考"><span class="iconfont-archer">&#xe60a;</span>思考</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Ahab"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

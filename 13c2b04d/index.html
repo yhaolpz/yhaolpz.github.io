@@ -28,12 +28,10 @@
 <meta property="og:site_name" content="Great hopes make great man">
 <meta property="og:description" content="ijkplayer 编译步骤：1.编译libijkffmpeg.so2.编译cpufeatures yuv_static ijkj4a静态库3.编译libijksdl.so4.编译android-ndk-profiler ijksoundtouch 静态库5.编译libijkplayer.so">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
-<meta property="og:updated_time" content="2020-04-07T15:34:42.798Z">
+<meta property="og:updated_time" content="2020-05-23T02:57:30.298Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 集成 ijkplayer 编译及替换 cmake 方式编译">
 <meta name="twitter:description" content="ijkplayer 编译步骤：1.编译libijkffmpeg.so2.编译cpufeatures yuv_static ijkj4a静态库3.编译libijksdl.so4.编译android-ndk-profiler ijksoundtouch 静态库5.编译libijkplayer.so">
-<meta name="twitter:image" content="http://yhaowa.gitee.io/img/qrcode.jpg">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
@@ -459,8 +457,7 @@ height:50vh;
 <p>编译选项记录：<br>-Wall 是打开警告开关<br>-O1 提供基础级别的优化<br>-O2 提供更加高级的代码优化,会占用更长的编译时间<br>-O3 提供最高级的代码优化<br>-ffast-math 对于这些以速度为重的应用，该选项定义了预处理器宏 <strong>FAST_MATH</strong>, 指示编译不必遵循 IEEE 和 ISO 的浮点运算标准<br>-fstrict-aliasing 在编译选项中加入-fstrict-aliasing的优势在于向编译器说明不同类型的lvalue将指向不相关的内存区域，编译器可以做大量的优化。<br>-fno-strict-aliasing：在编译内核的编译选项CFLAGS中，加入了-fno-strict-aliasing，向编译器表明不同类型的lvalue可能指向相关的内存区域，<br> 因此编译器不会做出一些极端的优化而造成不安全（内核编译中优化选项为-O2, -O2优化时默认是-fstrict-aliasing，因此需要显式的指出编译参数是-fno-strict-aliasing）<br>-Werror=strict-aliasing : <a href="http://clhjoe.blogspot.hk/2012/06/gcc-strict-aliasing.html" target="_blank" rel="noopener">http://clhjoe.blogspot.hk/2012/06/gcc-strict-aliasing.html</a><br>-Wno-psabi 可以防止ndk-build编译时出现的警告。<br>-Wall 选项意思是编译后显示所有警告。<br>-W 选项类似-Wall，会显示警告，但是只显示编译器认为会出现错误的警告。</p>
 <p>CMake 问题记录：<br>Q：编译 libyuv 库时报错：Error:(201) undefined reference to ‘I422ToYUY2Row_NEON’<br>A：编译选项 -DLIBYUV_NEON 改为 -LIBYUV_NEON，CMake 方式不同于 Android.mk 方式。<br>Q：相比与 Android.mk 方式，CMake 方式编译出的动态库体积很大，怎么办？<br>A：编译选项末尾加上 -s，形如： set(CMAKE_C_FLAGS_DEBUG “${cmake_c_flag_debug} -s”)，可去除冗余的二进制数据。</p>
 <p>待续…</p>
-<p><img src="../img/qrcode.jpg" alt></p>
-<center>关注公众号，Get 更多知识点</center>
+
     </article>
     <!-- license  -->
     
@@ -468,7 +465,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/13c2b04d/">http://yhaowa.gitee.io/13c2b04d/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/13c2b04d/">July 2nd 2018, 11:26:24 am</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/13c2b04d/">April 7th 2020, 11:34:42 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/13c2b04d/">May 23rd 2020, 10:57:30 am</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1161,9 +1158,20 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 39
+        Total : 40
         </div>
         <!-- search  -->
         
@@ -1176,6 +1184,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/38614e33/" >细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1278,12 +1291,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
         </li>
     
     
@@ -1293,17 +1306,17 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
         </li>
     
     
         <li class="archive-post-item">
             <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
         </li>
     
     
@@ -1404,9 +1417,11 @@ top:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
     
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
     
@@ -1414,29 +1429,29 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
     
-        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
-    
         <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
     
         <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
     
         <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
     
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
         <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
     
         <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
-    
-        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
     
         <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
     
         <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
     
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
         <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
     
         <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
-    
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
     
@@ -1453,8 +1468,6 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
         <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
-    
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1489,15 +1502,15 @@ jsonContent:
         <div class="sidebar-panel-categories">
     <div class="sidebar-categories-name">
     
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
         <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     
-        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
-    
         <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
     
         <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
     
