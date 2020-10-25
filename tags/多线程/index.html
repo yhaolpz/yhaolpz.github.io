@@ -22,7 +22,7 @@
     <meta name="description" content>
     <meta property="og:type" content="website">
 <meta property="og:title" content="Great hopes make great man">
-<meta property="og:url" content="http://yhaowa.gitee.io/tags/FFmpeg/index.html">
+<meta property="og:url" content="http://yhaowa.gitee.io/tags/多线程/index.html">
 <meta property="og:site_name" content="Great hopes make great man">
 <meta property="og:locale" content="zh-CN">
 <meta name="twitter:card" content="summary">
@@ -356,231 +356,41 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/798144ac/" >
+        <a class="abstract-title" href = "/d55eb6b/" >
             
-                <span>Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</span>
+                <span>Java 并发编程知识点总结</span>
         </a>
         <div class="abstract-content">
-            <p>在网上看到一篇关于 FFmpeg 的文章，讲的大概是基于 FFmpeg 实现了一个 App，支持视频拼图等强大炫酷的音视频编辑功能，其原理是在 Android 端集成 FFmpeg，通过命令方式调用 FFmpeg。</p>
-<p>尽管在 Android 端集成命令方式调用并不复杂，但一个具有强大炫酷音视频编辑功能的 App 是有价值的。由此启发，并决定敲下 Android 集成 FFmpeg 系列的第四篇，以一个实际应用的方式展现 FFmpeg 强大的音视频编辑功能。</p>
+            
+一、线程基础
+为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？
+
+
+可以把不同的执行内容解耦，全责分明
+某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程）
+继承 Thread 类的单继承特性会限制代码的扩展性
+
+
+线程是如何在 6 种状态之间转化的？
+
+
+线程的 6 种状态：New(新创建)、Runnable(可运行)、Blocked(被阻塞)、Waiting(等待)、Timed_waiting(计时等待)、Terminated(被终止)
+新创建线程处于 New 状态，调用 Thread#start 方法...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/16</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2020/10/07</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Java">Java</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "多线程">多线程</a>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/785f874e/" >
-            
-                <span>Android 端音频变声方案</span>
-        </a>
-        <div class="abstract-content">
-            <p>音频变声实质上是通过调整 PCM 数据的音调、节拍等属性，实现听感上的变化。如果是 mp3、aac 等压缩音频，则需提前解码成 PCM 数据，Android 端可以通过 MediaExtractor 及 MediaCodec 解码得到 PCM，但调整音调、节拍仅靠 Android api 就无能为力了，只能集成第三方库来实现，常见的音频处理库有 <a href="https://www.fmod.com" target="_blank" rel="noopener">Fmod</a> 、  <a href="http://www.surina.net/soundtouch/" target="_blank" rel="noopener">SoundTouch</a> 。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/01</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/13c2b04d/" >
-            
-                <span>Android 集成 ijkplayer 编译及替换 cmake 方式编译</span>
-        </a>
-        <div class="abstract-content">
-            <p>ijkplayer 编译步骤：<br>1.编译libijkffmpeg.so<br>2.编译cpufeatures yuv_static ijkj4a静态库<br>3.编译libijksdl.so<br>4.编译android-ndk-profiler ijksoundtouch 静态库<br>5.编译libijkplayer.so</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/02</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ijkplayer">ijkplayer</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/186751e8/" >
-            
-                <span>ijkplayer 源码分析（上）</span>
-        </a>
-        <div class="abstract-content">
-            <p>本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。</p>
-<p>ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/22</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ijkplayer">ijkplayer</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/8837781/" >
-            
-                <span>Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</span>
-        </a>
-        <div class="abstract-content">
-            <p>在以命令方式调用 FFmpeg 的时候，可能会执行一些比较耗时的任务，这时如果没有进度展示，用户可能会以为程序崩溃了，体验十分不好．能不能在以命令方式调用 FFmpeg 时实时获取执行进度呢？谷歌关键词 “Android FFmpeg 命令” 可以得到很多教程，但加上关键词 “进度”就没有相关文章了，看来以命令方式调用 FFmpeg 实时获取执行进度这个需求没有前人的肩膀可站，要开动自己的小脑筋了．</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/12/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/ddeb5551/" >
-            
-                <span>Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</span>
-        </a>
-        <div class="abstract-content">
-            <p>上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/09/22</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/e0b4d9fc/" >
-            
-                <span>Android 集成 FFmpeg (一) 基础知识及简单调用</span>
-        </a>
-        <div class="abstract-content">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/09/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "并发编程">并发编程</a>
     
 </div>
             

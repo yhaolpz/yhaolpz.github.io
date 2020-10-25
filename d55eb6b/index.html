@@ -20,19 +20,24 @@
     <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
     
     <meta name="description" content>
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Great hopes make great man">
-<meta property="og:url" content="http://yhaowa.gitee.io/tags/FFmpeg/index.html">
+    <meta name="description" content="一、线程基础 为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？   可以把不同的执行内容解耦，全责分明 某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程） 继承 Thread 类的单继承特性会限制代码的扩展性   线程是如何在 6 种状态之间转化的？   线程的 6 种状态：New(新创建)、Runnable(可运">
+<meta name="keywords" content="Java,多线程,并发编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 并发编程知识点总结">
+<meta property="og:url" content="http://yhaowa.gitee.io/d55eb6b/index.html">
 <meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="一、线程基础 为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？   可以把不同的执行内容解耦，全责分明 某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程） 继承 Thread 类的单继承特性会限制代码的扩展性   线程是如何在 6 种状态之间转化的？   线程的 6 种状态：New(新创建)、Runnable(可运">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-10-25T12:41:36.502Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Great hopes make great man">
+<meta name="twitter:title" content="Java 并发编程知识点总结">
+<meta name="twitter:description" content="一、线程基础 为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？   可以把不同的执行内容解耦，全责分明 某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程） 继承 Thread 类的单继承特性会限制代码的扩展性   线程是如何在 6 种状态之间转化的？   线程的 6 种状态：New(新创建)、Runnable(可运">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     
     <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
     
-    <title>Ahab&#39;s Studio</title>
+    <title>Java 并发编程知识点总结 · Ahab&#39;s Studio</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -213,12 +218,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Java 并发编程知识点总结</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>Ahab's Studio.</a>
 </header>
@@ -230,24 +246,78 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            Java 并发编程知识点总结
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Java">Java</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "多线程">多线程</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "并发编程">并发编程</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">5.3k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/10/07</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -348,247 +418,426 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/798144ac/" >
-            
-                <span>Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</span>
-        </a>
-        <div class="abstract-content">
-            <p>在网上看到一篇关于 FFmpeg 的文章，讲的大概是基于 FFmpeg 实现了一个 App，支持视频拼图等强大炫酷的音视频编辑功能，其原理是在 Android 端集成 FFmpeg，通过命令方式调用 FFmpeg。</p>
-<p>尽管在 Android 端集成命令方式调用并不复杂，但一个具有强大炫酷音视频编辑功能的 App 是有价值的。由此启发，并决定敲下 Android 集成 FFmpeg 系列的第四篇，以一个实际应用的方式展现 FFmpeg 强大的音视频编辑功能。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/06/16</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <a id="more"></a>
+<h2 id="一、线程基础"><a href="#一、线程基础" class="headerlink" title="一、线程基础"></a>一、线程基础</h2><ol>
+<li>为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？</li>
+</ol>
+<ul>
+<li>可以把不同的执行内容解耦，全责分明</li>
+<li>某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程）</li>
+<li>继承 Thread 类的单继承特性会限制代码的扩展性</li>
+</ul>
+<ol start="2">
+<li>线程是如何在 6 种状态之间转化的？</li>
+</ol>
+<ul>
+<li>线程的 6 种状态：New(新创建)、Runnable(可运行)、Blocked(被阻塞)、Waiting(等待)、Timed_waiting(计时等待)、Terminated(被终止)</li>
+<li>新创建线程处于 New 状态，调用 Thread#start 方法后进入 Runnable 状态，Runnable 对应操作系统的 Running 和 Ready 状态，代表可能正在被执行或正在等待 CPU 分配资源</li>
+<li>当要进入 synchronized 方法或代码块时却没抢到 monitor 锁，会由 Runnable 状态进入 Blocked 状态，获取到 monitor 锁后会进入 Runnable 状态</li>
+<li>执行 Object#wait 或 LockSupport#park 会进入 Waiting 状态；执行带 timeOut 参数的 Object#wait 或 LockSupport#park 会进入 Timed_waiting 状态</li>
+<li>调用 LockSupport#unpark 、被中断或超时时间到会由 Waiting/Timed_waiting 状态进入 Runnable 状态</li>
+<li>被 notify/notifyAll 唤醒，会由 Waiting/Timed_waiting 状态进入 Blocked 状态</li>
+<li>run 方法执行完或异常终止会进入 Terminated 状态</li>
+<li>一个线程只会经历一次 New 和 Terminated 状态，中间状态才可以相互转换</li>
+</ul>
+<ol start="3">
+<li>如何理解锁池和等待池？</li>
+</ol>
+<ul>
+<li>如果某对象的锁已被一个线程占有，其他线程调用此对象的 sychronized 代码块时无法获取到锁，就会进入此对象的锁池，锁池中的线程会竞争该对象的锁</li>
+<li>如果一个线程调用了 Object#wait 方法，此线程就会进入此对象的等待池，等待池中的线程不会去竞争该对象的锁</li>
+<li>调用 notify 方法会随机唤醒一个等待池中的线程，并移到锁池中；调用 notifyAll 方法会唤醒等待池中所有的线程，并全移到锁池中</li>
+</ul>
+<ol start="4">
+<li>为什么 Object#wait 要写在 while(condition) 循环中？</li>
+</ol>
+<ul>
+<li>规避虚假唤醒导致的问题，虚假唤醒是指线程可能在未调用 notify/notifyAll、未被中断和等待超时的情况下被意外唤醒，所以 wait 要写在 while(condition) 循环中，保证在发生虚假唤醒时程序的正确性</li>
+</ul>
+<ol start="5">
+<li>如何正确的中断线程？</li>
+</ol>
+<ul>
+<li>调用 Thread#interrupt 方法给线程发送中断信号，线程中通过 Thread#isInterrupted 方法判断是否被中断，若被中断则停止当前执行任务</li>
+<li>线程中通过 Thread#sleep 或 BlockingQueue#put 等方法休眠时，若被中断则会抛出 InterruptedException 异常并清除中断标记位，所以要捕获处理此异常，或再调用 Thread#interrupt 标记中断使后续代码能处理中断</li>
+<li>使用 volatile 标记位变量中断线程是错误的，因为不能中断 Thread#sleep 或 BlockingQueue#put 等方法进入的休眠状态</li>
+</ul>
+<ol start="6">
+<li>Object#wait 和 Thread#sleep 方法的异同？</li>
+</ol>
+<ul>
+<li>相同点：都可以让线程阻塞；都可以响应线程中断</li>
+<li>区别：wait 方法必须写在 synchronized 代码块；wait 方法会主动释放 monitor 锁；sleep 方法必须传入 timeout 参数</li>
+</ul>
+<h2 id="二、线程池"><a href="#二、线程池" class="headerlink" title="二、线程池"></a>二、线程池</h2><ol>
+<li>使用线程池相比手动创建线程有什么优点？</li>
+</ol>
+<ul>
+<li>频繁创建线程系统开销大，而线程池可用一些固定的工作线程反复执行任务，避免频繁创建线程</li>
+<li>过多线程会占用过多内存，而线程池可以控制线程的总数量，避免占用过多内存资源</li>
+<li>线程池可更方便的统筹管理任务执行和线程，避免手动创建线程难管理、难统计的问题</li>
+</ul>
+<ol start="2">
+<li>线程池各个参数的含义？</li>
+</ol>
+<ul>
+<li>corePoolSize 核心线程数：常驻的工作线程，初始化时核心线程数默认为 0，创建后不会被销毁</li>
+<li>maximumPoolSize 最大线程数：当 workQueue 存放满时，线程池会进一步创建线程，可创建的最多数量为 maximumPoolSize</li>
+<li>keepAliveTime/TimeUnit 空闲线程存活时间：当大于 corePoolSize 部分的线程空闲超过存活时间后，会被回收</li>
+<li>threadFactory 用来创建线程的线程工厂：方便给线程自定义命名以及线程优先级</li>
+<li>workQueue 存放任务的阻塞队列：当线程数超过 corePoolSize 后，会将任务存放到 workQueue 中等待执行</li>
+<li>handler 任务被拒绝时的处理：当线程池已 shutdown 关闭或线程数达到 maximumPoolSize 时新提交的任务会被拒绝</li>
+<li>注意：当 workQueue 为无界队列时， maximumPoolSize 参数其实不会被用到，是没意义的</li>
+</ul>
+<ol start="3">
+<li>线程池的四种拒绝策略？</li>
+</ol>
+<ul>
+<li>AbortPolicy：抛出 RejectedExecutionException 异常，可根据业务进行重试等操作</li>
+<li>DiscardPolicy：直接丢弃新提交的任务，不做其他反馈，有任务丢失风险</li>
+<li>DiscardOldestPolicy：如果线程池未关闭，就丢弃队列中存活时间最长的任务，但不做其他反馈，有任务丢失风险</li>
+<li>CallerRunsPolicy：如果线程池未关闭，就在提交任务的线程直接开始执行任务，任务不会被丢失，由于阻塞了提交任务的线程，相当于提供了负反馈</li>
+</ul>
+<ol start="4">
+<li>有哪 6 种常见的线程池？</li>
+</ol>
+<ul>
+<li>FixedThreadPool：固定线程数的线程池，核心线程数与最大线程数相同，任务存放队列为无界阻塞队列（LinkedBlockingQueue）</li>
+<li>CachedThreadPool：可缓存线程池，核心线程数为 0，最大线程数为 Integer.MAX_VALUE，任务存放队列为中转阻塞队列（SynchronousQueue）</li>
+<li>SingleThreadExecutor：单工作线程线程池，核心线程数为 1，任务存放队列为无界阻塞队列（LinkedBlockingQueue）</li>
+<li>ScheduledThreadPool：定时或周期性任务线程池，任务存放队列为无界优先级阻塞队列（DelayedWorkQueue）</li>
+<li>SingleThreadScheduledExecutor：定时或周期性任务单工作线程线程池，核心线程数为 1，任务存放队列为无界优先级阻塞队列（DelayedWorkQueue）</li>
+<li>ForkJoinPool：适合执行可以产生并行子任务的任务，可方便的分裂(Fork)成子任务执行并汇总(Join)结果，任务存放队列为 WorkQueue，除了公用队列外，每个线程还有一个独立的队列来存放任务</li>
+</ul>
+<ol start="5">
+<li>线程池常用的阻塞队列有哪些？</li>
+</ol>
+<ul>
+<li>LinkedBlockingQueue 无界阻塞队列：任务队列容量为 Integer.MAX_VALUE，永远不会放满，所以对应线程池只会创建核心线程数量的工作线程，而最大线程数参数对线程池来说没有意义，因为并不会触发生成多于核心线程数的线程</li>
+<li>SynchronousQueue 中转阻塞队列：不存放任务，一旦有任务被提交就直接转发给线程或者创建新线程来执行</li>
+<li>DelayedWorkQueue 无界优先级阻塞队列：内部采用堆数据结构，按照延迟时间长短对任务进行排序，ScheduledThreadPool 和 SingleThreadScheduledExecutor 选择 DelayedWorkQueue，正是因为它们本身是基于时间执行任务的，而延迟队列正好可以把任务按时间进行排序，方便任务的执行</li>
+<li>ArrayBlockingQueue 有界队列：任务队列容量可配置，结合最大线程数与拒绝策略可有效的规避资源被耗尽的风险</li>
+</ul>
+<ol start="6">
+<li>为什么不建议使用常见的线程池？</li>
+</ol>
+<ul>
+<li>FixedThreadPool 和 SingleThreadExecutor 任务存放队列为无界队列（LinkedBlockingQueue），任务过多时会占用大量内存并导致 OOM</li>
+<li>CachedThreadPool 虽然不存储任务，但线程数没有上限，任务过多时会创建非常多的线程，导致超过线程数量上限或 OOM</li>
+<li>ScheduledThreadPool 和 SingleThreadScheduledExecutor 任务存放队列为无界队列（DelayedWorkQueue），任务过多时会占用大量内存并导致 OOM</li>
+<li>手动创建可以根据业务选择合适的线程数量，制定拒绝策略，避免资源耗尽的风险</li>
+</ul>
+<ol start="7">
+<li>合适的线程数量是多少？</li>
+</ol>
+<ul>
+<li>CPU 密集型任务无需设置过多线程数，因为此类任务需占用大量 CPU 资源，设置过多线程数会导致多个线程都去抢占 CPU 资源，产生不必要的上下文切换，从而造成整体性能下降</li>
+<li>IO 密集型任务可设置较多线程数，因为此类任务 IO 操作较耗时，但不会占用太多 CPU 资源，设置过少线程数会导致 CPU 资源空闲，导致 CPU 资源的浪费</li>
+<li>所以 CPU 耗时所占比例越高，就需要越少的线程；IO 耗时所占比例越高，就需要越多的线程</li>
+<li>通用公式：线程数 = CPU 核心数 * (1 + IO 耗时/CPU 耗时)</li>
+<li>例如 8 核机器执行一个 CPU 耗时 5ms，DB 耗时 100ms 的任务，线程数 = 8*(1+100/5) = 168 个</li>
+<li>QPS(req pre second) 即一秒可执行次数，上例中 QPS = 168<em>(1000/105) = 1600 。若 DB 最大 QPS 限制为 1000，则按比例减少线程数为 168</em>(1000/1600) = 105 个</li>
+<li>如果不同任务的 CPU 耗时和 IO 耗时各不相同，可对所有任务的 CPU 耗时和 IO 耗时求个平均值进行计算；</li>
+</ul>
+<ol start="8">
+<li>如何正确的关闭线程池？</li>
+</ol>
+<ul>
+<li>shutdown()：调用后会在执行完正在执行任务和队列中等待任务后才彻底关闭，并会根据拒绝策略拒绝后续新提交的任务</li>
+<li>shutdownNow()：调用后会给正在执行任务线程发送中断信号，并将任务队列中等待的任务转移到一个 List 中返回，后续会根据拒绝策略拒绝新提交的任务</li>
+<li>isShutdown()：判断是否开始关闭线程池，即是否调用了 shutdown() 或 shutdownNow() 方法</li>
+<li>isTerminated()：判断线程池是否真正终止，即线程池已关闭且所有剩余的任务都执行完了</li>
+<li>awaitTermination()：阻塞一段时间等待线程池终止，返回 true 代表线程池真正终止否则为等待超时</li>
+</ul>
+<ol start="9">
+<li>线程池线程复用的原理？</li>
+</ol>
+<ul>
+<li>线程池将线程和任务解耦，一个线程可以从任务队列中获取多个任务执行</li>
+<li>关键类为 ThreadPoolExecutor 内部的 Worker 类，对应于一个线程，其内部会从任务队列中获取多个任务执行</li>
+</ul>
+<h2 id="三、各种各样的锁"><a href="#三、各种各样的锁" class="headerlink" title="三、各种各样的锁"></a>三、各种各样的锁</h2><ol>
+<li>悲观锁/乐观锁</li>
+</ol>
+<ul>
+<li>悲观锁指在操作同步资源前必须先拿到锁；而乐观锁利用 CAS 理念，在不独占资源的情况下对资源进行修改</li>
+<li>悲观锁适合用于并发写入多、临界区代码复杂、竞争激烈等场景，这种场景下悲观锁可以避免大量的无用的反复尝试等消耗</li>
+<li>乐观锁适用于大部分是读取，少部分是修改的场景，也适合虽然读写都很多，但是并发并不激烈的场景。在这些场景下，乐观锁不加锁的特点能让性能大幅提高</li>
+</ul>
+<ol start="2">
+<li>可重入锁/非可重入</li>
+</ol>
+<ul>
+<li>可重入是如果指线程已经持有锁，则能在不释放这把锁的情况下，再次获取这把锁</li>
+<li>Java 中的 ReentrantLock 和 synchronized 都是可重入锁</li>
+</ul>
+<ol start="3">
+<li>共享锁/独占锁</li>
+</ol>
+<ul>
+<li>共享锁指同一把锁可以同时被多个线程获取，而独占锁指一把锁只能同时被一个线程获取</li>
+<li>ReentrantReadWriteLock 的读锁就是共享锁，可以同时被多个线程读取；写锁则为独占锁，同时只能被一个线程写</li>
+</ul>
+<ol start="4">
+<li>自旋锁/非自旋锁</li>
+</ol>
+<ul>
+<li>自旋是指拿不到锁时不陷入阻塞，而是循环尝试获取锁</li>
+<li>自旋锁适用于并发度不是特别高的场景，以及临界区比较短小的情况，这样我们可以利用避免线程切换来提高效率</li>
+<li>如果临界区很大，线程一旦拿到锁，很久才会释放的话，那就不合适用自旋锁，因为自旋会一直占用 CPU 却无法拿到锁，白白消耗资源</li>
+</ul>
+<ol start="5">
+<li>公平锁/非公平锁</li>
+</ol>
+<ul>
+<li>公平锁是指各个线程公平平等，排队获取锁时等待的时间越长就会优先获取到锁，</li>
+<li>非公平锁是指线程可能存在插队现象，比如一个阻塞等待中的线程 A 和新来的线程 B 同时竞争一把锁时线程 B 会插队先获取到锁</li>
+<li>非公平锁整体执行速度为什么能更快：如上例，唤醒线程是需要耗时的，与其漫长的等待唤醒 A，不如直接先让 B 插队执行，这样可以跳过 B 阻塞、唤醒的状态切换</li>
+<li>非公平锁的优缺点：整体执行速度更快、吞吐量更大，但可能产生线程饥饿导致某个线程长时间得不到执行</li>
+</ul>
+<ol start="6">
+<li>可中断锁/不可中断锁</li>
+</ol>
+<ul>
+<li>可中断指等待获取锁时可被中断从而取消等待；synchronized 是不可中断锁</li>
+</ul>
+<ol start="7">
+<li>偏向锁/轻量级锁/重量级锁</li>
+</ol>
+<ul>
+<li>特指 synchronized 锁的几种状态</li>
+<li>锁的升级路径：无锁-&gt;偏向锁-&gt;轻量级锁-&gt;重量级锁</li>
+<li>偏向锁：当一个线程第一次尝试获取某个对象的锁时，仅记录这个线程为偏向锁的拥有者，后续获取锁时如果是同个线程，就可以直接获取锁，开销很小，当多线程发生实际竞争时会升级为轻量级锁</li>
+<li>轻量级锁：线程会通过自旋的方式尝试获取锁（自旋锁），不会阻塞，开销较小，当锁竞争时间较长时会膨胀为重量级锁</li>
+<li>重量级锁：利用操作系统同步机制实现，会让线程进入阻塞状态，开销较大</li>
+</ul>
+<ol start="8">
+<li>JVM 对 synchronized 锁做了哪些优化？</li>
+</ol>
+<ul>
+<li>锁的升级：无锁-&gt;偏向锁-&gt;轻量级锁-&gt;重量级锁</li>
+<li>锁消除：虚拟机编译时，对一些代码上使用 synchronized 同步，但是被检测到不可能存在共享数据竞争的锁进行削除</li>
+<li>锁粗化：把不间断、高频锁的请求合并成一个请求，以降低短时间内大量锁请求、同步、释放带来的性能损耗</li>
+</ul>
+<h2 id="四、并发容器"><a href="#四、并发容器" class="headerlink" title="四、并发容器"></a>四、并发容器</h2><ol>
+<li>Vector/HashTab</li>
+</ol>
+<ul>
+<li>内部使用 synchronized 方法级别的锁保证线程安全，锁的粒度比较大</li>
+<li>在并发量高的时候很容易发生竞争，并发效率比较低</li>
+</ul>
+<ol start="2">
+<li>ConcurrentHashMap</li>
+</ol>
+<ul>
+<li>Java7 中基于普通的 HashMap 数组+链表结构，采用分段锁的机制</li>
+<li>Java8 中基于数组+链表+红黑树结构，采用 CAS + synchronized 同步机制</li>
+<li>红黑树相比链表可以提高查找效率，复杂度为 O(log(n))</li>
+<li>为什么链表长度大于 8 时转换为红黑树？如果 hashCode 分布离散良好、链表符合泊松分布，那链表长度为 8 的概率小于千万分之一，红黑树更多的是一种保底策略，用来保证 hash 算法异常等极端情况下的查询效率</li>
+<li>为什么不采取仅数组+红黑树的结构？红黑树节点相比链表占用内存约大一倍，而链表较短时查找也很快，所以优先采取链表结构</li>
+</ul>
+<ol start="3">
+<li>CopyOnWriteArrayList</li>
+</ol>
+<ul>
+<li>基于 CopyOnWrite 机制，写入时会先创建一份副本，写完副本后直接替换原内容</li>
+<li>优点：比读写锁更近一步，只需写写互斥，读取不用加锁，对于读多写少的场景可以大幅提升性能</li>
+<li>缺点：写入时存在创建副本开销及副本所多占的内存，读写不互斥可能会导致数据无法及时保持同步</li>
+</ul>
+<h2 id="五、原子类"><a href="#五、原子类" class="headerlink" title="五、原子类"></a>五、原子类</h2><ol>
+<li>基本类型原子类</li>
+</ol>
+<ul>
+<li>包括 AtomicInteger、AtomicLong、AtomicBoolean</li>
+<li>提供了基本类型的 getAndSet、compareAndSet 等原子操作</li>
+<li>底层基于 Unsafe#compareAndSwapInt、Unsafe#compareAndSwapLong 等实现</li>
+</ul>
+<ol start="2">
+<li>数组类型原子类</li>
+</ol>
+<ul>
+<li>包括 AtomicIntegerArray、AtomicLongArray、AtomicReferenceArray</li>
+<li>数组里的元素都可以保证其原子性，相当于把基本类型原子类聚合起来，组合成一个数组</li>
+</ul>
+<ol start="3">
+<li>引用类型原子类</li>
+</ol>
+<ul>
+<li>包括 AtomicReference、AtomicStampedReference、AtomicMarkableReference</li>
+<li>用于让一个对象保证原子性，底层基于 Unsafe#compareAndSwapObject 等实现</li>
+<li>AtomicStampedReference 是对 AtomicReference 的升级，在此基础上加了时间戳，用于解决 CAS 的 ABA 问题</li>
+</ul>
+<ol start="4">
+<li>升级类型原子类</li>
+</ol>
+<ul>
+<li>包括 AtomicIntegerFieldUpdater、AtomicLongFieldUpdater、AtomicReferenceFieldUpdater</li>
+<li>对于非原子的基本或引用类型，在不改变其原类型的前提下，提供原子更新的能力</li>
+<li>适用于由于历史原因改动成本太大或极少情况用到原子性的场景</li>
+</ul>
+<ol start="5">
+<li>累加器</li>
+</ol>
+<ul>
+<li>包括 LongAdder、DoubleAdder</li>
+<li>相比于基本类型原子类，累加器没有 compareAndSwap、addAndGet 等方法，功能较少</li>
+<li>设计原理：将 value 分散到一个数组中，不同线程只针对自己命中的槽位进行修改，减小高并发场景的线程竞争概率，类似于 ConcurrentHashMap 的分段锁思想</li>
+<li>可解决高并发场景 AtomicLong 的过多自旋问题</li>
+</ul>
+<ol start="6">
+<li>积累器</li>
+</ol>
+<ul>
+<li>包括 LongAccumulator、DoubleAccumulator</li>
+<li>是 LongAdder、DoubleAdder 的功能增强版，提供了自定义的函数操作</li>
+</ul>
+<ol start="7">
+<li>原子类与锁</li>
+</ol>
+<ul>
+<li>都是为了保证并发场景下线程安全</li>
+<li>原子类粒度更细，竞争范围为变量级别</li>
+<li>原子类效率更高，底层采取 CAS 操作，不会阻塞线程</li>
+<li>原子类不适用于高并发场景，因为无限循环的 CAS 操作会占用 CPU</li>
+</ul>
+<ol start="8">
+<li>原子类与 volatile</li>
+</ol>
+<ul>
+<li>volatile 具有可见性和有序性，但不具备原子性</li>
+<li>volatile 修饰 boolean 类型通常保证线程安全，因为赋值操作具有原子性</li>
+<li>volatile 修饰 int 类型通常无法保证线程安全，因为 int 类型的计算操作需要读取、修改、赋值回去，不是原子操作，这时需要使用原子类</li>
+</ul>
+<h2 id="六、Java-内存模型"><a href="#六、Java-内存模型" class="headerlink" title="六、Java 内存模型"></a>六、Java 内存模型</h2><ol>
+<li>内存结构与内存模型</li>
+</ol>
+<ul>
+<li>内存结构描述了 JVM 运行时内存区域结构，包括：堆、方法区、虚拟机栈、本地方法栈、程序计数器、运行时常量池</li>
+<li>内存模型（JMM）是和多线程相关的一组规范，与 Java 并发编程有关</li>
+</ul>
+<ol start="2">
+<li>主内存和工作内存</li>
+</ol>
+<ul>
+<li>CPU 有多级缓存，会存在数据不同步的情况，JMM 屏蔽了 CPU 缓存的底层细节，抽象为主内存和工作内存</li>
+<li>工作内存中存在一份主内存数据的副本，每个线程只能接触工作内存，无法直接操作主内存</li>
+</ul>
+<ol start="3">
+<li>内存可见性</li>
+</ol>
+<ul>
+<li>指一个线程修改了工作内存的值后，其他线程能正确感知到最新的值</li>
+<li>满足于 happens-before 关系的原则具备可见行，比如单线程、volatile、锁同步等规则</li>
+</ul>
+<ol start="4">
+<li>指令重排序</li>
+</ol>
+<ul>
+<li>编译器、JVM 或者 CPU 都有可能出于优化等目的，对于实际指令执行的顺序进行调整，这就是重排序</li>
+<li>volatile 具备禁止重排序的特性</li>
+<li>单例模式的双重检查模式需要添加 volatile 修饰，规避指令重排序导致的对象引用判断不为 null，但对象仍未初始化完的问题</li>
+</ul>
+<h2 id="七、线程协作"><a href="#七、线程协作" class="headerlink" title="七、线程协作"></a>七、线程协作</h2><ol>
+<li>Semaphore</li>
+</ol>
+<ul>
+<li>通过控制许可证的发放和归还实现统一时刻可执行某任务的最大线程数</li>
+<li>信号量可以被 FixedThreadPool 代替吗？不能，信号量具有可跨线程、跨线程池的特性，相比 FixedThreadPool 更灵活，更适合于限制并发访问的线程数</li>
+</ul>
+<ol start="2">
+<li>CountDownLatch</li>
+</ol>
+<ul>
+<li>用于并发流程控制，等到一个设定的数值达到之后，才能开始执行</li>
+<li>不可重用，若已完成倒数，则不能再重置使用</li>
+</ul>
+<ol start="3">
+<li>CyclicBarrier</li>
+</ol>
+<ul>
+<li>与 CountDownLatch 类似，都能阻塞一个或一组线程，直到某个预设的条件达成，再统一出发</li>
+<li>CountDownLatch 作用于一个线程，CountDownLatch 作用于事件</li>
+<li>可重用，若已达成条件，可重置继续使用</li>
+<li>可定义条件达成后的自定义执行动作</li>
+</ul>
+<h2 id="八、AQS-框架"><a href="#八、AQS-框架" class="headerlink" title="八、AQS 框架"></a>八、AQS 框架</h2><ol>
+<li>AQS 及存在的意义？</li>
+</ol>
+<ul>
+<li>AQS 是一个用于构建锁、同步器等线程协作工具类的框架，即 AbstractQueuedSynchronizer 类</li>
+<li>ReentrantLock、Semaphore、CountDownLatch 等工具类的工作都是类似的，AQS 就是这些类似工作提取出来的公共部分，比如阀门功能、调度线程等</li>
+<li>AQS 可以极大的减少上层工具类的开发工作量，也可以避免上层处理不当导致的线程安全问题</li>
+</ul>
+<ol start="2">
+<li>AQS 内部的关键原理</li>
+</ol>
+<ul>
+<li>state 值：AQS 中具有一个 int 类型的 state 变量，在不同工具类中代表不同的含义，比如在 Semaphore 中代表剩余许可证的数量；在 CountDownLatch 中代表需要倒数的数量；在 ReentrantLock 中代表锁的占有情况，0 代表没被占有，1 代表被占有，大于 1 代表同个线程重入了</li>
+<li>FIFO 队列：用于存储、管理等待的线程</li>
+<li>获取、释放锁：需工具类自行实现，比如 Semaphore#acquire、ReentrantLock#lock 为获取； Semaphore#release、ReentrantLock#unlock 为释放</li>
+</ul>
+
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/785f874e/" >
-            
-                <span>Android 端音频变声方案</span>
-        </a>
-        <div class="abstract-content">
-            <p>音频变声实质上是通过调整 PCM 数据的音调、节拍等属性，实现听感上的变化。如果是 mp3、aac 等压缩音频，则需提前解码成 PCM 数据，Android 端可以通过 MediaExtractor 及 MediaCodec 解码得到 PCM，但调整音调、节拍仅靠 Android api 就无能为力了，只能集成第三方库来实现，常见的音频处理库有 <a href="https://www.fmod.com" target="_blank" rel="noopener">Fmod</a> 、  <a href="http://www.surina.net/soundtouch/" target="_blank" rel="noopener">SoundTouch</a> 。</p>
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/d55eb6b/">http://yhaowa.gitee.io/d55eb6b/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/d55eb6b/">十月 7日 2020, 12:45:59 下午</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/d55eb6b/">October 25th 2020, 8:41:36 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/01</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/13c2b04d/" >
-            
-                <span>Android 集成 ijkplayer 编译及替换 cmake 方式编译</span>
-        </a>
-        <div class="abstract-content">
-            <p>ijkplayer 编译步骤：<br>1.编译libijkffmpeg.so<br>2.编译cpufeatures yuv_static ijkj4a静态库<br>3.编译libijksdl.so<br>4.编译android-ndk-profiler ijksoundtouch 静态库<br>5.编译libijkplayer.so</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/07/02</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ijkplayer">ijkplayer</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/186751e8/" >
-            
-                <span>ijkplayer 源码分析（上）</span>
-        </a>
-        <div class="abstract-content">
-            <p>本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。</p>
-<p>ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/06/22</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "ijkplayer">ijkplayer</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/8837781/" >
-            
-                <span>Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</span>
-        </a>
-        <div class="abstract-content">
-            <p>在以命令方式调用 FFmpeg 的时候，可能会执行一些比较耗时的任务，这时如果没有进度展示，用户可能会以为程序崩溃了，体验十分不好．能不能在以命令方式调用 FFmpeg 时实时获取执行进度呢？谷歌关键词 “Android FFmpeg 命令” 可以得到很多教程，但加上关键词 “进度”就没有相关文章了，看来以命令方式调用 FFmpeg 实时获取执行进度这个需求没有前人的肩膀可站，要开动自己的小脑筋了．</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/12/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/ddeb5551/" >
-            
-                <span>Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</span>
-        </a>
-        <div class="abstract-content">
-            <p>上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/09/22</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/e0b4d9fc/" >
-            
-                <span>Android 集成 FFmpeg (一) 基础知识及简单调用</span>
-        </a>
-        <div class="abstract-content">
-            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。</p>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2017/09/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "FFmpeg">FFmpeg</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "音视频">音视频</a>
-    
-</div>
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/a5b629de/" title= "Android 方法插桩 plugin 开发实践">
+                    <div class="prevTitle">Android 方法插桩 plugin 开发实践</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -677,6 +926,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、线程基础"><span class="toc-number">1.</span> <span class="toc-text">一、线程基础</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、线程池"><span class="toc-number">2.</span> <span class="toc-text">二、线程池</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、各种各样的锁"><span class="toc-number">3.</span> <span class="toc-text">三、各种各样的锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、并发容器"><span class="toc-number">4.</span> <span class="toc-text">四、并发容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、原子类"><span class="toc-number">5.</span> <span class="toc-text">五、原子类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、Java-内存模型"><span class="toc-number">6.</span> <span class="toc-text">六、Java 内存模型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、线程协作"><span class="toc-number">7.</span> <span class="toc-text">七、线程协作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#八、AQS-框架"><span class="toc-number">8.</span> <span class="toc-text">八、AQS 框架</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -1635,6 +1902,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>
