@@ -361,21 +361,17 @@
                 <span>Java 并发编程知识点总结</span>
         </a>
         <div class="abstract-content">
-            
-一、线程基础
-为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？
-
-
-可以把不同的执行内容解耦，全责分明
-某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程）
-继承 Thread 类的单继承特性会限制代码的扩展性
-
-
-线程是如何在 6 种状态之间转化的？
-
-
-线程的 6 种状态：New(新创建)、Runnable(可运行)、Blocked(被阻塞)、Waiting(等待)、Timed_waiting(计时等待)、Terminated(被终止)
-新创建线程处于 New 状态，调用 Thread#start 方法...
+            <p>目录：</p>
+<ol>
+<li>线程基础</li>
+<li>线程池</li>
+<li>各种各样的锁</li>
+<li>并发容器</li>
+<li>原子类</li>
+<li>Java 内存模型</li>
+<li>线程协作</li>
+<li>AQS 框架</li>
+</ol>
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
@@ -1301,8 +1297,6 @@
     
     
     
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 42
@@ -1583,15 +1577,15 @@
     
         <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
     
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
         <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
     
         <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
     
         <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
-    
-        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
-    
-        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
     
         <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
     
@@ -1658,9 +1652,9 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
     
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
-    
         <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
     
