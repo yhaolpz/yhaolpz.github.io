@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Great hopes make great man">
 <meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-05-23T02:57:30.302Z">
+<meta property="og:updated_time" content="2020-11-01T04:11:24.461Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
 <meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
@@ -289,7 +289,7 @@ height:50vh;
                 
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">4.6k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">4.5k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
@@ -581,8 +581,7 @@ height:50vh;
 <p>到此为止，由 SharedMemory 的 mapReadWrite 方法调用到 native mmap 函数，传递的关键参数是文件描述符，后续它将这样调用到 ashmem_mmap：<br><strong>1.</strong>通过 fd 可以找到所属设备，也就是 Ashmem 设备<br><strong>2.</strong>调用 Ashmem 设备的 ashmem_mmap 驱动函数</p>
 <p>这属于 mmap 函数的内部实现，调用链比较复杂就不再具体展开，关键代码如下：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(file)&#123;</span><br><span class="line">    ...</span><br><span class="line">    error = file-&gt;f_op-&gt;mmap(file,vma);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>file 代表文件或设备驱动，这里指的就是 Ashmem 设备，f_op 就是 Ashmem 设备驱动函数集，也就是上文提过的通过 misc_register 注册的 Ashmem 设备描述，至此便是 ashmem_mmap 驱动函数的调用过程。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>不知你是否会觉得本文介绍的虚拟内存无用，起初我有这样的想法，作者在原书中是这样描述的：本小节为读者完整地还原了操作系统虚拟地址的概念与转换原理，相信大家会在后续<strong> Android 各子系统的学习中受益匪浅</strong>。 这让我想到前几天看到的一个问题 “为什么要分析算法的时间复杂度和空间复杂度，是因为现在的计算机都是冯诺依曼结构吗？”，基于基础知识能有自己的理解和发散才是可贵的。</p>
-<p>所以谦虚一点别自以为是，对知识保持敬畏、渴望。技术知识的价值不在于是否会被用到，而在于它能否对你的技术体系建设有帮助，能否让你对本质有更清晰的认知，能否让你的上层建筑更牢固。如果只盯着自己的那一点墨水坐井观天，实力没随年龄上涨，迟早会迎来焦虑的中年危机，被行业淘汰。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作者在原书中是这样描述的：本小节为读者完整地还原了操作系统虚拟地址的概念与转换原理，相信大家会在后续<strong> Android 各子系统的学习中受益匪浅</strong>。 这让我想到前几天看到的一个问题 “为什么要分析算法的时间复杂度和空间复杂度，是因为现在的计算机都是冯诺依曼结构吗？”，基于基础知识能有自己的理解和发散才是可贵的。</p>
 <p>那本文涉及的知识点对上层建筑有什么帮助呢？比如学习了 Ashmem 后，再遇到跨进程传输大数据的问题，是不是更有底气了呢？比如学习了 Android 的 Low Memory Killer 机制原理后，才知道应用保活本质到底是在解决什么问题，相比只是知道从网上搜来的几个保活方案，是不是更加胸有成竹呢？比如在阅读本文涉及的源码时发现 mutex_lock 随处可见，是不是很庆幸自己掌握了本系列第一章中的 <strong>进程间同步机制</strong> 呢？</p>
 
     </article>
@@ -592,7 +591,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/2d9a78ad/">http://yhaowa.gitee.io/2d9a78ad/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">April 6th 2020, 2:18:55 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">May 23rd 2020, 10:57:30 am</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/2d9a78ad/">November 1st 2020, 12:11:24 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1318,9 +1317,34 @@ top:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 42
+        Total : 43
         </div>
         <!-- search  -->
         
@@ -1333,6 +1357,11 @@ top:50vh;
     
     <div class="archive-year"> 2020 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/52cb86d4/" >Android 消息屏障与异步消息</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1450,12 +1479,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
         </li>
     
     
@@ -1470,12 +1499,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
         </li>
     
     
@@ -1578,8 +1607,6 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
     
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
         <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
     
         <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
@@ -1592,17 +1619,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
     
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
         <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
     
         <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
-    
-        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
-    
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
-    
-        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
-    
-        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
     
         <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
     
@@ -1610,13 +1631,19 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
     
-        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
-    
-        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
-    
         <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
     
         <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
     
         <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
     
@@ -1629,6 +1656,8 @@ top:50vh;
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
     
         <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
@@ -1669,15 +1698,15 @@ jsonContent:
     
         <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
     
-        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
-    
         <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
     
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
     
         <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
     
         <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
     
         <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
     
