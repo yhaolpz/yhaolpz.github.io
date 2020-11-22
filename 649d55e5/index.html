@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="author" content="Ahab">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="Ahab">
+    
+    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
+    
+    <meta name="description" content>
+    <meta name="description" content="介绍一下 Handler 中的 epoll 机制？">
+<meta name="keywords" content="Android,Handler,epoll">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Handler epoll 机制分析">
+<meta property="og:url" content="http://yhaowa.gitee.io/649d55e5/index.html">
+<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:description" content="介绍一下 Handler 中的 epoll 机制？">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-11-22T16:07:14.197Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Handler epoll 机制分析">
+<meta name="twitter:description" content="介绍一下 Handler 中的 epoll 机制？">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
+    
+    <title>Android Handler epoll 机制分析 · Ahab&#39;s Studio</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href="/assets/android.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
+    <link rel="preload" href="/scripts/main.js" as="script">
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >Ahab&#39;s Studio.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Android Handler epoll 机制分析</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>Ahab's Studio.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Android Handler epoll 机制分析
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "Handler">Handler</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "epoll">epoll</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.6k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2020/11/15</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>介绍一下 Handler 中的 epoll 机制？ </p>
+<a id="more"></a>
+<h3 id="1-IO-多路复用"><a href="#1-IO-多路复用" class="headerlink" title="1. IO 多路复用"></a>1. IO 多路复用</h3><p>IO 多路复用是一种同步 IO 模型，实现一个线程可以监视多个文件句柄；一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；没有文件句柄就绪时会阻塞应用程序，交出 cpu。</p>
+<p>与多进程和多线程技术相比，IO 多路复用技术的最大优势是系统开销小，系统不必为每个 IO 操作都创建进程或线程，也不必维护这些进程或线程，从而大大减小了系统的开销。</p>
+<p>select、poll、epoll 就是 IO 多路复用三种实现方式。</p>
+<h3 id="2-select、poll、epoll-对比"><a href="#2-select、poll、epoll-对比" class="headerlink" title="2. select、poll、epoll 对比"></a>2. select、poll、epoll 对比</h3><p>:–:|:–:|:–:|:–:<br>|select|poll|epoll<br>最大连接数|1024|无上限|无上限<br>fd拷贝|每次调用 select 拷贝|每次调用 poll 拷贝|fd 首次调用 epoll_ctl 拷贝，每次调用 epoll_wait 不拷贝<br>工作效率|轮询：O(n)|轮询：O(n)|回调：O(1)</p>
+<h3 id="3-epoll-API"><a href="#3-epoll-API" class="headerlink" title="3. epoll API"></a>3. epoll API</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epoll_create(<span class="keyword">int</span> size);</span><br></pre></td></tr></table></figure>
+<p>创建 eventpoll 对象，并将 eventpoll 对象放到 epfd 对应的 file-&gt;private_data 上，返回一个 epfd，即 eventpoll 句柄。</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epoll_ctl(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, <span class="keyword">struct</span> epoll_event *event) <span class="comment">//返回值：成功 0；失败 -1</span></span><br></pre></td></tr></table></figure>
+<p>对一个 epfd 进行操作。op 表示要执行的操作，包括 EPOLL_CTL_ADD (添加)、EPOLL_CTL_DEL (删除)、EPOLL_CTL_MOD (修改)；fd 表示被监听的文件描述符；event 表示要被监听的事件，包括：</p>
+<ul>
+<li>EPOLLIN（表示被监听的fd有可以读的数据）</li>
+<li>EPOLLOUT（表示被监听的fd有可以写的数据）</li>
+<li>EPOLLPRI（表示有可读的紧急数据）</li>
+<li>EPOLLERR（对应的fd发生异常）</li>
+<li>EPOLLHUP（对应的fd被挂断）</li>
+<li>EPOLLET（设置EPOLL为边缘触发）</li>
+<li>EPOLLONESHOT（只监听一次）</li>
+</ul>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epoll_wait(<span class="keyword">int</span> epfd, <span class="keyword">struct</span> epoll_event *events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout) <span class="comment">//返回值：监听到的产生的事件数</span></span><br></pre></td></tr></table></figure>
+<p>等待 epfd 监听的 fd 所产生对应的事件。epfd 表示 epoll句柄；events 表示回传处理事件的数组；maxevents 表示每次能处理的最大事件数；timeout：等待 IO 的超时时间，-1 表示一直阻塞直到来 IO 被唤醒，大于 0 表示阻塞指定的时间后被唤醒</p>
+<h3 id="4-epoll-使用示例"><a href="#4-epoll-使用示例" class="headerlink" title="4. epoll 使用示例"></a>4. epoll 使用示例</h3><p>创建一个管道，使用 epoll 监听管道读端，然后进入阻塞：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> pipFd[<span class="number">2</span>];</span><br><span class="line">pipe(pipFd); <span class="comment">//打开管道</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> epoll_event event;</span><br><span class="line">event.data.fd = pipFd[<span class="number">0</span>]; <span class="comment">//设置为监听管道读端</span></span><br><span class="line">event.events = EPOLLIN | EPOLLET; <span class="comment">//设置参数，接收可以 read() 的通知</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> epfd = epoll_create(<span class="number">256</span>); <span class="comment">//创建 epoll 对象</span></span><br><span class="line"><span class="keyword">int</span> res = epoll_ctl(epfd, EPOLL_CTL_ADD, pipFd[<span class="number">0</span>], &amp;event); <span class="comment">//添加管道读端为要监听的文件描述符</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> epoll_event allEvs[<span class="number">256</span>];</span><br><span class="line"><span class="keyword">int</span> count = epoll_wait(epfd, allEvs, <span class="number">256</span>, <span class="number">5000</span>); <span class="comment">//当前线程进入阻塞，等待被唤醒</span></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++)&#123; <span class="comment">//被唤醒，处理触发唤醒文件描述符</span></span><br><span class="line">    <span class="keyword">if</span>(allEvs[i].data.fd == pipFd[<span class="number">0</span>] &amp;&amp; (allEvs[i].events &amp; EPOLLIN))&#123;</span><br><span class="line">        <span class="keyword">char</span> buffer[<span class="number">256</span>];</span><br><span class="line">        read(pipeFd, buffer, <span class="number">100</span>); <span class="comment">//接收到管道可以进行读的信号，开始读取</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在其他线程写入管道，通知唤醒：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">write(pipFd[<span class="number">1</span>], str,strlen(<span class="string">"hello"</span>));</span><br></pre></td></tr></table></figure></p>
+<h3 id="5-eventfd"><a href="#5-eventfd" class="headerlink" title="5. eventfd"></a>5. eventfd</h3><p>eventfd 是 Linux 系统中一个用来通知事件的文件描述符，基于内核向用户空间应用发送通知的机制，可以有效地被用来实现用户空间事件驱动的应用程序。</p>
+<p>简而言之：eventfd 就是用来触发事件通知，它只有一个系统调用接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">eventfd</span><span class="params">(unsigned <span class="keyword">int</span> initval, <span class="keyword">int</span> flags)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>表示打开一个 eventfd 文件并返回文件描述符，支持 epoll/poll/select 操作。</p>
+<p>之所以要在介绍 Handler native 源码前先介绍 eventfd，是因为在 Android 6.0 后，Handler 底层替换为 eventfd/epoll 实现。而 6.0 之前是由 pipe/epoll 实现的，就像上面的 epoll 使用示例那样。</p>
+<h3 id="6-Handler-中的-epoll-源码分析"><a href="#6-Handler-中的-epoll-源码分析" class="headerlink" title="6. Handler 中的 epoll 源码分析"></a>6. Handler 中的 epoll 源码分析</h3><p>主要分析 MessageQueue.java 中的三个 native 函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">nativeInit</span><span class="params">()</span></span>; <span class="comment">//返回 ptr</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">nativePollOnce</span><span class="params">(<span class="keyword">long</span> ptr, <span class="keyword">int</span> timeoutMillis)</span></span>; <span class="comment">//阻塞</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">nativeWake</span><span class="params">(<span class="keyword">long</span> ptr)</span></span>; <span class="comment">//唤醒</span></span><br></pre></td></tr></table></figure>
+<h5 id="nativeInit"><a href="#nativeInit" class="headerlink" title="nativeInit"></a>nativeInit</h5><p>首先来看 nativeInit 方法，nativeInit 在 MessageQueue 构造函数中被，其返回了一个底层对象的指针：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MessageQueue(<span class="keyword">boolean</span> quitAllowed) &#123;</span><br><span class="line">    mQuitAllowed = quitAllowed;</span><br><span class="line">    mPtr = nativeInit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应实现在 android_os_MessageQueue.cpp 中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> jlong <span class="title">android_os_MessageQueue_nativeInit</span><span class="params">(JNIEnv* env, jclass clazz)</span> </span>&#123;</span><br><span class="line">    NativeMessageQueue* nativeMessageQueue = <span class="keyword">new</span> NativeMessageQueue();</span><br><span class="line">    ...</span><br><span class="line">    <span class="keyword">return</span> reinterpret_cast&lt;jlong&gt;(nativeMessageQueue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可见 MessageQueue 对应的底层对象就是 NativeMessageQueue，而 NativeMessageQueue 初始化时会创建一个底层的 Looper 对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">NativeMessageQueue::NativeMessageQueue() :</span><br><span class="line">        mPollEnv(NULL), mPollObj(NULL), mExceptionObj(NULL) &#123;</span><br><span class="line">    mLooper = Looper::getForThread();</span><br><span class="line">    <span class="keyword">if</span> (mLooper == NULL) &#123;</span><br><span class="line">        mLooper = <span class="keyword">new</span> Looper(<span class="keyword">false</span>);</span><br><span class="line">        Looper::setForThread(mLooper);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如上代码，可以知道 Looper 对象是 ThreadLocal 类型。Looper 的构造函数如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Looper::Looper(bool allowNonCallbacks) :</span><br><span class="line">        mAllowNonCallbacks(allowNonCallbacks), ...&#123;</span><br><span class="line">    mWakeEventFd = eventfd(<span class="number">0</span>, EFD_NONBLOCK | EFD_CLOEXEC);</span><br><span class="line">    ...</span><br><span class="line">    rebuildEpollLocked();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先通过 eventfd 系统调用返回一个文件描述符，专门用于事件通知。接着来看 rebuildEpollLocked 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Looper::rebuildEpollLocked() &#123;</span><br><span class="line">    mEpollFd = epoll_create(EPOLL_SIZE_HINT);</span><br><span class="line">    struct epoll_event eventItem;</span><br><span class="line">    memset(&amp; eventItem, <span class="number">0</span>, sizeof(epoll_event));</span><br><span class="line">    eventItem.events = EPOLLIN;</span><br><span class="line">    eventItem.data.fd = mWakeEventFd;</span><br><span class="line">    <span class="keyword">int</span> result = epoll_ctl(mEpollFd, EPOLL_CTL_ADD, mWakeEventFd, &amp; eventItem); </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到我们已经熟悉的 epoll 操作了： 通过 epoll_create 创建 epoll 对象，然后调用 epoll_ctl 添加 mWakeEventFd 为要监听的文件描述符。</p>
+<h5 id="nativePollOnce"><a href="#nativePollOnce" class="headerlink" title="nativePollOnce"></a>nativePollOnce</h5><p>之前学习 Handler 机制时多次看到过 nativePollOnce 方法，也知道它会进入休眠，下面就来彻底搞懂它的原理。对应的底层调用同样是在 android_os_MessageQueue.cpp 中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">android_os_MessageQueue_nativePollOnce</span><span class="params">(JNIEnv* env, jobject obj,</span></span></span><br><span class="line"><span class="function"><span class="params">        jlong ptr, jint timeoutMillis)</span> </span>&#123;</span><br><span class="line">    NativeMessageQueue* nativeMessageQueue = reinterpret_cast&lt;NativeMessageQueue*&gt;(ptr);</span><br><span class="line">    nativeMessageQueue-&gt;pollOnce(env, obj, timeoutMillis);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> NativeMessageQueue::pollOnce(JNIEnv* env, jobject pollObj, <span class="keyword">int</span> timeoutMillis) &#123;</span><br><span class="line">    mLooper-&gt;pollOnce(timeoutMillis);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到实现同样是在 Looper.cpp 中，接着来看 Looper 的 pollOnce 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> Looper::pollOnce(<span class="keyword">int</span> timeoutMillis, <span class="keyword">int</span>* outFd, <span class="keyword">int</span>* outEvents, <span class="keyword">void</span>** outData) &#123;</span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">        ...</span><br><span class="line">        result = pollInner(timeoutMillis);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> Looper::pollInner(<span class="keyword">int</span> timeoutMillis) &#123;</span><br><span class="line">    ...</span><br><span class="line">    struct epoll_event eventItems[EPOLL_MAX_EVENTS];</span><br><span class="line">    <span class="keyword">int</span> eventCount = epoll_wait(mEpollFd, eventItems, EPOLL_MAX_EVENTS, timeoutMillis);</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>至此通过调用 epoll_wait 方法，当前线程进入休眠，等待被唤醒。</p>
+<h5 id="nativeWake"><a href="#nativeWake" class="headerlink" title="nativeWake"></a>nativeWake</h5><p>最后来看如何通过 nativeWake 唤醒线程，首先是 android_os_MessageQueue.cpp 中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">android_os_MessageQueue_nativeWake</span><span class="params">(JNIEnv* env, jclass clazz, jlong ptr)</span> </span>&#123;</span><br><span class="line">    NativeMessageQueue* nativeMessageQueue = reinterpret_cast&lt;NativeMessageQueue*&gt;(ptr);</span><br><span class="line">    nativeMessageQueue-&gt;wake();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> NativeMessageQueue::wake() &#123;</span><br><span class="line">    mLooper-&gt;wake();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>与 nativeInit、nativePollOnce 一样，最终实现都是在 Looper.cpp 中，Looper 的 wake 方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> Looper::wake() &#123;</span><br><span class="line">    uint64_t inc = <span class="number">1</span>;</span><br><span class="line">    ssize_t nWrite = TEMP_FAILURE_RETRY(write(mWakeEventFd, &amp;inc, sizeof(uint64_t)));</span><br><span class="line">    <span class="keyword">if</span> (nWrite != sizeof(uint64_t)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (errno != EAGAIN) &#123;</span><br><span class="line">            LOG_ALWAYS_FATAL(<span class="string">"Could not write wake signal to fd %d: %s"</span>,</span><br><span class="line">                    mWakeEventFd, strerror(errno));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中关键逻辑是对 mWakeEventFd 发起写入操作，从而唤醒 nativePollOnce 中通过 epoll_wait 进入的线程休眠。</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
+            <p>原文链接：<a href="http://yhaowa.gitee.io/649d55e5/">http://yhaowa.gitee.io/649d55e5/</a>
+            <p>发表日期：<a href="http://yhaowa.gitee.io/649d55e5/">十一月 15日 2020, 12:25:14 中午</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/649d55e5/">November 23rd 2020, 12:07:14 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/f9fd2518/" title= "开发编写的 View 控件，是怎么变成屏幕上图像的？">
+                    <div class="prevTitle">开发编写的 View 控件，是怎么变成屏幕上图像的？</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- gitalk评论 -->
+
+    <!-- utteranc评论 -->
+
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <div id="comment"></div>
+    <script>
+    new Valine({
+        el: '#comment' ,
+        notify:false, 
+        verify:false, 
+        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
+        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
+        placeholder: "",
+        path:window.location.pathname, 
+        avatar:'mm' 
+    });
+    </script>
+
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+            
+                <span class="iconfont-archer wechat" title=wechat>
+                  
+                  <img class="profile-qr" src="/assets/wechat.jpg" />
+                </span>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+            
+                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
+            
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-IO-多路复用"><span class="toc-number">1.</span> <span class="toc-text">1. IO 多路复用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-select、poll、epoll-对比"><span class="toc-number">2.</span> <span class="toc-text">2. select、poll、epoll 对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-epoll-API"><span class="toc-number">3.</span> <span class="toc-text">3. epoll API</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-epoll-使用示例"><span class="toc-number">4.</span> <span class="toc-text">4. epoll 使用示例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-eventfd"><span class="toc-number">5.</span> <span class="toc-text">5. eventfd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Handler-中的-epoll-源码分析"><span class="toc-number">6.</span> <span class="toc-text">6. Handler 中的 epoll 源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#nativeInit"><span class="toc-number">6.0.1.</span> <span class="toc-text">nativeInit</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#nativePollOnce"><span class="toc-number">6.0.2.</span> <span class="toc-text">nativePollOnce</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#nativeWake"><span class="toc-number">6.0.3.</span> <span class="toc-text">nativeWake</span></a></li></ol></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 45
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/15</span><a class="archive-post-title" href= "/649d55e5/" >Android Handler epoll 机制分析</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/f9fd2518/" >开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/52cb86d4/" >Android 消息屏障与异步消息</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/d55eb6b/" >Java 并发编程知识点总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/a5b629de/" >Android 方法插桩 plugin 开发实践</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/a183dbba/" >如何绕过 Android 8.0 startService 限制？</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/38614e33/" >细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/c74cb1a3/" >细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/23</span><a class="archive-post-title" href= "/a8eae25c/" >细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/a7541469/" >细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/06</span><a class="archive-post-title" href= "/2d9a78ad/" >细读《深入理解 Android 内核设计思想》（二）内存管理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
+    
+        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
+    
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
+        <span class="sidebar-tag-name" data-tags="window"><span class="iconfont-archer">&#xe606;</span>window</span>
+    
+        <span class="sidebar-tag-name" data-tags="Handler"><span class="iconfont-archer">&#xe606;</span>Handler</span>
+    
+        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
+    
+        <span class="sidebar-tag-name" data-tags="Plugin"><span class="iconfont-archer">&#xe606;</span>Plugin</span>
+    
+        <span class="sidebar-tag-name" data-tags="ASM"><span class="iconfont-archer">&#xe606;</span>ASM</span>
+    
+        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
+    
+        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
+    
+        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
+    
+        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
+    
+        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
+    
+        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
+    
+        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
+    
+        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
+    
+        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
+    
+        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
+    
+        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
+    
+        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
+    
+        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
+    
+        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
+    
+        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
+    
+        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
+    
+        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
+    
+        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
+    
+        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
+    
+        <span class="sidebar-tag-name" data-tags="epoll"><span class="iconfont-archer">&#xe606;</span>epoll</span>
+    
+        <span class="sidebar-tag-name" data-tags="vsync"><span class="iconfont-archer">&#xe606;</span>vsync</span>
+    
+        <span class="sidebar-tag-name" data-tags="service"><span class="iconfont-archer">&#xe606;</span>service</span>
+    
+        <span class="sidebar-tag-name" data-tags="Binder"><span class="iconfont-archer">&#xe606;</span>Binder</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
+    
+        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
+    
+        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
+    
+        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
+    
+        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
+    
+        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
+    
+        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
+    
+        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
+    
+        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "Ahab"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
