@@ -28,7 +28,7 @@
 <meta property="og:site_name" content="Great hopes make great man">
 <meta property="og:description" content="介绍一下 Handler 中的 epoll 机制？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-23T04:20:17.009Z">
+<meta property="og:updated_time" content="2020-11-23T09:01:43.633Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android Handler epoll 机制分析">
 <meta name="twitter:description" content="介绍一下 Handler 中的 epoll 机制？">
@@ -426,8 +426,8 @@ height:50vh;
 <p>与多进程和多线程技术相比，IO 多路复用技术的最大优势是系统开销小，系统不必为每个 IO 操作都创建进程或线程，也不必维护这些进程或线程，从而大大减小了系统的开销。</p>
 <p>select、poll、epoll 就是 IO 多路复用三种实现方式。</p>
 <h3 id="select、poll、epoll-对比"><a href="#select、poll、epoll-对比" class="headerlink" title="select、poll、epoll 对比"></a>select、poll、epoll 对比</h3><p>select 最大连接数为进程文件描述符上限，一般为 1024；每次调用 select 拷贝 fd；轮询方式工作时间复杂度为 O(n)</p>
-<p>select 最大连接数无上限；每次调用 poll 拷贝 fd；轮询方式工作时间复杂度为 O(n)</p>
-<p>select 最大连接数无上限；首次调用 epoll_ctl 拷贝 fd，调用 epoll_wait 时不拷贝；回调方式工作时间复杂度为 O(1)</p>
+<p>poll 最大连接数无上限；每次调用 poll 拷贝 fd；轮询方式工作时间复杂度为 O(n)</p>
+<p>epoll 最大连接数无上限；首次调用 epoll_ctl 拷贝 fd，调用 epoll_wait 时不拷贝；回调方式工作时间复杂度为 O(1)</p>
 <h3 id="epoll-API"><a href="#epoll-API" class="headerlink" title="epoll API"></a>epoll API</h3><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epoll_create(<span class="keyword">int</span> size);</span><br></pre></td></tr></table></figure>
 <p>创建 eventpoll 对象，并将 eventpoll 对象放到 epfd 对应的 file-&gt;private_data 上，返回一个 epfd，即 eventpoll 句柄。</p>
 <figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> epoll_ctl(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, <span class="keyword">struct</span> epoll_event *event) <span class="comment">//返回值：成功 0；失败 -1</span></span><br></pre></td></tr></table></figure>
@@ -482,7 +482,7 @@ height:50vh;
             <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
             <p>原文链接：<a href="http://yhaowa.gitee.io/649d55e5/">http://yhaowa.gitee.io/649d55e5/</a>
             <p>发表日期：<a href="http://yhaowa.gitee.io/649d55e5/">November 15th 2020, 12:25:14 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/649d55e5/">November 23rd 2020, 12:20:17 pm</a>
+            <p>更新日期：<a href="http://yhaowa.gitee.io/649d55e5/">November 23rd 2020, 5:01:43 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -1256,12 +1256,6 @@ top:50vh;
     
     
     
-    
-    
-    
-    
-    
-    
     <div class="total-and-search">
         <div class="total-archive">
         Total : 45
@@ -1414,12 +1408,12 @@ top:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
+            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
         </li>
     
     
@@ -1539,11 +1533,11 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
     
+        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
+    
         <span class="sidebar-tag-name" data-tags="window"><span class="iconfont-archer">&#xe606;</span>window</span>
     
         <span class="sidebar-tag-name" data-tags="vsync"><span class="iconfont-archer">&#xe606;</span>vsync</span>
-    
-        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
     
         <span class="sidebar-tag-name" data-tags="Handler"><span class="iconfont-archer">&#xe606;</span>Handler</span>
     
@@ -1595,9 +1589,9 @@ top:50vh;
     
         <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
     
-        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
-    
         <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
+    
+        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
     
         <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
     
