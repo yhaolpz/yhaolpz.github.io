@@ -3,11 +3,11 @@
   <title>what is your main focus for today?</title>
   
   
-  <link href="/atom.xml" rel="self"/>
+  <link href="/yhaowa/atom.xml" rel="self"/>
   
-  <link href="http://yhaowa.gitee.io/"/>
+  <link href="http://yhaowa.gitee.io/yhaowa/"/>
   <updated>2020-12-06T06:59:08.587Z</updated>
-  <id>http://yhaowa.gitee.io/</id>
+  <id>http://yhaowa.gitee.io/yhaowa/</id>
   
   <author>
     <name>Ahab</name>
@@ -18,8 +18,8 @@
   
   <entry>
     <title>Android Handler epoll 机制分析</title>
-    <link href="http://yhaowa.gitee.io/649d55e5/"/>
-    <id>http://yhaowa.gitee.io/649d55e5/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/649d55e5/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/649d55e5/</id>
     <published>2020-11-15T04:25:14.000Z</published>
     <updated>2020-12-06T06:59:08.587Z</updated>
     
@@ -31,19 +31,19 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="handler" scheme="http://yhaowa.gitee.io/tags/handler/"/>
+      <category term="handler" scheme="http://yhaowa.gitee.io/yhaowa/tags/handler/"/>
     
-      <category term="epoll" scheme="http://yhaowa.gitee.io/tags/epoll/"/>
+      <category term="epoll" scheme="http://yhaowa.gitee.io/yhaowa/tags/epoll/"/>
     
   </entry>
   
   <entry>
     <title>开发编写的 View 控件，是怎么变成屏幕上图像的？</title>
-    <link href="http://yhaowa.gitee.io/f9fd2518/"/>
-    <id>http://yhaowa.gitee.io/f9fd2518/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/f9fd2518/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/f9fd2518/</id>
     <published>2020-11-08T06:24:57.000Z</published>
     <updated>2020-12-06T06:59:08.595Z</updated>
     
@@ -57,21 +57,21 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="window" scheme="http://yhaowa.gitee.io/tags/window/"/>
+      <category term="window" scheme="http://yhaowa.gitee.io/yhaowa/tags/window/"/>
     
-      <category term="vsync" scheme="http://yhaowa.gitee.io/tags/vsync/"/>
+      <category term="vsync" scheme="http://yhaowa.gitee.io/yhaowa/tags/vsync/"/>
     
-      <category term="surface" scheme="http://yhaowa.gitee.io/tags/surface/"/>
+      <category term="surface" scheme="http://yhaowa.gitee.io/yhaowa/tags/surface/"/>
     
   </entry>
   
   <entry>
     <title>Android 消息屏障与异步消息</title>
-    <link href="http://yhaowa.gitee.io/52cb86d4/"/>
-    <id>http://yhaowa.gitee.io/52cb86d4/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/52cb86d4/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/52cb86d4/</id>
     <published>2020-10-31T16:07:58.000Z</published>
     <updated>2020-12-06T06:59:08.623Z</updated>
     
@@ -85,17 +85,17 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="handler" scheme="http://yhaowa.gitee.io/tags/handler/"/>
+      <category term="handler" scheme="http://yhaowa.gitee.io/yhaowa/tags/handler/"/>
     
   </entry>
   
   <entry>
     <title>Java 并发编程知识点总结</title>
-    <link href="http://yhaowa.gitee.io/d55eb6b/"/>
-    <id>http://yhaowa.gitee.io/d55eb6b/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/d55eb6b/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/d55eb6b/</id>
     <published>2020-10-07T04:45:59.000Z</published>
     <updated>2020-12-06T07:13:14.228Z</updated>
     
@@ -117,19 +117,19 @@
     
     </summary>
     
-      <category term="Java" scheme="http://yhaowa.gitee.io/categories/Java/"/>
+      <category term="Java" scheme="http://yhaowa.gitee.io/yhaowa/categories/Java/"/>
     
     
-      <category term="线程池" scheme="http://yhaowa.gitee.io/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
+      <category term="线程池" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/"/>
     
-      <category term="并发编程" scheme="http://yhaowa.gitee.io/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
+      <category term="并发编程" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
   <entry>
     <title>Android 方法插桩 plugin 开发实践</title>
-    <link href="http://yhaowa.gitee.io/a5b629de/"/>
-    <id>http://yhaowa.gitee.io/a5b629de/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/a5b629de/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/a5b629de/</id>
     <published>2020-08-22T05:26:21.000Z</published>
     <updated>2020-12-06T06:59:08.630Z</updated>
     
@@ -146,21 +146,21 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="aop" scheme="http://yhaowa.gitee.io/tags/aop/"/>
+      <category term="aop" scheme="http://yhaowa.gitee.io/yhaowa/tags/aop/"/>
     
-      <category term="plugin" scheme="http://yhaowa.gitee.io/tags/plugin/"/>
+      <category term="plugin" scheme="http://yhaowa.gitee.io/yhaowa/tags/plugin/"/>
     
-      <category term="asm" scheme="http://yhaowa.gitee.io/tags/asm/"/>
+      <category term="asm" scheme="http://yhaowa.gitee.io/yhaowa/tags/asm/"/>
     
   </entry>
   
   <entry>
     <title>如何绕过 Android 8.0 startService 限制？</title>
-    <link href="http://yhaowa.gitee.io/a183dbba/"/>
-    <id>http://yhaowa.gitee.io/a183dbba/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/a183dbba/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/a183dbba/</id>
     <published>2020-06-22T05:31:51.000Z</published>
     <updated>2020-12-06T07:13:14.225Z</updated>
     
@@ -174,17 +174,17 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="service" scheme="http://yhaowa.gitee.io/tags/service/"/>
+      <category term="service" scheme="http://yhaowa.gitee.io/yhaowa/tags/service/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</title>
-    <link href="http://yhaowa.gitee.io/38614e33/"/>
-    <id>http://yhaowa.gitee.io/38614e33/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/38614e33/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/38614e33/</id>
     <published>2020-05-17T09:37:42.000Z</published>
     <updated>2020-12-06T07:13:14.217Z</updated>
     
@@ -196,23 +196,23 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="BufferQueue" scheme="http://yhaowa.gitee.io/tags/BufferQueue/"/>
+      <category term="BufferQueue" scheme="http://yhaowa.gitee.io/yhaowa/tags/BufferQueue/"/>
     
-      <category term="GUI" scheme="http://yhaowa.gitee.io/tags/GUI/"/>
+      <category term="GUI" scheme="http://yhaowa.gitee.io/yhaowa/tags/GUI/"/>
     
-      <category term="ANativeWindow" scheme="http://yhaowa.gitee.io/tags/ANativeWindow/"/>
+      <category term="ANativeWindow" scheme="http://yhaowa.gitee.io/yhaowa/tags/ANativeWindow/"/>
     
-      <category term="Gralloc" scheme="http://yhaowa.gitee.io/tags/Gralloc/"/>
+      <category term="Gralloc" scheme="http://yhaowa.gitee.io/yhaowa/tags/Gralloc/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</title>
-    <link href="http://yhaowa.gitee.io/c74cb1a3/"/>
-    <id>http://yhaowa.gitee.io/c74cb1a3/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/c74cb1a3/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/c74cb1a3/</id>
     <published>2020-05-03T02:02:35.000Z</published>
     <updated>2020-12-06T07:16:30.623Z</updated>
     
@@ -224,19 +224,19 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="读书笔记" scheme="http://yhaowa.gitee.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
-      <category term="binder" scheme="http://yhaowa.gitee.io/tags/binder/"/>
+      <category term="binder" scheme="http://yhaowa.gitee.io/yhaowa/tags/binder/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</title>
-    <link href="http://yhaowa.gitee.io/a8eae25c/"/>
-    <id>http://yhaowa.gitee.io/a8eae25c/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/a8eae25c/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/a8eae25c/</id>
     <published>2020-04-23T15:24:46.000Z</published>
     <updated>2020-12-06T07:13:14.210Z</updated>
     
@@ -248,27 +248,27 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="读书笔记" scheme="http://yhaowa.gitee.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
-      <category term="binder" scheme="http://yhaowa.gitee.io/tags/binder/"/>
+      <category term="binder" scheme="http://yhaowa.gitee.io/yhaowa/tags/binder/"/>
     
-      <category term="ProcessState" scheme="http://yhaowa.gitee.io/tags/ProcessState/"/>
+      <category term="ProcessState" scheme="http://yhaowa.gitee.io/yhaowa/tags/ProcessState/"/>
     
-      <category term="IPCThreadState" scheme="http://yhaowa.gitee.io/tags/IPCThreadState/"/>
+      <category term="IPCThreadState" scheme="http://yhaowa.gitee.io/yhaowa/tags/IPCThreadState/"/>
     
-      <category term="BpBinder" scheme="http://yhaowa.gitee.io/tags/BpBinder/"/>
+      <category term="BpBinder" scheme="http://yhaowa.gitee.io/yhaowa/tags/BpBinder/"/>
     
-      <category term="BinderProxy" scheme="http://yhaowa.gitee.io/tags/BinderProxy/"/>
+      <category term="BinderProxy" scheme="http://yhaowa.gitee.io/yhaowa/tags/BinderProxy/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</title>
-    <link href="http://yhaowa.gitee.io/a7541469/"/>
-    <id>http://yhaowa.gitee.io/a7541469/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/a7541469/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/a7541469/</id>
     <published>2020-04-12T09:58:51.000Z</published>
     <updated>2020-12-06T07:13:14.253Z</updated>
     
@@ -280,23 +280,23 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="读书笔记" scheme="http://yhaowa.gitee.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
-      <category term="binder" scheme="http://yhaowa.gitee.io/tags/binder/"/>
+      <category term="binder" scheme="http://yhaowa.gitee.io/yhaowa/tags/binder/"/>
     
-      <category term="Linux driver" scheme="http://yhaowa.gitee.io/tags/Linux-driver/"/>
+      <category term="Linux driver" scheme="http://yhaowa.gitee.io/yhaowa/tags/Linux-driver/"/>
     
-      <category term="Service Manager" scheme="http://yhaowa.gitee.io/tags/Service-Manager/"/>
+      <category term="Service Manager" scheme="http://yhaowa.gitee.io/yhaowa/tags/Service-Manager/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解 Android 内核设计思想》（二）内存管理</title>
-    <link href="http://yhaowa.gitee.io/2d9a78ad/"/>
-    <id>http://yhaowa.gitee.io/2d9a78ad/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/2d9a78ad/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/2d9a78ad/</id>
     <published>2020-04-06T06:18:55.000Z</published>
     <updated>2020-12-06T07:13:14.233Z</updated>
     
@@ -308,27 +308,27 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="mmap" scheme="http://yhaowa.gitee.io/tags/mmap/"/>
+      <category term="mmap" scheme="http://yhaowa.gitee.io/yhaowa/tags/mmap/"/>
     
-      <category term="读书笔记" scheme="http://yhaowa.gitee.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
-      <category term="虚拟内存" scheme="http://yhaowa.gitee.io/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"/>
+      <category term="虚拟内存" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98/"/>
     
-      <category term="COW" scheme="http://yhaowa.gitee.io/tags/COW/"/>
+      <category term="COW" scheme="http://yhaowa.gitee.io/yhaowa/tags/COW/"/>
     
-      <category term="LMK" scheme="http://yhaowa.gitee.io/tags/LMK/"/>
+      <category term="LMK" scheme="http://yhaowa.gitee.io/yhaowa/tags/LMK/"/>
     
-      <category term="Ashmem" scheme="http://yhaowa.gitee.io/tags/Ashmem/"/>
+      <category term="Ashmem" scheme="http://yhaowa.gitee.io/yhaowa/tags/Ashmem/"/>
     
   </entry>
   
   <entry>
     <title>细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</title>
-    <link href="http://yhaowa.gitee.io/12a8b16b/"/>
-    <id>http://yhaowa.gitee.io/12a8b16b/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/12a8b16b/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/12a8b16b/</id>
     <published>2020-03-31T16:50:13.000Z</published>
     <updated>2020-12-06T07:13:14.219Z</updated>
     
@@ -340,23 +340,23 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="Linux IPC" scheme="http://yhaowa.gitee.io/tags/Linux-IPC/"/>
+      <category term="Linux IPC" scheme="http://yhaowa.gitee.io/yhaowa/tags/Linux-IPC/"/>
     
-      <category term="Mutex" scheme="http://yhaowa.gitee.io/tags/Mutex/"/>
+      <category term="Mutex" scheme="http://yhaowa.gitee.io/yhaowa/tags/Mutex/"/>
     
-      <category term="Autolock" scheme="http://yhaowa.gitee.io/tags/Autolock/"/>
+      <category term="Autolock" scheme="http://yhaowa.gitee.io/yhaowa/tags/Autolock/"/>
     
-      <category term="读书笔记" scheme="http://yhaowa.gitee.io/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
+      <category term="读书笔记" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/"/>
     
   </entry>
   
   <entry>
     <title>Framework &amp; startActivity</title>
-    <link href="http://yhaowa.gitee.io/a608ff50/"/>
-    <id>http://yhaowa.gitee.io/a608ff50/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/a608ff50/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/a608ff50/</id>
     <published>2019-09-15T11:42:33.000Z</published>
     <updated>2020-12-06T06:59:08.604Z</updated>
     
@@ -370,19 +370,19 @@
     
     </summary>
     
-      <category term="Framework" scheme="http://yhaowa.gitee.io/categories/Framework/"/>
+      <category term="Framework" scheme="http://yhaowa.gitee.io/yhaowa/categories/Framework/"/>
     
     
-      <category term="ams" scheme="http://yhaowa.gitee.io/tags/ams/"/>
+      <category term="ams" scheme="http://yhaowa.gitee.io/yhaowa/tags/ams/"/>
     
-      <category term="startActivity" scheme="http://yhaowa.gitee.io/tags/startActivity/"/>
+      <category term="startActivity" scheme="http://yhaowa.gitee.io/yhaowa/tags/startActivity/"/>
     
   </entry>
   
   <entry>
     <title>Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</title>
-    <link href="http://yhaowa.gitee.io/798144ac/"/>
-    <id>http://yhaowa.gitee.io/798144ac/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/798144ac/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/798144ac/</id>
     <published>2019-06-16T12:07:18.000Z</published>
     <updated>2020-12-06T06:59:08.601Z</updated>
     
@@ -395,17 +395,17 @@
     
     </summary>
     
-      <category term="音视频" scheme="http://yhaowa.gitee.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+      <category term="音视频" scheme="http://yhaowa.gitee.io/yhaowa/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
-      <category term="FFmpeg" scheme="http://yhaowa.gitee.io/tags/FFmpeg/"/>
+      <category term="FFmpeg" scheme="http://yhaowa.gitee.io/yhaowa/tags/FFmpeg/"/>
     
   </entry>
   
   <entry>
     <title>Android OpenGL ES（二）绘制三角形</title>
-    <link href="http://yhaowa.gitee.io/2296ca3/"/>
-    <id>http://yhaowa.gitee.io/2296ca3/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/2296ca3/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/2296ca3/</id>
     <published>2019-06-16T08:39:50.000Z</published>
     <updated>2020-12-06T06:59:08.620Z</updated>
     
@@ -418,17 +418,17 @@
     
     </summary>
     
-      <category term="音视频" scheme="http://yhaowa.gitee.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+      <category term="音视频" scheme="http://yhaowa.gitee.io/yhaowa/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
-      <category term="OpenGL" scheme="http://yhaowa.gitee.io/tags/OpenGL/"/>
+      <category term="OpenGL" scheme="http://yhaowa.gitee.io/yhaowa/tags/OpenGL/"/>
     
   </entry>
   
   <entry>
     <title>Android OpenGL ES（一）开发入门</title>
-    <link href="http://yhaowa.gitee.io/eeb650a2/"/>
-    <id>http://yhaowa.gitee.io/eeb650a2/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/eeb650a2/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/eeb650a2/</id>
     <published>2019-06-09T12:40:06.000Z</published>
     <updated>2020-12-06T06:59:08.614Z</updated>
     
@@ -446,17 +446,17 @@
     
     </summary>
     
-      <category term="音视频" scheme="http://yhaowa.gitee.io/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
+      <category term="音视频" scheme="http://yhaowa.gitee.io/yhaowa/categories/%E9%9F%B3%E8%A7%86%E9%A2%91/"/>
     
     
-      <category term="OpenGL" scheme="http://yhaowa.gitee.io/tags/OpenGL/"/>
+      <category term="OpenGL" scheme="http://yhaowa.gitee.io/yhaowa/tags/OpenGL/"/>
     
   </entry>
   
   <entry>
     <title>Android 知识简记</title>
-    <link href="http://yhaowa.gitee.io/c75061d/"/>
-    <id>http://yhaowa.gitee.io/c75061d/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/c75061d/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/c75061d/</id>
     <published>2019-06-01T12:42:37.000Z</published>
     <updated>2020-12-06T07:17:53.706Z</updated>
     
@@ -475,17 +475,17 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="总结" scheme="http://yhaowa.gitee.io/tags/%E6%80%BB%E7%BB%93/"/>
+      <category term="总结" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E6%80%BB%E7%BB%93/"/>
     
   </entry>
   
   <entry>
     <title>对 Android 开发的一点思考</title>
-    <link href="http://yhaowa.gitee.io/f713728e/"/>
-    <id>http://yhaowa.gitee.io/f713728e/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/f713728e/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/f713728e/</id>
     <published>2019-04-07T09:17:09.000Z</published>
     <updated>2020-12-06T07:13:14.206Z</updated>
     
@@ -497,17 +497,17 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="开发模式" scheme="http://yhaowa.gitee.io/tags/%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/"/>
+      <category term="开发模式" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E5%BC%80%E5%8F%91%E6%A8%A1%E5%BC%8F/"/>
     
   </entry>
   
   <entry>
     <title>一个轻量的 Android 端日志打印记录库</title>
-    <link href="http://yhaowa.gitee.io/f346f34f/"/>
-    <id>http://yhaowa.gitee.io/f346f34f/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/f346f34f/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/f346f34f/</id>
     <published>2019-03-31T06:22:56.000Z</published>
     <updated>2020-12-06T07:13:14.203Z</updated>
     
@@ -525,19 +525,19 @@
     
     </summary>
     
-      <category term="Android" scheme="http://yhaowa.gitee.io/categories/Android/"/>
+      <category term="Android" scheme="http://yhaowa.gitee.io/yhaowa/categories/Android/"/>
     
     
-      <category term="mmap" scheme="http://yhaowa.gitee.io/tags/mmap/"/>
+      <category term="mmap" scheme="http://yhaowa.gitee.io/yhaowa/tags/mmap/"/>
     
-      <category term="log" scheme="http://yhaowa.gitee.io/tags/log/"/>
+      <category term="log" scheme="http://yhaowa.gitee.io/yhaowa/tags/log/"/>
     
   </entry>
   
   <entry>
     <title>单例的线程安全及序列化问题</title>
-    <link href="http://yhaowa.gitee.io/1516a551/"/>
-    <id>http://yhaowa.gitee.io/1516a551/</id>
+    <link href="http://yhaowa.gitee.io/yhaowa/1516a551/"/>
+    <id>http://yhaowa.gitee.io/yhaowa/1516a551/</id>
     <published>2019-03-05T15:04:44.000Z</published>
     <updated>2020-12-06T07:13:14.215Z</updated>
     
@@ -549,10 +549,10 @@
     
     </summary>
     
-      <category term="Java" scheme="http://yhaowa.gitee.io/categories/Java/"/>
+      <category term="Java" scheme="http://yhaowa.gitee.io/yhaowa/categories/Java/"/>
     
     
-      <category term="单例" scheme="http://yhaowa.gitee.io/tags/%E5%8D%95%E4%BE%8B/"/>
+      <category term="单例" scheme="http://yhaowa.gitee.io/yhaowa/tags/%E5%8D%95%E4%BE%8B/"/>
     
   </entry>
   
