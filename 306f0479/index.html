@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>ijkplayer 学习笔记 | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ijk概述mediacodec相关OpenGL相关filter相关setOption配置相关metadata相关h264编码器特有的设置域线程相关消息机制音频输出声道切换SDL_CreateCond 与 SDL_CreateThreadEx如何暂停">
+<meta name="keywords" content="FFmpeg,ijkplayer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ijkplayer 学习笔记">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/306f0479/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="ijk概述mediacodec相关OpenGL相关filter相关setOption配置相关metadata相关h264编码器特有的设置域线程相关消息机制音频输出声道切换SDL_CreateCond 与 SDL_CreateThreadEx如何暂停">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.298Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ijkplayer 学习笔记">
+<meta name="twitter:description" content="ijk概述mediacodec相关OpenGL相关filter相关setOption配置相关metadata相关h264编码器特有的设置域线程相关消息机制音频输出声道切换SDL_CreateCond 与 SDL_CreateThreadEx如何暂停">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-ijkplayer-学习笔记" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/306f0479/" class="article-date">
+  <time datetime="2018-05-01T02:53:54.000Z" itemprop="datePublished">2018-05-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ijkplayer 学习笔记
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>ijk概述<br>mediacodec相关<br>OpenGL相关<br>filter相关<br>setOption配置相关<br>metadata相关<br>h264编码器特有的设置域<br>线程相关<br>消息机制<br>音频输出<br>声道切换<br>SDL_CreateCond 与 SDL_CreateThreadEx<br>如何暂停</p>
+</blockquote>
+<a id="more"></a>
+<p>笔记可能微乱，但大致清晰，可能会对他人有所帮助，故分享出来。</p>
+<hr>
+<h3 id="ijk概述"><a href="#ijk概述" class="headerlink" title="ijk概述"></a>ijk概述</h3><hr>
+<p>《零基础读懂视频播放器控制原理： ffplay 播放器源代码分析》：    <a href="https://cloud.tencent.com/developer/article/1004559" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1004559</a><br>《基于 ffmpeg 的跨平台播放器实现》：    <a href="https://cloud.tencent.com/developer/article/1004561" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1004561</a><br>《ijkplayer框架深入剖析》：   <a href="https://www.jianshu.com/p/daf0a61cc1e0" target="_blank" rel="noopener">https://www.jianshu.com/p/daf0a61cc1e0</a></p>
+<p>三种播放器实现： 均继承自 AbstractMediaPlayer 继承自 IMediaPlayer<br>1.AndroidMediaPlayer：基于安卓自带播放器（位于ijkplayer-java）<br>2.IjkExoMediaPlayer：基于ExoPlayer（位于ijkplayer-exo）<br>介绍：<a href="http://blog.csdn.net/u014606081/article/details/76181049" target="_blank" rel="noopener">http://blog.csdn.net/u014606081/article/details/76181049</a><br>3.IjkMediaPlayer：基于ffplay（位于ijkplayer-java，底层实现在ijkmedia目录）<br>输出：<br>video-output: NativeWindow, OpenGL ES 2.0<br>audio-output: AudioTrack, OpenSL ES<br>jni底层接口：<br>IjkMediaPlayer ： ijkmedia/ijkplayer/android/ijkplayer_jni.c<br>播放器结构体：VideoState（ff_ffplay_def.c ）<br>播放入口：<br>ffplay.c ： ffp_prepare_async_l<br>stream_open ：创建音视频解码前后队列， 创建数据读取（read_thread）和视频显示线程（video_refresh_thread）<br>1.read_thread：读取packet<br>stream_component_open： 打开视频、音频解码器。在此会打开相应解码器，并创建相应的解码线程<br>av_read_frame：读取媒体数据，得到的是音视频分离的解码前数据<br>packet_queue_put：往缓冲队列中放入解码前的音、视、字幕 packet<br>打开视频解码器：<br>ffplay.c : stream_component_open<br>ffpipeline_open_video_decoder<br>ff_ffpipeline.c : ffpipeline_open_video_decoder 调用 IJKFF_Pipeline-&gt;func_open_video_decoder<br>IJKFF_Pipeline-&gt;func_open_video_decoder 函数指针指向 android/pipeline/cffpipeline_android.c 的 func_open_video_decoder 方法<br>然后调用 android/pipeline/ffpipenode_android_mediacodec_vdec.c  的 ffpipenode_create_video_decoder_from_android_mediacodec<br>2.video_thread：解码<br>ff_ffpipenode.c : ffpipenode_run_sync<br>/android/pipeline/ffpipenode_android_mediacodec_vdec.c  : func_run_sync   解码后的帧加入帧缓冲队列<br>IJKFF_Pipenode  IJKFF_Pipenode_Opaque<br>视频显示：<br>video_refresh_thread<br>video_refresh<br>frame_queue_peek_last<br>video_display2<br>video_image_display2<br>ijksdl/ijksdl_vout.c : SDL_VoutDisplayYUVOverlay<br>ijksdl_vout_android_nativewindow.c   vout-&gt;display_overlay = func_display_overlay<br>func_display_overlay<br>func_display_overlay_l<br>音视频同步:<br>video_refresh</p>
+<hr>
+<h3 id="mediacodec相关"><a href="#mediacodec相关" class="headerlink" title="mediacodec相关"></a>mediacodec相关</h3><hr>
+<p>1.为什么ijk硬解不用ffmpeg自带的mediacodec_wrapper，而是自己在底层封装的java api<br><a href="https://github.com/Bilibili/ijkplayer/issues/1705" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/1705</a><br><a href="https://github.com/Bilibili/ijkplayer/issues/1557" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/1557</a><br>FFmpeg3.1中也集成了MediaCodec硬件解码<br>ijkplayer doesn’t use ffmpeg’s mediacodec implement<br>ijkplayer has its own mediacodec implement.</p>
+<hr>
+<h3 id="OpenGL相关"><a href="#OpenGL相关" class="headerlink" title="OpenGL相关"></a>OpenGL相关</h3><hr>
+<p>1.Android MediaCodec and OpenGL Render<br><a href="https://github.com/Bilibili/ijkplayer/issues/2893" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/2893</a><br>2.ijk android是支持opengl的<br><a href="https://github.com/Bilibili/ijkplayer/issues/338" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/338</a></p>
+<p>ijksdl/gles2/fsh/  下脚本可修改gl渲染效果</p>
+<p>问题：<br>播放时软解解码出的为yuv420p格式，可通过gl渲染<br>播放时硬解解码出不能通过gl渲染，视频帧格式为 QCOM_FORMATYUV420PackedSemiPlanar32m<br>分析：<br>不同设备硬解出的视频帧格式不同：<br><a href="https://www.polarxiong.com/archives/Android-MediaCodec%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81-%E9%AB%98%E6%95%88%E7%8E%87%E5%BE%97%E5%88%B0YUV%E6%A0%BC%E5%BC%8F%E5%B8%A7-%E5%BF%AB%E9%80%9F%E4%BF%9D%E5%AD%98JPEG%E5%9B%BE%E7%89%87-%E4%B8%8D%E4%BD%BF%E7%94%A8OpenGL.html" target="_blank" rel="noopener">https://www.polarxiong.com/archives/Android-MediaCodec%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E7%A1%AC%E4%BB%B6%E8%A7%A3%E7%A0%81-%E9%AB%98%E6%95%88%E7%8E%87%E5%BE%97%E5%88%B0YUV%E6%A0%BC%E5%BC%8F%E5%B8%A7-%E5%BF%AB%E9%80%9F%E4%BF%9D%E5%AD%98JPEG%E5%9B%BE%E7%89%87-%E4%B8%8D%E4%BD%BF%E7%94%A8OpenGL.html</a><br>比如红米设备上硬解出的帧格式为：YUV420PackedSemiPlanar32m<br>ijk中的gl渲染只支持yuv420、rgb等，需要把 YUV420PackedSemiPlanar32m 转为 YUV 才可以<br>转换算法：<a href="http://blog.csdn.net/u011270282/article/details/50698243" target="_blank" rel="noopener">http://blog.csdn.net/u011270282/article/details/50698243</a><br>解决：<br>播放时的解码速度并不严格要求，先用软解,软解解出的为yuv420p，可以直接gl渲染<br>遗留优化项：<br>若采用软解播放则进行内存比较，若硬解较优，则硬解后将视频帧转换为gl可以渲染的格式，当然也要考虑转换的时间消耗</p>
+<hr>
+<h3 id="filter相关"><a href="#filter相关" class="headerlink" title="filter相关"></a>filter相关</h3><hr>
+<p>1.Does ijkplayer support video filters , ijk支持java层直接设置滤镜！<br><a href="https://github.com/Bilibili/ijkplayer/issues/3686" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/3686</a></p>
+<hr>
+<h3 id="setOption配置相关"><a href="#setOption配置相关" class="headerlink" title="setOption配置相关"></a>setOption配置相关</h3><hr>
+<p>mIjkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, “mediacodec”, 0);<br>“mediacodec”等配置项位于：ff_ffplayer_options.h   以及  option_table.h<br>如何利用 AVDictionary 配置参数 : <a href="http://blog.csdn.net/encoder1234/article/details/54582676" target="_blank" rel="noopener">http://blog.csdn.net/encoder1234/article/details/54582676</a></p>
+<p>AVClass 与 AVOption :  <a href="http://blog.csdn.net/leixiaohua1020/article/details/44268323" target="_blank" rel="noopener">http://blog.csdn.net/leixiaohua1020/article/details/44268323</a><br>AVClass就是AVOption和目标结构体之间的“桥梁”。<br>AVClass中存储了AVOption类型的数组option，用于存储选项信息。<br>AVClass有一个特点就是它必须位于其支持的结构体的第一个位置</p>
+<hr>
+<h3 id="metadata相关"><a href="#metadata相关" class="headerlink" title="metadata相关"></a>metadata相关</h3><hr>
+<p>对于metadata的操作封装于 ijkmeta.c , metadata信息声明在ijkmeta.h中, java层对应IjkMediaMeta.java<br>IjkMediaMeta分两层，外层metadata，内层：video、audio、subtitle三个metadata,共4个metadata<br>显然 ijkmeta.c 中只针对播放流程，也就是只负责从视频中获取 metadata ，然后在播放时获取 metadata 信息<br>保存时应该将metadata信息写入视频，首先要搞清楚需要写入哪些metadata信息？<br>应该是：凡是播放时需要获取的都需要写入，这样才能正常播放<br>How to set header metadata to encoded video?<br><a href="https://stackoverflow.com/questions/17024192/how-to-set-header-metadata-to-encoded-video" target="_blank" rel="noopener">https://stackoverflow.com/questions/17024192/how-to-set-header-metadata-to-encoded-video</a><br>avformat.h有对metadata的用法介绍</p>
+<hr>
+<h3 id="h264编码器特有的设置域"><a href="#h264编码器特有的设置域" class="headerlink" title="h264编码器特有的设置域"></a>h264编码器特有的设置域</h3><hr>
+<p>具体见：libx264.c  options<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* priv_data 属于每个编码器特有的设置域，用 av_opt_set 设置  */</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  preset ： 编码模式</span></span><br><span class="line"><span class="comment"> * ultrafast,superfast, veryfast, faster, fast, medium, slow, slower, veryslow</span></span><br><span class="line"><span class="comment"> * fast 节省约 10% encoding time   10s视频100s</span></span><br><span class="line"><span class="comment"> * faster 25%</span></span><br><span class="line"><span class="comment"> * ultrafast 55% 10s视频16s</span></span><br><span class="line"><span class="comment"> * 但越快质量越低</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">av_opt_set(enc_ctx-&gt;priv_data, <span class="string">"preset"</span>, <span class="string">"ultrafast"</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * lookahead:编码码率控制所需要锁定的帧个数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">av_opt_set(enc_ctx-&gt;priv_data, <span class="string">"lookahead"</span>, <span class="string">"0"</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 使用2pass编码模式</span></span><br><span class="line"><span class="comment"> * 1pass和2pass的区别在于1pass只需要编码一次，</span></span><br><span class="line"><span class="comment"> * 2pass需要编码两次。2pass的优点在于可编码更小的文件，缺点在于所花费时间比1pass更多</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">av_opt_set(enc_ctx-&gt;priv_data, <span class="string">"2pass"</span>, <span class="string">"0"</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 无延时输出</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">av_opt_set(enc_ctx-&gt;priv_data, <span class="string">"zerolatency"</span>, <span class="string">"1"</span>, <span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
+<hr>
+<h3 id="线程相关"><a href="#线程相关" class="headerlink" title="线程相关"></a>线程相关</h3><hr>
+<p>ijk线程相关操作位于ijksdl_thread.c，封装了pthread库<br>以解码为例：<br>d-&gt;decoder_tid = SDL_CreateThreadEx(&amp;d-&gt;_decoder_tid, fn, arg, name);<br>在 SDL_CreateThreadEx 方法其实是调用 pthread_create 方法<br>ijk 封装了线程的初始化和销毁操作，见 ijksdl_thread.c 的 SDL_RunThread方法</p>
+<hr>
+<h3 id="消息机制"><a href="#消息机制" class="headerlink" title="消息机制"></a>消息机制</h3><hr>
+<p>native_setup 时设置循环读消息函数， mp-&gt;msg_loop = msg_loop ，初始化消息队列在 FFPlayer 中<br>在 ijkmp_prepare_async_l 时创建线程运行循环读消息函数</p>
+<hr>
+<h3 id="音频输出"><a href="#音频输出" class="headerlink" title="音频输出"></a>音频输出</h3><hr>
+<p>新建播放器实例（native_setup）时，根据ffp-&gt;opensles 初始化 opensles 或 androidTrack 输出设备<br>在 opensles 或 androidTrack 中，通过回调 sdl_audio_callback 方法从音频帧缓冲队列中读取音频数据，播放之<br>比如在 ijksdl_aout_android_opensles.c 中 audio_cblk 就是 sdl_audio_callback 方法</p>
+<hr>
+<h3 id="声道切换"><a href="#声道切换" class="headerlink" title="声道切换"></a>声道切换</h3><hr>
+<p>ijkplayer如何切换音轨，以及获取音轨信息：<a href="https://github.com/Bilibili/ijkplayer/issues/3811" target="_blank" rel="noopener">https://github.com/Bilibili/ijkplayer/issues/3811</a><br>IjkMediaPlayer.java 跟轨道相关的方法 ：<br>   getTrackInfo（获取所有轨道）、getSelectedTrack（获取当前轨道）、selectTrack（选择轨道）<br>selectTrack（选择轨道）可实现切换轨道操作<br>对应调用 ff_ffplayer.c 的 ffp_set_stream_selected 方法<br>此方法中通过调用 stream_component_close、stream_component_open 实现轨道切换</p>
+<hr>
+<h3 id="SDL-CreateCond-与-SDL-CreateThreadEx"><a href="#SDL-CreateCond-与-SDL-CreateThreadEx" class="headerlink" title="SDL_CreateCond 与 SDL_CreateThreadEx"></a>SDL_CreateCond 与 SDL_CreateThreadEx</h3><hr>
+<p>ff_ffplay.c 中有一句代码： is-&gt;continue_read_thread = SDL_CreateCond()<br>乍一看变量名会以为 SDL_CreateCond 方法是用来创建线程…  不对! ，SDL_CreateThreadEx 才是用来创建线程的<br>SDL_CreateCond 方法调用了 pthread_cond_init 方法，含义为：创建条件变量<br>条件变量相关:<br>1.初始化条件变量 pthread_cond_init<br>2.阻塞在条件变量上pthread_cond_wait<br>3.解除在条件变量上的阻塞pthread_cond_signal<br>4.阻塞直到指定时间pthread_cond_timedwait<br>5.释放阻塞的所有线程pthread_cond_broadcast<br>6.释放条件变量pthread_cond_destroy<br>详细：<a href="https://blog.csdn.net/ithomer/article/details/6031723" target="_blank" rel="noopener">https://blog.csdn.net/ithomer/article/details/6031723</a><br>ijksdl_mutex.c 中封装了互斥锁相关操作</p>
+<hr>
+<h3 id="如何暂停"><a href="#如何暂停" class="headerlink" title="如何暂停"></a>如何暂停</h3><hr>
+<p>IjkMediaPlayer.java 中的 _pause 本地方法调用 ijkplayer_jni.c 中的 IjkMediaPlayer_pause<br>然后通过ijk的消息机制发送暂停信号： ffp_notify_msg1(mp-&gt;ffplayer, FFP_REQ_PAUSE);<br>然后调用到 ff_ffplay.c 的 ffp_pause_l 方法，最后调用到 stream_toggle_pause_l 方法<br>其中两个关键操作：1.is-&gt;paused 置 true ; 2.调用 SDL_AoutPauseAudio 方法<br>其实在读包、解码、渲染/播放这个工作线中，只要有一处停止工作，其他地方自然会阻塞住即可，<br>但是看代码发现多处都有根据is-&gt;paused来停止工作的逻辑，列一下自认为比较关键的地方：<br>对于视频：在视频渲染线程的 video_refresh 方法中：<br>  if (is-&gt;paused) goto display;<br>如果暂停了，就一直显示当前帧，跳过后面的取下一帧操作，不取下一帧，帧队列满后自然就会停止解码、读包操作。<br>对于音频： 调用 SDL_AoutPauseAudio 方法后不再回调 sdl_audio_callback 方法（参见上面的《音频输出》）</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/306f0479/" data-id="ckicxuszk001n33cag2jkpicy" class="article-share-link" data-share="baidu" data-title="ijkplayer 学习笔记">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/ijkplayer/">ijkplayer</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/186751e8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          ijkplayer 源码分析（上）
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/322c0cad/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">视频相关的理论知识与基础概念</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

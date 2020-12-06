@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>ijkplayer 源码分析（上） | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。 ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。">
+<meta name="keywords" content="FFmpeg,ijkplayer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ijkplayer 源码分析（上）">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/186751e8/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。 ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/6.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/4.png">
+<meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/3.jpg">
+<meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/5.png">
+<meta property="og:updated_time" content="2020-12-06T07:13:14.244Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ijkplayer 源码分析（上）">
+<meta name="twitter:description" content="本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。 ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。">
+<meta name="twitter:image" content="http://yhaowa.gitee.io/yhaowa/img/6.png">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-ijkplayer-源码分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/186751e8/" class="article-date">
+  <time datetime="2018-06-22T03:11:16.000Z" itemprop="datePublished">2018-06-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ijkplayer 源码分析（上）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文基于0.8.8版本的 ijkplayer ，对其源码进行剖析，涉及到不同平台下的封装接口或处理方式时，均以 Android 为例。</p>
+<p>ijkplayer 是一款比较出众的开源 Android/IOS 跨平台播放器，基于 ffplay，API 易于集成，可定制编译控制体积。</p>
+<a id="more"></a>
+<p>ijkplayer 集成了三种播放器实现：</p>
+<ul>
+<li>AndroidMediaPlayer：即安卓系统自带的播放器 MediaPlayer，基于 MediaCodec、AudioTrack 等安卓系统 API.</li>
+<li>IjkExoMediaPlayer：即谷歌新推出的 <a href="https://google.github.io/ExoPlayer/guide.html" target="_blank" rel="noopener">ExoPlayer</a>，同样是基于 MediaCodec、AudioTrack 等安卓系统 API，但相比 MediaPlayer 具有支持 DASH、高级 HLS、自定义扩展等优点。</li>
+<li>IjkMediaPlayer：基于 FFmpeg 的 ffplay，集成了 MediaCodec 硬解码器、Opengl 渲染方式等。</li>
+</ul>
+<p>一般而言， ijkplayer 就是指 IjkMediaPlayer，本文分析的对象就是 IjkMediaPlayer.</p>
+<p>对 Android 而言，音频输出支持 AudioTrack、OpenSL ES 方式；视频输出支持 NativeWindow、OpenGL ES 方式。</p>
+<p>对 ijkplayer 不熟悉的同学建议参看源码阅读本文。</p>
+<h3 id="一、初始化"><a href="#一、初始化" class="headerlink" title="一、初始化"></a><strong>一、初始化</strong></h3><p>ijkplayer 在 Java 层的操作封装于 IjkMediaPlayer.java ，其中包含一些与底层通信的关键方法，比如播放控制相关的 start、pause、stop 等， 这些 native 方法对应的底层实现位于 ijkpalyer_ini.c 文件中。</p>
+<p>在 IjkMediaPlayer.java 中有一些 @CalledByNative 注解的方法，比如底层的播放状态回调，这些方法由底层主动调用，具体位于 IjkMediaPlayer.c 文件中。 </p>
+<p><img src="../img/6.png" alt></p>
+<p>ijkplayer 的初始化位于 initPlayer 方法，共做了四件事：</p>
+<ol>
+<li>加载 so 库</li>
+<li>静态初始化底层，底层其实什么都没做</li>
+<li>初始化 Message Handler，处理底层状态信息的上报</li>
+<li>初始化底层，这部分做的工作最多，主要逻辑位于 ijkpalyer_android 的 ijkmp_android_create 方法，如下：</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建底层播放器对象，设置消息处理函数</span></span><br><span class="line">IjkMediaPlayer *mp = ijkmp_create(msg_loop, saveMode, hard_mux);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建图像渲染对象</span></span><br><span class="line">mp-&gt;ffplayer-&gt;vout = SDL_VoutAndroid_CreateForAndroidSurface();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化视频解码器（软/硬）、音频输出设备（opensles/audioTrack）</span></span><br><span class="line">mp-&gt;ffplayer-&gt;pipeline = ffpipeline_create_from_android(mp-&gt;ffplayer);</span><br></pre></td></tr></table></figure>
+<p>具体是怎么选择软解码器还是硬解码器的呢，跟踪 ffpipeline_create_from_android 方法可以看到：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (ffp-&gt;mediacodec_all_videos || ffp-&gt;mediacodec_avc || ffp-&gt;mediacodec_hevc || ffp-&gt;mediacodec_mpeg2)</span><br><span class="line">    <span class="comment">// 创建硬解码器</span></span><br><span class="line">    node = ffpipenode_create_video_decoder_from_android_mediacodec(ffp, pipeline, opaque-&gt;weak_vout);</span><br><span class="line"><span class="keyword">if</span> (!node) &#123;</span><br><span class="line">    <span class="comment">// 创建软解码器</span></span><br><span class="line">    node = ffpipenode_create_video_decoder_from_ffplay(ffp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ffp 的 mediacodec_all_videos 等属性是通过 IjkMediaPlayer 的成员方法 setOption() 设置的，成员方法的调用肯定是在类初始化之后的，而解码器等依赖配置项的设置却在初始化中，难道不是应该先设置，后初始化吗？代码肯定是没有问题的，初始化中其实并没有调用这些方法，只是以函数指针的方式记录下来而已。ijkplayer 几乎完全由 c 实现，函数指针随处可见，方便编程。</p>
+<h3 id="二、配置"><a href="#二、配置" class="headerlink" title="二、配置"></a><strong>二、配置</strong></h3><p>初始化后 IjkMediaPlayer 后，可以对其进行一系列配置，例如:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置硬解码</span></span><br><span class="line">mIjkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, <span class="string">"mediacodec"</span>, <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置 opensles 方式输出音频</span></span><br><span class="line">mIjkMediaPlayer.setOption(IjkMediaPlayer.OPT_CATEGORY_PLAYER, <span class="string">"opensles"</span>, <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p> setOption() 会调用到底层 ff_ffplay.c 的 ffp_set_option() 方法：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ffp_set_option</span><span class="params">(FFPlayer *ffp, <span class="keyword">int</span> opt_category, <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">const</span> <span class="keyword">char</span> *value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!ffp)</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    AVDictionary **dict = ffp_get_opt_dict(ffp, opt_category);</span><br><span class="line">    av_dict_set(dict, name, value, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>AVDictionary 其实就是一个键值对数组，相当于 Java 中的 HashMap，av_dict_set 就相当于 put 方法，用来存储播放器的配置信息，FFPlayer 中就有如下 AVDictionary ：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">AVDictionary *format_opts;      <span class="comment">// 格式配置，解封装文件时（avformat_open_input）需传入</span></span><br><span class="line">AVDictionary *codec_opts;       <span class="comment">// 编解码器配置，打开编解码器时（avcodec_open2）需传入</span></span><br><span class="line">AVDictionary *sws_dict;         <span class="comment">// avfilter 视频相关配置</span></span><br><span class="line">AVDictionary *player_opts;      <span class="comment">// 播放相关配置</span></span><br><span class="line">AVDictionary *swr_opts;         <span class="comment">// 音频相关配置</span></span><br><span class="line">AVDictionary *swr_preset_opts;</span><br></pre></td></tr></table></figure></p>
+<p>通过 setOption() 方法将一系列的播放器配置暂存到这些 AVDictionary 中，对于没有 map 容器的 c 语言，可以充分利用它来配置和定义播放器的参数。FFmpeg 中很多 API 就是依赖 AVDictionary 来传递参数的，比如上面提到的 avformat_open_input、avcodec_open2 接口。<br>FFPlayer 结构体中本身就有配置相关的成员变量的，比如控制音频输出设备的 “int opensles” 等，当我们调用一系列 setOption() 方法将播放配置存储在 player_opts 中后，该如何取出再赋值给成员变量呢？<br>这个情景是否似曾相似，JavaEE 开发中如何从传递的一系列键值中取出赋值给成员变量？ JavaEE 的 Struts2 可以实现自动映射转换，可以将互联网上收到的 “名称”和“值”的组合自动赋值给相应名称的变量。FFmpeg 中也实现了这样一套自动映射的机制，可以实现直接将 AVDictionary 赋值给结构体，只需调用：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">av_opt_set_dict</span><span class="params">(<span class="keyword">void</span> *obj, struct AVDictionary **options)</span></span>;</span><br></pre></td></tr></table></figure></p>
+<p>当然这个结构体需要提前做一些处理，制定映射的规则，要在结构体中添加 AVClass 成员变量，且必须为第一个成员变量，然后对其初始化，比如 FFPlayer 结构体：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 需要映射的成员变量</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> AVOption ffp_context_options[] = &#123;</span><br><span class="line">      &#123; <span class="string">"mediacodec-avc"</span>,  <span class="string">"MediaCodec: enable H264"</span>, OPTION_OFFSET(mediacodec_avc),   OPTION_INT(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>) &#125;,</span><br><span class="line">      &#123; <span class="string">"opensles"</span>,        <span class="string">"OpenSL ES: enable"</span>,       OPTION_OFFSET(opensles),         OPTION_INT(<span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>) &#125;,</span><br><span class="line">      <span class="comment">// 省略...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span>  AVClass  ffp_context_class = &#123;</span><br><span class="line">        .class_name       = <span class="string">"FFPlayer"</span>,                  </span><br><span class="line">        .item_name        = ffp_context_to_name,           </span><br><span class="line">        .option           = ffp_context_options,     <span class="comment">// 将需要映射的成员变量记录到 AVClass 中</span></span><br><span class="line">        .version          = LIBAVUTIL_VERSION_INT,</span><br><span class="line">        .child_next       = ffp_context_child_next,</span><br><span class="line">        .child_class_next = ffp_context_child_class_next,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ffplayer-&gt;av_class = &amp;ffp_context_class;    <span class="comment">// 使结构体可自动映射</span></span><br></pre></td></tr></table></figure></p>
+<p>这样处理后，就可以直接对 FFplayer 这个结构体进行整体赋值了，在 ff_ffplay.c 的 ffp_prepare_async_l 方法中就有这个逻辑：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">av_opt_set_dict(ffp, &amp;ffp-&gt;player_opts);</span><br></pre></td></tr></table></figure></p>
+<p>扩展阅读：</p>
+<p><a href="https://blog.csdn.net/leixiaohua1020/article/details/44268323" target="_blank" rel="noopener">FFmpeg源代码简单分析：结构体成员管理系统-AVClass</a></p>
+<p><a href="https://blog.csdn.net/leixiaohua1020/article/details/44279329" target="_blank" rel="noopener">FFmpeg源代码简单分析：结构体成员管理系统-AVOption</a></p>
+<h3 id="三、播放"><a href="#三、播放" class="headerlink" title="三、播放"></a><strong>三、播放</strong></h3><p>先来回顾下播放器的整体流程：<br><img src="../img/4.png" alt="播放器原理.png"><br>在 <a href="https://yhaolpz.github.io/322c0cad/" target="_blank" rel="noopener">视频相关的理论知识与基础概念</a> 中简单总结过视频播放原理，播放器必然是通过多线程同时进行解封装、解码、视频渲染等工作的，对于 Ijkplayer 来说，开辟的线程如下：<br><img src="../img/3.jpg" alt><br>所有的播放逻辑都位于 ff_ffplay.c 中，当对播放器设置视频源路径、解码方式、输出模式等播放选项后，就可以开始播放了， 播放入口方法为 ffp_prepare_async_l，此方法中调用了比较重要的两个方法：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 打开音频输出设备</span></span><br><span class="line">ffp-&gt;aout = ffpipeline_open_audio_output(ffp-&gt;pipeline, ffp);</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 创建音/视频数据解码前/后队列， 创建解封装和视频渲染线程</span></span><br><span class="line">VideoState *is = stream_open(ffp, file_name, <span class="literal">NULL</span>);</span><br></pre></td></tr></table></figure></p>
+<p>在初始化时 IjkPlayer 将选择视频解码器、选择音频输出设备的方法以函数指针的形式记录下来，方便后面直接调用。ffpipeline_open_audio_output 方法即选择了音频输出方式为 opensles 或 AndroidTrack ，具体实现为 ffpipeline_android.c 的 func_open_audio_output 方法。<br>stream_open 方法则相当重要了，梳理一下该方法中涉及到的关键方法：<br><img src="../img/5.png" alt="stream_open (1).png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/186751e8/" data-id="ckicxuszl001q33caou8iro1g" class="article-share-link" data-share="baidu" data-title="ijkplayer 源码分析（上）">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/FFmpeg/">FFmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/ijkplayer/">ijkplayer</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/13c2b04d/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 集成 ijkplayer 编译及替换 cmake 方式编译
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/306f0479/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">ijkplayer 学习笔记</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

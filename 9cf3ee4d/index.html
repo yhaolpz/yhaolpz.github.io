@@ -1,0 +1,425 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>带你彻底理解 Window 和 WindowManager | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
+<meta name="keywords" content="window,wms">
+<meta property="og:type" content="article">
+<meta property="og:title" content="带你彻底理解 Window 和 WindowManager">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/9cf3ee4d/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-4dc2eebed4c383ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-70dfe9d03a79cad4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-c1204a1a543f1417?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.325Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="带你彻底理解 Window 和 WindowManager">
+<meta name="twitter:description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-带你彻底理解-Window-和-WindowManager" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/9cf3ee4d/" class="article-date">
+  <time datetime="2017-12-17T07:24:01.000Z" itemprop="datePublished">2017-12-17</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/Framework/">Framework</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      带你彻底理解 Window 和 WindowManager
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<ol>
+<li>WindowManagerService</li>
+<li>Window 分类</li>
+<li>WindowManager 使用</li>
+<li>WindowManager 的内部机制</li>
+<li>Window 的创建过程</li>
+<li>总结</li>
+</ol>
+</blockquote>
+<a id="more"></a>
+<p>有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<h1 id="WindowManagerService"><a href="#WindowManagerService" class="headerlink" title="WindowManagerService"></a><strong>WindowManagerService</strong></h1><p>WindowManagerService 就是位于 Framework 层的窗口管理服务，它的职责就是管理系统中的所有窗口。窗口的本质是什么呢？其实就是一块显示区域，在 Android 中就是绘制的画布：Surface，当一块 Surface 显示在屏幕上时，就是用户所看到的窗口了。WindowManagerService 添加一个窗口的过程，其实就是 WindowManagerService 为其分配一块 Surface 的过程，一块块的 Surface 在 WindowManagerService 的管理下有序的排列在屏幕上，Android 才得以呈现出多姿多彩的界面。于是根据对 Surface 的操作类型可以将 Android 的显示系统分为三个层次，如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-4dc2eebed4c383ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>一般的开发过程中，我们操作的是 UI 框架层，对 Window 的操作通过 WindowManager 即可完成，而 WindowManagerService 作为系统级服务运行在一个单独的进程，所以 WindowManager 和  WindowManagerService 的交互是一个 IPC 过程。</p>
+<h1 id="Window-分类"><a href="#Window-分类" class="headerlink" title="Window 分类"></a><strong>Window 分类</strong></h1><p>Window 有三种类型，分别是<strong>应用 Window</strong>、<strong>子 Window</strong> 和<strong>系统 Window</strong>。应用类 Window 对应一个 Acitivity，子 Window 不能单独存在，需要依附在特定的父 Window 中，比如常见的一些 Dialog 就是一个子 Window。系统 Window是需要声明权限才能创建的 Window，比如 Toast 和系统状态栏都是系统 Window。 </p>
+<p>Window 是分层的，每个 Window 都有对应的 z-ordered，层级大的会覆盖在层级小的 Window 上面，这和 HTML 中的 z-index 概念是完全一致的。在三种 Window 中，应用 Window 层级范围是 1~99，子 Window 层级范围是 1000~1999，系统 Window 层级范围是 2000~2999，我们可以用一个表格来直观的表示：<br>|   Window    |   层级    |<br>| :———: | :——-: |<br>| 应用 Window |   1~99    |<br>|  子 Window  | 1000~1999 |<br>| 系统 Window | 2000~2999 |<br><br><br>这些层级范围对应着 WindowManager.LayoutParams 的 type 参数，如果想要 Window 位于所有 Window 的最顶层，那么采用较大的层级即可，很显然系统 Window 的层级是最大的，当我们采用系统层级时，需要声明权限。</p>
+<h1 id="WindowManager-使用"><a href="#WindowManager-使用" class="headerlink" title="WindowManager 使用"></a><strong>WindowManager 使用</strong></h1><p>我们对 Window 的操作是通过 WindowManager 来完成的，WindowManager 是一个接口，它继承自只有三个方法的 ViewManager 接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ViewManager</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(View view, ViewGroup.LayoutParams params)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateViewLayout</span><span class="params">(View view, ViewGroup.LayoutParams params)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeView</span><span class="params">(View view)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这三个方法其实就是 WindowManager 对外提供的主要功能，即添加 View、更新 View 和删除 View。接下来来看一个通过 WindowManager 添加 Window 的例子，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        </span><br><span class="line">        Button floatingButton = <span class="keyword">new</span> Button(<span class="keyword">this</span>);</span><br><span class="line">        floatingButton.setText(<span class="string">"button"</span>);</span><br><span class="line">        WindowManager.LayoutParams layoutParams = <span class="keyword">new</span> WindowManager.LayoutParams(</span><br><span class="line">                WindowManager.LayoutParams.WRAP_CONTENT,</span><br><span class="line">                WindowManager.LayoutParams.WRAP_CONTENT,</span><br><span class="line">                <span class="number">0</span>, <span class="number">0</span>,</span><br><span class="line">                PixelFormat.TRANSPARENT</span><br><span class="line">        );</span><br><span class="line">        <span class="comment">// flag 设置 Window 属性</span></span><br><span class="line">        layoutParams.flags= WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;</span><br><span class="line">        <span class="comment">// type 设置 Window 类别（层级）</span></span><br><span class="line">        layoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;</span><br><span class="line">        layoutParams.gravity = Gravity.CENTER;</span><br><span class="line">        WindowManager windowManager = getWindowManager();</span><br><span class="line">        windowManager.addView(floatingButton, layoutParams);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码中并没有调用 Activity 的 setContentView 方法，而是直接通过 WindowManager 添加 Window，其中设置为系统 Window，所以应该添加权限：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=<span class="string">"android.permission.SYSTEM_ALERT_WINDOW"</span>/&gt;</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-70dfe9d03a79cad4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>第二个界面是锁屏界面，由于按钮是处于较大层级的系统 Window 中的，所以可以看到 button。</p>
+<h1 id="WindowManager-的内部机制"><a href="#WindowManager-的内部机制" class="headerlink" title="WindowManager 的内部机制"></a><strong>WindowManager 的内部机制</strong></h1><p>在实际使用中无法直接访问 Window，对 Window 的访问必须通过 WindowManager。WindowManager 提供的三个接口方法 addView、updateViewLayout 以及 removeView 都是针对 View 的，这说明 View 才是 Window 存在的实体，上面例子实现了 Window 的添加，WindowManager 是一个接口，它的真正实现是 WindowManagerImpl 类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addView</span><span class="params">(View view, ViewGroup.LayoutParams params)</span></span>&#123;</span><br><span class="line">    mGlobal.addView(view, params, mDisplay, mParentWindow);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateViewLayout</span><span class="params">(View view, ViewGroup.LayoutParams params)</span></span>&#123;</span><br><span class="line">    mGlobal.updateViewLayout(view, params);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeView</span><span class="params">(View view)</span></span>&#123;</span><br><span class="line">    mGlobal.removeView(view, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，WindowManagerImpl 并没有直接实现 Window 的三大操作，而是交给了 <strong>WindowManagerGlobal</strong> 来处理，下面以 addView 为例，分析一下 WindowManagerGlobal 中的实现过程：</p>
+<p><strong>1、检查参数合法性，如果是子 Window 做适当调整</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(view == <span class="keyword">null</span>)&#123;</span><br><span class="line">   <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"view must not be null"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(display == <span class="keyword">null</span>)&#123;</span><br><span class="line">   <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"display must not be null"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!(params <span class="keyword">instanceof</span> WindowManager.LayoutParams))&#123;</span><br><span class="line">   <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Params must be WindowManager.LayoutParams"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> WindowManager.LayoutParams wparams = (WindowManager.LayoutParams)params;</span><br><span class="line"><span class="keyword">if</span>(parentWindow != <span class="keyword">null</span>)&#123;</span><br><span class="line">   parentWindow.adjustLayoutParamsForSubWindow(wparams);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、创建 ViewRootImpl 并将 View 添加到集合中</strong></p>
+<p>在 WindowManagerGlobal 内部有如下几个集合比较重要：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ArrayList&lt;View&gt; mViews = <span class="keyword">new</span> ArrayList&lt;View&gt;();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ArrayList&lt;ViewRootImpl&gt; mRoots = <span class="keyword">new</span> ArrayList&lt;ViewRootImpl&gt;();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ArrayList&lt;WindowManager.LayoutParams&gt; mParams = <span class="keyword">new</span> ArrayList&lt;WindowManager.LayoutParams&gt;();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ArraySet&lt;View&gt; mDyingViews = <span class="keyword">new</span> ArraySet&lt;View&gt;();</span><br></pre></td></tr></table></figure>
+<p>其中 mViews 存储的是所有 Window 所对应的 View，mRoots 存储的是所有 Window 所对应的 ViewRootImpl，mParams 存储的是所有 Window 所对应的布局参数，mDyingViews 存储了那些正在被删除的 View 对象，或者说是那些已经调用了 removeView 方法但是操作删除还未完成的 Window 对象，可以通过表格直观的表示：<br>|    集合     |           存储内容           |<br>| :———: | :————————–: |<br>|   mViews    |     Window 所对应的 View     |<br>|   mRoots    | Window 所对应的 ViewRootImpl |<br>|   mParams   |   Window 所对应的布局参数    |<br>| mDyingViews |    正在被删除的 View 对象    |<br><br><br>addView 操作时会将相关对象添加到对应集合中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">root = <span class="keyword">new</span> ViewRootImpl(view.getContext(),display);</span><br><span class="line">view.setLayoutParams(wparams);</span><br><span class="line"></span><br><span class="line">mViews.add(view);</span><br><span class="line">mRoots.add(root);</span><br><span class="line">mParams.add(wparams);</span><br></pre></td></tr></table></figure>
+<p><strong>3、通过 ViewRootImpl 来更新界面并完成 Window 的添加过程</strong></p>
+<p>在学习 View 的工作原理时，我们知道 View 的绘制过程是由 ViewRootImpl 来完成的，这里当然也不例外，具体是通过 ViewRootImpl 的 setView 方法来实现的。在 setView 内部会通过 requestLayout 来完成异步刷新请求，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">requestLayout</span><span class="params">()</span></span>&#123;</span><br><span class="line">   <span class="keyword">if</span>(!mHandingLayoutInLayoutRequest)&#123;</span><br><span class="line">       checkThread();</span><br><span class="line">       mLayoutRequested = <span class="keyword">true</span>;</span><br><span class="line">       scheduleTraversals();</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 scheduleTraversals 方法是 View 绘制的入口，继续查看它的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">res = mWindowSession.addToDisplay(mWindow, mSeq, mWindowAttributes, getHostVisibility(), </span><br><span class="line">          mDisplay.getDisplayId(),mAttachInfo.mContentInsets, mInputChannel);</span><br></pre></td></tr></table></figure>
+<p>mWindowSession 的类型是 IWindowSession，它是一个 Binder 对象，真正的实现类是 Session，这也就是之前提到的 IPC 调用的位置。在 Session 内部会通过 WindowManagerService 来实现 Window 的添加，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">addToDisplay</span><span class="params">(IWindow window, <span class="keyword">int</span> seq, WindowManager.LayoutParams, attrs, <span class="keyword">int</span> viewVisibility, </span></span></span><br><span class="line"><span class="function"><span class="params">                  <span class="keyword">int</span> displayId, Rect outContentInsets, InputChannel outInputChannel)</span></span>&#123;</span><br><span class="line">   <span class="keyword">return</span> mService.addWindow(<span class="keyword">this</span>, window, seq, attrs, viewVisibility, displayId, outContentInsets, outInputChannel);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>终于，Window 的添加请求移交给 WindowManagerService 手上了，在 WindowManagerService 内部会为每一个应用保留一个单独的 Session，具体 Window 在 WindowManagerService 内部是怎么添加的，就不对其进一步的分析，因为到此为止我们对 Window 的添加这一从应用层到 Framework 的流程已经清楚了，下面通过图示总结一下：<br><img src="http://upload-images.jianshu.io/upload_images/4679478-c1204a1a543f1417?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>理解了 Window 的添加过程，Window 的删除过程和更新过程都是类似的，也就容易理解了，它们最终都会通过一个 IPC 过程将操作移交给 WindowManagerService 这个位于 Framework 层的窗口管理服务来处理。</p>
+<h1 id="Window-的创建过程"><a href="#Window-的创建过程" class="headerlink" title="Window 的创建过程"></a><strong>Window 的创建过程</strong></h1><p>View 是 Android 中的视图的呈现方式，但是 View 不能单独存在，它必须附着在 Window 这个抽象的概念上面，因此有视图的地方就有 Window。哪些地方有视图呢？Android 可以提供视图的地方有 Activity、Dialog、Toast，除此之外，还有一些依托 Window 而实现的视图，比如 PopUpWindow（自定义弹出窗口）、菜单，它们也是视图，有视图的地方就有 Window，因此 Activity、Dialog、Toast 等视图都对应着一个 Window。这也是面试中常问到的一个知识点：一个应用中有多少个 Window？下面分别分析 Activity、Dialog以及 Toast 的 Window 创建过程。</p>
+<p><strong>1、 Activity 的 Window 创建过程</strong></p>
+<p>在了解了 Window 的概念及意义后，我们自然就清楚 Activity 的 Window 创建时机，Window 本质就是一块显示区域，所以关于 Activity 的 Window 创建应该发生在 Activity 的启动过程，Activity 的启动过程很复杂，最终会由 ActivityThread 中的 performLaunchActivity() 来完成整个启动过程，在这个方法内部会通过类加载器创建 Activity 的实例对象，并调用其 attach 方法为其关联运行过程中所依赖的一系列上下文环境变量。</p>
+<p>Activity 的 Window 创建就发生在 attach 方法里，系统会创建 Activity 所属的 Window 对象并为其设置回调接口，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mWindow = PolicyManager.makeNewWindow(<span class="keyword">this</span>)；</span><br><span class="line">mWindow.setCallback(<span class="keyword">this</span>);</span><br><span class="line">mWindow.setOnWindowDismissedCallback(<span class="keyword">this</span>);</span><br><span class="line">mWindow.getLayoutInflater().setPrivateFactory(<span class="keyword">this</span>);</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>可以看到， Window 对象的创建是通过 PolicyManager 的 makeNewWindow 方法实现的，由于 Activity 实现了 Window 的 Callback 接口，因此当 Window 接受到外界的状态改变时就会回调 Activity 的方法。Callback 接口中的方法很多，有几个是我们非常熟悉的，如 onAttachedToWindow、onDetachedFromWindow、dispatchTouchEvent 等等。</p>
+<p>再回到 Window 的创建，可以看到 Activity 的 Window 是通过 PolicyManager 的一个工厂方法来创建的，但是在 PolicyManager 的实际调用中，PolicyManager 的真正实现是 Policy 类，Policy 类中的 makeNewWindow 方法的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Window  <span class="title">makeNewWindow</span><span class="params">(Context context)</span></span>&#123;</span><br><span class="line">   <span class="keyword">return</span> <span class="keyword">new</span> PhoneWindow(context);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，Window 的具体实现类的确是 PhoneWindow。到这里 Window 以及创建完成了，下面分析 Activity 的视图是怎么附属到 Window 上的，而 Activity 的视图由 setContentView 提供，所以从 setContentView 入手，它的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentView</span><span class="params">(<span class="keyword">int</span> layoutResID)</span></span>&#123;</span><br><span class="line">   getWindow().setContentView(layoutResID);</span><br><span class="line">   initWindowDecorActionBar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，Activity 将具体实现交给了 Window，而 Window 的具体实现是 PhoneWindow，所以只需要看 PhoneWindow 的相关逻辑即可，它的处理步骤如下：</p>
+<p>(1)、如果没有 DecorView 就创建一个</p>
+<p>DecorView 是 Activity 中的顶级 View，是一个 FrameLayout，一般来说它的内部包含标题栏和内容栏，但是这个会随着主题的变化而改变，不管怎么样，内容栏是一定存在的，并且有固定的 id：”android.R.id.content”，在 PhoneWindow 中，通过 generateDecor 方法创建 DecorView，通过 generateLayout 初始化主题有关布局。</p>
+<p>(2)、将 View  添加到 DecorView 的 mContentParent 中</p>
+<p>这一步较为简单，直接将 Activity 的视图添加到 DecorView 的 mContentParent 中即可，由此可以理解 Activity 的 setContentView 这个方法的来历了，为什么不叫 setView 呢？因为 Activity 的布局文件只是被添加到 DecorView 的 mContentParent 中，因此叫 setContentView 更加具体准确。</p>
+<p>(3)、回调 Activity 的 onContentChanged 方法通知 Activity 视图已经发生改变</p>
+<p>前面分析到 Activity 实现了 Window 的 Callback 接口，这里当 Activity 的视图已经被添加到 DecorView 的 mContentParent 中了，需要通知 Activity，使其方便做相关的处理。</p>
+<p>经过上面的三个步骤，DecorView 已经被创建并初始化完毕，Activity 的布局文件也已经成功添加到了 DecorView 的 mContentParent 中，但是这个时候 DecorView 还没有被 WindowManager 正式添加到 Window 中。在 ActivityThread 的 handleResumeActivity 方法中，首先会调用 Acitivy 的 onResume 方法，接着会调用 Acitivy 的 makeVisible() 方法，正是在 makeVisible 方法中，DecorView 才真正的完成了显示过程，到这里 Activity 的视图才能被用户看到，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">makeVisible</span><span class="params">()</span></span>&#123;</span><br><span class="line">   <span class="keyword">if</span>(!mWindowAdded)&#123;</span><br><span class="line">      ViewManager wm = getWindowManager();</span><br><span class="line">      wm.addView(mDecor, getWindow().getAttributes());</span><br><span class="line">      mWindowAdded = <span class="keyword">true</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   mDecor.setVisibility(View.VISIBLE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>2、 Dialog 的 Window 创建过程</strong></p>
+<p>Dialog 的 Window 的创建过程与 Activity 类似，步骤如下：</p>
+<p>(1)、创建 Window</p>
+<p>Dialog 中 Window 同样是通过 PolicyManager 的 makeNewWindow 方法来完成的，创建后的对象也是 PhoneWindow。</p>
+<p>(2)、初始化 DecorView 并将 Dialog 的视图添加到 DecorView 中</p>
+<p>这个过程也和 Activity 类似，都是通过 Window 去添加指定布局文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentView</span><span class="params">(<span class="keyword">int</span> layoutResID)</span></span>&#123;</span><br><span class="line">   mWindow.setContentView(layoutResID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>(3)、将 DecorView 添加到 Window 中并显示</p>
+<p>在 Dialog 的 show 方法中，会通过 WindowManager 将 DecorView 添加到 Window 中，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mWindowManager.addView(mDecor, <span class="number">1</span>);</span><br><span class="line">mShowing = <span class="keyword">true</span>;</span><br></pre></td></tr></table></figure>
+<p>从上面三个步骤可以发现，Dialog 的 Window 创建过程和 Activity 创建过程很类似，当 Dialog 关闭时，它会通过 WindowManager 来移除 DecorView。普通的 Dialog 必须采用 Activity 的 Context，如果采用 Application 的 Context 就会报错。这是因为没有应用 token 导致的，而应用 token 一般只有 Activity 拥有，另外，系统 Window 比较特殊，可以不需要 token。</p>
+<p><strong>3、 Toast 的 Window 创建过程</strong></p>
+<p>Toast 与 Dialog 不同，它的工作过程稍显复杂，首先  Toast 也是基于 Window 来实现的，但是由于 Toast 具有定时取消这一功能，所以系统采用了 Handler。在 Toast 内部有两类 IPC 过程，一是 Toast 访问 NotificationManagerService，第二类是 NotificationManagerService 回调 Toast 里的 TN 接口。NotificationManagerService 同 WindowManagerService 一样，都是位于 Framework 层的服务，下面简称 NotificationManagerService 为 NMS。</p>
+<p>Toast 属于系统 Window，它内部的视图可以是系统默认样式也可以通过 setView 方法自定义 View，不管如何，它们都对应 Toast 的内部成员 mNextView，Toast  提供 show 和 cancel 分别用于显示和隐藏 Toast，它们内部是一个 IPC 过程，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mNextView == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"setView must have been called"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    INotificationManager service = getService();</span><br><span class="line">    String pkg = mContext.getOpPackageName();</span><br><span class="line">    TN tn = mTN;</span><br><span class="line">    tn.mNextView = mNextView;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        service.enqueueToast(pkg, tn, mDuration);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="comment">// Empty</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mTN.hide();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        getService().cancelToast(mContext.getPackageName(), mTN);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (RemoteException e) &#123;</span><br><span class="line">        <span class="comment">// Empty</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，显示和隐藏 Toast 都需要通过 NMS 来实现，TN 是一个 Binder 类，当 NMS 处理  Toast 的显示或隐藏请求时会跨进程回调 TN 中的方法。由于 TN 运行在 Binder 线程池中，所以需要通过 Handler 将其切换到当前线程中，这里的当前线程指的是发送 Toast 请求所在的线程。</p>
+<p>代码在显示 Toast 中调用了 NMS 的 enqueueToast 方法， enqueueToast 方法内部将 Toast 请求封装为 ToastRecord 对象并将其添加到一个名为 mToastQueue 的队列中，对于非系统应用来说，mToastQueue 中最多同时存在 50 个 ToastRecord，用于防止 DOS （Denial of Service  拒绝服务）。</p>
+<p>当 ToastRecord 添加到 mToastQueue 中后，NMS 就会通过 showNextToastLocked 方法来顺序显示 Toast，但是 Toast 真正的显示并不是在 NMS 中完成的，而是由 ToastRecord 的 callback 来完成的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">showNextToastLocked</span> <span class="params">()</span></span>&#123;</span><br><span class="line">   ToastRecord record = mToastQueue.get(<span class="number">0</span>);</span><br><span class="line">   <span class="keyword">while</span>(record != <span class="keyword">null</span>)&#123;</span><br><span class="line">       <span class="keyword">if</span>(DBG) </span><br><span class="line">          Slog.d(TAG,<span class="string">"show pkg="</span> + record.pkg + <span class="string">"callback="</span> + record.callback);</span><br><span class="line">       <span class="keyword">try</span>&#123;</span><br><span class="line">          record.callback.show();</span><br><span class="line">          scheduleTimeoutLocked(record);</span><br><span class="line">          <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">       ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个 callback 就是 Toast 中的 TN 对象的远程 Binder，最终被调用的 TN 中的方法会运行在发起 Toast 请求的应用的 Binder 线程池中，从以上代码可以看出，Toast 显示以后，NMS 还调用了 sheduleTimeoutLocked 方法，此方法中首先进行延时，具体的延时时长取决于 Toast 的显示时长，延迟相应时间后，NMS 会通过 cancelToastLocked 方法来隐藏 Toast 并将它从 mToastQueue 中移除，这时如果 mToastQueue 中还有其他 Toast，那么 NMS 就继续显示其他 Toast。Toast 的隐藏也是通过 ToastRecord 的 callback 来完成的，同样也是一次 IPC 过程。</p>
+<p>从上面的分析，可以知道 NMS 只是起到了管理 Toast 队列及其延时的效果，Toast 的显示和隐藏过程实际上是通过 Toast 的 TN 类来实现的，TN 类的两个方法 show 和 hide，是被 NMS 以跨进程的方式调用的，因此它们运行在 Binder 线程池中，为了将执行环境切换到 Toast 请求所在的线程，在它们内部使用了 Handler。</p>
+<p>Toast 毕竟是要在 Window 中实现的，因此它最终还是要依附于 WindowManager，TN 的 handleShow 中代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);</span><br><span class="line">mWM.addView(mView, mParams);</span><br></pre></td></tr></table></figure>
+<p>TN 的 handleHide 方法同样需要通过 WindowManager 来实现视图的移除，这里就不再贴出。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h1><p>下面让我们再次认清一些概念：任何 View 都是附属在一个 Window 上面的，Window 表示一个窗口的概念，也是一个抽象的概念，Window 并不是实际存在的，它是以 View 的形式存在的。WindowManager 是外界也就是我们访问 Window 的入口，Window 的具体实现位于 WindowManagerService 中，WindowManagerService 和  WindowManager 的交互是一个 IPC 过程。</p>
+<p>相信读完本文后，对 Window 会有一个更加清晰的认识，同时能够深刻理解 Window 和 View 的依赖关系。</p>
+<p>参考文章：</p>
+<p>《Android 开发艺术探索》</p>
+<p> <a href="http://blog.csdn.net/luoshengyang/article/details/8462738" target="_blank" rel="noopener">http://blog.csdn.net/luoshengyang/article/details/8462738</a></p>
+<p> <a href="http://blog.csdn.net/innost/article/details/47660193" target="_blank" rel="noopener">http://blog.csdn.net/innost/article/details/47660193</a></p>
+<p> <a href="http://www.tuicool.com/articles/MjAjIfU" target="_blank" rel="noopener">http://www.tuicool.com/articles/MjAjIfU</a></p>
+<p> <a href="http://blog.csdn.net/wzy_1988/article/details/43341761" target="_blank" rel="noopener">http://blog.csdn.net/wzy_1988/article/details/43341761</a></p>
+<p> <a href="http://blog.csdn.net/luoshengyang/article/details/6689748" target="_blank" rel="noopener">http://blog.csdn.net/luoshengyang/article/details/6689748</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/9cf3ee4d/" data-id="ckicxuszu002f33cainc9ql9y" class="article-share-link" data-share="baidu" data-title="带你彻底理解 Window 和 WindowManager">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/window/">window</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/wms/">wms</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/322c0cad/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          视频相关的理论知识与基础概念
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/8837781/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

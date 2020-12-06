@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Java 并发编程知识点总结 | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="线程基础 线程池 各种各样的锁 并发容器 原子类 Java 内存模型 线程协作 AQS 框架">
+<meta name="keywords" content="线程池,并发编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 并发编程知识点总结">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/d55eb6b/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="线程基础 线程池 各种各样的锁 并发容器 原子类 Java 内存模型 线程协作 AQS 框架">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-12-06T09:22:48.980Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java 并发编程知识点总结">
+<meta name="twitter:description" content="线程基础 线程池 各种各样的锁 并发容器 原子类 Java 内存模型 线程协作 AQS 框架">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Java-并发编程知识点总结" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/d55eb6b/" class="article-date">
+  <time datetime="2020-10-07T04:45:59.000Z" itemprop="datePublished">2020-10-07</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/Java/">Java</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java 并发编程知识点总结
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<ol>
+<li>线程基础</li>
+<li>线程池</li>
+<li>各种各样的锁</li>
+<li>并发容器</li>
+<li>原子类</li>
+<li>Java 内存模型</li>
+<li>线程协作</li>
+<li>AQS 框架</li>
+</ol>
+</blockquote>
+<a id="more"></a>
+<h2 id="一、线程基础"><a href="#一、线程基础" class="headerlink" title="一、线程基础"></a>一、线程基础</h2><h4 id="1-为什么继承-runnable-接口比继承-Thread-类的线程实现方式好？"><a href="#1-为什么继承-runnable-接口比继承-Thread-类的线程实现方式好？" class="headerlink" title="1. 为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？"></a>1. 为什么继承 runnable 接口比继承 Thread 类的线程实现方式好？</h4><ul>
+<li>可以把不同的执行内容解耦，全责分明</li>
+<li>某些情况可以减少开销，提高性能（比如可用线程池中已有的线程去执行 runnable，而不用重新创建线程）</li>
+<li>继承 Thread 类的单继承特性会限制代码的扩展性</li>
+</ul>
+<h4 id="2-线程是如何在-6-种状态之间转化的？"><a href="#2-线程是如何在-6-种状态之间转化的？" class="headerlink" title="2. 线程是如何在 6 种状态之间转化的？"></a>2. 线程是如何在 6 种状态之间转化的？</h4><ul>
+<li>线程的 6 种状态：New(新创建)、Runnable(可运行)、Blocked(被阻塞)、Waiting(等待)、Timed_waiting(计时等待)、Terminated(被终止)</li>
+<li>新创建线程处于 New 状态，调用 Thread#start 方法后进入 Runnable 状态，Runnable 对应操作系统的 Running 和 Ready 状态，代表可能正在被执行或正在等待 CPU 分配资源</li>
+<li>当要进入 synchronized 方法或代码块时却没抢到 monitor 锁，会由 Runnable 状态进入 Blocked 状态，获取到 monitor 锁后会进入 Runnable 状态</li>
+<li>执行 Object#wait 或 LockSupport#park 会进入 Waiting 状态；执行带 timeOut 参数的 Object#wait 或 LockSupport#park 会进入 Timed_waiting 状态</li>
+<li>调用 LockSupport#unpark 、被中断或超时时间到会由 Waiting/Timed_waiting 状态进入 Runnable 状态</li>
+<li>被 notify/notifyAll 唤醒，会由 Waiting/Timed_waiting 状态进入 Blocked 状态</li>
+<li>run 方法执行完或异常终止会进入 Terminated 状态</li>
+<li>一个线程只会经历一次 New 和 Terminated 状态，中间状态才可以相互转换</li>
+</ul>
+<h4 id="3-如何理解锁池和等待池？"><a href="#3-如何理解锁池和等待池？" class="headerlink" title="3. 如何理解锁池和等待池？"></a>3. 如何理解锁池和等待池？</h4><ul>
+<li>如果某对象的锁已被一个线程占有，其他线程调用此对象的 sychronized 代码块时无法获取到锁，就会进入此对象的锁池，锁池中的线程会竞争该对象的锁</li>
+<li>如果一个线程调用了 Object#wait 方法，此线程就会进入此对象的等待池，等待池中的线程不会去竞争该对象的锁</li>
+<li>调用 notify 方法会随机唤醒一个等待池中的线程，并移到锁池中；调用 notifyAll 方法会唤醒等待池中所有的线程，并全移到锁池中</li>
+</ul>
+<h4 id="4-为什么-Object-wait-要写在-while-condition-循环中？"><a href="#4-为什么-Object-wait-要写在-while-condition-循环中？" class="headerlink" title="4. 为什么 Object#wait 要写在 while(condition) 循环中？"></a>4. 为什么 Object#wait 要写在 while(condition) 循环中？</h4><ul>
+<li>规避虚假唤醒导致的问题，虚假唤醒是指线程可能在未调用 notify/notifyAll、未被中断和等待超时的情况下被意外唤醒，所以 wait 要写在 while(condition) 循环中，保证在发生虚假唤醒时程序的正确性</li>
+</ul>
+<h4 id="5-如何正确的中断线程？"><a href="#5-如何正确的中断线程？" class="headerlink" title="5. 如何正确的中断线程？"></a>5. 如何正确的中断线程？</h4><ul>
+<li>调用 Thread#interrupt 方法给线程发送中断信号，线程中通过 Thread#isInterrupted 方法判断是否被中断，若被中断则停止当前执行任务</li>
+<li>线程中通过 Thread#sleep 或 BlockingQueue#put 等方法休眠时，若被中断则会抛出 InterruptedException 异常并清除中断标记位，所以要捕获处理此异常，或再调用 Thread#interrupt 标记中断使后续代码能处理中断</li>
+<li>使用 volatile 标记位变量中断线程是错误的，因为不能中断 Thread#sleep 或 BlockingQueue#put 等方法进入的休眠状态</li>
+</ul>
+<h4 id="6-Object-wait-和-Thread-sleep-方法的异同？"><a href="#6-Object-wait-和-Thread-sleep-方法的异同？" class="headerlink" title="6. Object#wait 和 Thread#sleep 方法的异同？"></a>6. Object#wait 和 Thread#sleep 方法的异同？</h4><ul>
+<li>相同点：都可以让线程阻塞；都可以响应线程中断</li>
+<li>区别：wait 方法必须写在 synchronized 代码块；wait 方法会主动释放 monitor 锁；sleep 方法必须传入 timeout 参数</li>
+</ul>
+<h2 id="二、线程池"><a href="#二、线程池" class="headerlink" title="二、线程池"></a>二、线程池</h2><h4 id="1-使用线程池相比手动创建线程有什么优点？"><a href="#1-使用线程池相比手动创建线程有什么优点？" class="headerlink" title="1. 使用线程池相比手动创建线程有什么优点？"></a>1. 使用线程池相比手动创建线程有什么优点？</h4><ul>
+<li>频繁创建线程系统开销大，而线程池可用一些固定的工作线程反复执行任务，避免频繁创建线程</li>
+<li>过多线程会占用过多内存，而线程池可以控制线程的总数量，避免占用过多内存资源</li>
+<li>线程池可更方便的统筹管理任务执行和线程，避免手动创建线程难管理、难统计的问题</li>
+</ul>
+<h4 id="2-线程池各个参数的含义？"><a href="#2-线程池各个参数的含义？" class="headerlink" title="2. 线程池各个参数的含义？"></a>2. 线程池各个参数的含义？</h4><ul>
+<li>corePoolSize 核心线程数：常驻的工作线程，初始化时核心线程数默认为 0，创建后不会被销毁</li>
+<li>maximumPoolSize 最大线程数：当 workQueue 存放满时，线程池会进一步创建线程，可创建的最多数量为 maximumPoolSize</li>
+<li>keepAliveTime/TimeUnit 空闲线程存活时间：当大于 corePoolSize 部分的线程空闲超过存活时间后，会被回收</li>
+<li>threadFactory 用来创建线程的线程工厂：方便给线程自定义命名以及线程优先级</li>
+<li>workQueue 存放任务的阻塞队列：当线程数超过 corePoolSize 后，会将任务存放到 workQueue 中等待执行</li>
+<li>handler 任务被拒绝时的处理：当线程池已 shutdown 关闭或线程数达到 maximumPoolSize 时新提交的任务会被拒绝</li>
+<li>注意：当 workQueue 为无界队列时， maximumPoolSize 参数其实不会被用到，是没意义的</li>
+</ul>
+<h4 id="3-线程池的四种拒绝策略？"><a href="#3-线程池的四种拒绝策略？" class="headerlink" title="3. 线程池的四种拒绝策略？"></a>3. 线程池的四种拒绝策略？</h4><ul>
+<li>AbortPolicy：抛出 RejectedExecutionException 异常，可根据业务进行重试等操作</li>
+<li>DiscardPolicy：直接丢弃新提交的任务，不做其他反馈，有任务丢失风险</li>
+<li>DiscardOldestPolicy：如果线程池未关闭，就丢弃队列中存活时间最长的任务，但不做其他反馈，有任务丢失风险</li>
+<li>CallerRunsPolicy：如果线程池未关闭，就在提交任务的线程直接开始执行任务，任务不会被丢失，由于阻塞了提交任务的线程，相当于提供了负反馈</li>
+</ul>
+<h4 id="4-有哪-6-种常见的线程池？"><a href="#4-有哪-6-种常见的线程池？" class="headerlink" title="4. 有哪 6 种常见的线程池？"></a>4. 有哪 6 种常见的线程池？</h4><ul>
+<li>FixedThreadPool：固定线程数的线程池，核心线程数与最大线程数相同，任务存放队列为无界阻塞队列（LinkedBlockingQueue）</li>
+<li>CachedThreadPool：可缓存线程池，核心线程数为 0，最大线程数为 Integer.MAX_VALUE，任务存放队列为中转阻塞队列（SynchronousQueue）</li>
+<li>SingleThreadExecutor：单工作线程线程池，核心线程数为 1，任务存放队列为无界阻塞队列（LinkedBlockingQueue）</li>
+<li>ScheduledThreadPool：定时或周期性任务线程池，任务存放队列为无界优先级阻塞队列（DelayedWorkQueue）</li>
+<li>SingleThreadScheduledExecutor：定时或周期性任务单工作线程线程池，核心线程数为 1，任务存放队列为无界优先级阻塞队列（DelayedWorkQueue）</li>
+<li>ForkJoinPool：适合执行可以产生并行子任务的任务，可方便的分裂(Fork)成子任务执行并汇总(Join)结果，任务存放队列为 WorkQueue，除了公用队列外，每个线程还有一个独立的队列来存放任务</li>
+</ul>
+<h4 id="5-线程池常用的阻塞队列有哪些？"><a href="#5-线程池常用的阻塞队列有哪些？" class="headerlink" title="5. 线程池常用的阻塞队列有哪些？"></a>5. 线程池常用的阻塞队列有哪些？</h4><ul>
+<li>LinkedBlockingQueue 无界阻塞队列：任务队列容量为 Integer.MAX_VALUE，永远不会放满，所以对应线程池只会创建核心线程数量的工作线程，而最大线程数参数对线程池来说没有意义，因为并不会触发生成多于核心线程数的线程</li>
+<li>SynchronousQueue 中转阻塞队列：不存放任务，一旦有任务被提交就直接转发给线程或者创建新线程来执行</li>
+<li>DelayedWorkQueue 无界优先级阻塞队列：内部采用堆数据结构，按照延迟时间长短对任务进行排序，ScheduledThreadPool 和 SingleThreadScheduledExecutor 选择 DelayedWorkQueue，正是因为它们本身是基于时间执行任务的，而延迟队列正好可以把任务按时间进行排序，方便任务的执行</li>
+<li>ArrayBlockingQueue 有界队列：任务队列容量可配置，结合最大线程数与拒绝策略可有效的规避资源被耗尽的风险</li>
+</ul>
+<h4 id="6-为什么不建议使用常见的线程池？"><a href="#6-为什么不建议使用常见的线程池？" class="headerlink" title="6. 为什么不建议使用常见的线程池？"></a>6. 为什么不建议使用常见的线程池？</h4><ul>
+<li>FixedThreadPool 和 SingleThreadExecutor 任务存放队列为无界队列（LinkedBlockingQueue），任务过多时会占用大量内存并导致 OOM</li>
+<li>CachedThreadPool 虽然不存储任务，但线程数没有上限，任务过多时会创建非常多的线程，导致超过线程数量上限或 OOM</li>
+<li>ScheduledThreadPool 和 SingleThreadScheduledExecutor 任务存放队列为无界队列（DelayedWorkQueue），任务过多时会占用大量内存并导致 OOM</li>
+<li>手动创建可以根据业务选择合适的线程数量，制定拒绝策略，避免资源耗尽的风险</li>
+</ul>
+<h4 id="7-合适的线程数量是多少？"><a href="#7-合适的线程数量是多少？" class="headerlink" title="7. 合适的线程数量是多少？"></a>7. 合适的线程数量是多少？</h4><ul>
+<li>CPU 密集型任务无需设置过多线程数，因为此类任务需占用大量 CPU 资源，设置过多线程数会导致多个线程都去抢占 CPU 资源，产生不必要的上下文切换，从而造成整体性能下降</li>
+<li>IO 密集型任务可设置较多线程数，因为此类任务 IO 操作较耗时，但不会占用太多 CPU 资源，设置过少线程数会导致 CPU 资源空闲，导致 CPU 资源的浪费</li>
+<li>所以 CPU 耗时所占比例越高，就需要越少的线程；IO 耗时所占比例越高，就需要越多的线程</li>
+<li>通用公式：线程数 = CPU 核心数 * (1 + IO 耗时/CPU 耗时)</li>
+<li>例如 8 核机器执行一个 CPU 耗时 5ms，DB 耗时 100ms 的任务，线程数 = 8*(1+100/5) = 168 个</li>
+<li>QPS(req pre second) 即一秒可执行次数，上例中 QPS = 168<em>(1000/105) = 1600 。若 DB 最大 QPS 限制为 1000，则按比例减少线程数为 168</em>(1000/1600) = 105 个</li>
+<li>如果不同任务的 CPU 耗时和 IO 耗时各不相同，可对所有任务的 CPU 耗时和 IO 耗时求个平均值进行计算；</li>
+</ul>
+<h4 id="8-如何正确的关闭线程池？"><a href="#8-如何正确的关闭线程池？" class="headerlink" title="8. 如何正确的关闭线程池？"></a>8. 如何正确的关闭线程池？</h4><ul>
+<li>shutdown()：调用后会在执行完正在执行任务和队列中等待任务后才彻底关闭，并会根据拒绝策略拒绝后续新提交的任务</li>
+<li>shutdownNow()：调用后会给正在执行任务线程发送中断信号，并将任务队列中等待的任务转移到一个 List 中返回，后续会根据拒绝策略拒绝新提交的任务</li>
+<li>isShutdown()：判断是否开始关闭线程池，即是否调用了 shutdown() 或 shutdownNow() 方法</li>
+<li>isTerminated()：判断线程池是否真正终止，即线程池已关闭且所有剩余的任务都执行完了</li>
+<li>awaitTermination()：阻塞一段时间等待线程池终止，返回 true 代表线程池真正终止否则为等待超时</li>
+</ul>
+<h4 id="9-线程池线程复用的原理？"><a href="#9-线程池线程复用的原理？" class="headerlink" title="9. 线程池线程复用的原理？"></a>9. 线程池线程复用的原理？</h4><ul>
+<li>线程池将线程和任务解耦，一个线程可以从任务队列中获取多个任务执行</li>
+<li>关键类为 ThreadPoolExecutor 内部的 Worker 类，对应于一个线程，其内部会从任务队列中获取多个任务执行</li>
+</ul>
+<h2 id="三、各种各样的锁"><a href="#三、各种各样的锁" class="headerlink" title="三、各种各样的锁"></a>三、各种各样的锁</h2><h4 id="1-悲观锁-乐观锁"><a href="#1-悲观锁-乐观锁" class="headerlink" title="1. 悲观锁/乐观锁"></a>1. 悲观锁/乐观锁</h4><ul>
+<li>悲观锁指在操作同步资源前必须先拿到锁；而乐观锁利用 CAS 理念，在不独占资源的情况下对资源进行修改</li>
+<li>悲观锁适合用于并发写入多、临界区代码复杂、竞争激烈等场景，这种场景下悲观锁可以避免大量的无用的反复尝试等消耗</li>
+<li>乐观锁适用于大部分是读取，少部分是修改的场景，也适合虽然读写都很多，但是并发并不激烈的场景。在这些场景下，乐观锁不加锁的特点能让性能大幅提高</li>
+</ul>
+<h4 id="2-可重入锁-非可重入"><a href="#2-可重入锁-非可重入" class="headerlink" title="2. 可重入锁/非可重入"></a>2. 可重入锁/非可重入</h4><ul>
+<li>可重入是如果指线程已经持有锁，则能在不释放这把锁的情况下，再次获取这把锁</li>
+<li>Java 中的 ReentrantLock 和 synchronized 都是可重入锁</li>
+</ul>
+<h4 id="3-共享锁-独占锁"><a href="#3-共享锁-独占锁" class="headerlink" title="3. 共享锁/独占锁"></a>3. 共享锁/独占锁</h4><ul>
+<li>共享锁指同一把锁可以同时被多个线程获取，而独占锁指一把锁只能同时被一个线程获取</li>
+<li>ReentrantReadWriteLock 的读锁就是共享锁，可以同时被多个线程读取；写锁则为独占锁，同时只能被一个线程写</li>
+</ul>
+<h4 id="4-自旋锁-非自旋锁"><a href="#4-自旋锁-非自旋锁" class="headerlink" title="4. 自旋锁/非自旋锁"></a>4. 自旋锁/非自旋锁</h4><ul>
+<li>自旋是指拿不到锁时不陷入阻塞，而是循环尝试获取锁</li>
+<li>自旋锁适用于并发度不是特别高的场景，以及临界区比较短小的情况，这样我们可以利用避免线程切换来提高效率</li>
+<li>如果临界区很大，线程一旦拿到锁，很久才会释放的话，那就不合适用自旋锁，因为自旋会一直占用 CPU 却无法拿到锁，白白消耗资源</li>
+</ul>
+<h4 id="5-公平锁-非公平锁"><a href="#5-公平锁-非公平锁" class="headerlink" title="5. 公平锁/非公平锁"></a>5. 公平锁/非公平锁</h4><ul>
+<li>公平锁是指各个线程公平平等，排队获取锁时等待的时间越长就会优先获取到锁，</li>
+<li>非公平锁是指线程可能存在插队现象，比如一个阻塞等待中的线程 A 和新来的线程 B 同时竞争一把锁时线程 B 会插队先获取到锁</li>
+<li>非公平锁整体执行速度为什么能更快：如上例，唤醒线程是需要耗时的，与其漫长的等待唤醒 A，不如直接先让 B 插队执行，这样可以跳过 B 阻塞、唤醒的状态切换</li>
+<li>非公平锁的优缺点：整体执行速度更快、吞吐量更大，但可能产生线程饥饿导致某个线程长时间得不到执行</li>
+</ul>
+<h4 id="6-可中断锁-不可中断锁"><a href="#6-可中断锁-不可中断锁" class="headerlink" title="6. 可中断锁/不可中断锁"></a>6. 可中断锁/不可中断锁</h4><ul>
+<li>可中断指等待获取锁时可被中断从而取消等待；synchronized 是不可中断锁</li>
+</ul>
+<h4 id="7-偏向锁-轻量级锁-重量级锁"><a href="#7-偏向锁-轻量级锁-重量级锁" class="headerlink" title="7. 偏向锁/轻量级锁/重量级锁"></a>7. 偏向锁/轻量级锁/重量级锁</h4><ul>
+<li>特指 synchronized 锁的几种状态</li>
+<li>锁的升级路径：无锁-&gt;偏向锁-&gt;轻量级锁-&gt;重量级锁</li>
+<li>偏向锁：当一个线程第一次尝试获取某个对象的锁时，仅记录这个线程为偏向锁的拥有者，后续获取锁时如果是同个线程，就可以直接获取锁，开销很小，当多线程发生实际竞争时会升级为轻量级锁</li>
+<li>轻量级锁：线程会通过自旋的方式尝试获取锁（自旋锁），不会阻塞，开销较小，当锁竞争时间较长时会膨胀为重量级锁</li>
+<li>重量级锁：利用操作系统同步机制实现，会让线程进入阻塞状态，开销较大</li>
+</ul>
+<h4 id="8-JVM-对-synchronized-锁做了哪些优化？"><a href="#8-JVM-对-synchronized-锁做了哪些优化？" class="headerlink" title="8. JVM 对 synchronized 锁做了哪些优化？"></a>8. JVM 对 synchronized 锁做了哪些优化？</h4><ul>
+<li>锁的升级：无锁-&gt;偏向锁-&gt;轻量级锁-&gt;重量级锁</li>
+<li>锁消除：虚拟机编译时，对一些代码上使用 synchronized 同步，但是被检测到不可能存在共享数据竞争的锁进行削除</li>
+<li>锁粗化：把不间断、高频锁的请求合并成一个请求，以降低短时间内大量锁请求、同步、释放带来的性能损耗</li>
+</ul>
+<h2 id="四、并发容器"><a href="#四、并发容器" class="headerlink" title="四、并发容器"></a>四、并发容器</h2><h4 id="1-Vector-HashTab"><a href="#1-Vector-HashTab" class="headerlink" title="1. Vector/HashTab"></a>1. Vector/HashTab</h4><ul>
+<li>内部使用 synchronized 方法级别的锁保证线程安全，锁的粒度比较大</li>
+<li>在并发量高的时候很容易发生竞争，并发效率比较低</li>
+</ul>
+<h4 id="2-ConcurrentHashMap"><a href="#2-ConcurrentHashMap" class="headerlink" title="2. ConcurrentHashMap"></a>2. ConcurrentHashMap</h4><ul>
+<li>Java7 中基于普通的 HashMap 数组+链表结构，采用分段锁的机制</li>
+<li>Java8 中基于数组+链表+红黑树结构，采用 CAS + synchronized 同步机制</li>
+<li>红黑树相比链表可以提高查找效率，复杂度为 O(log(n))</li>
+<li>为什么链表长度大于 8 时转换为红黑树？如果 hashCode 分布离散良好、链表符合泊松分布，那链表长度为 8 的概率小于千万分之一，红黑树更多的是一种保底策略，用来保证 hash 算法异常等极端情况下的查询效率</li>
+<li>为什么不采取仅数组+红黑树的结构？红黑树节点相比链表占用内存约大一倍，而链表较短时查找也很快，所以优先采取链表结构</li>
+</ul>
+<h4 id="3-CopyOnWriteArrayList"><a href="#3-CopyOnWriteArrayList" class="headerlink" title="3. CopyOnWriteArrayList"></a>3. CopyOnWriteArrayList</h4><ul>
+<li>基于 CopyOnWrite 机制，写入时会先创建一份副本，写完副本后直接替换原内容</li>
+<li>优点：比读写锁更近一步，只需写写互斥，读取不用加锁，对于读多写少的场景可以大幅提升性能</li>
+<li>缺点：写入时存在创建副本开销及副本所多占的内存，读写不互斥可能会导致数据无法及时保持同步</li>
+</ul>
+<h2 id="五、原子类"><a href="#五、原子类" class="headerlink" title="五、原子类"></a>五、原子类</h2><h4 id="1-基本类型原子类"><a href="#1-基本类型原子类" class="headerlink" title="1. 基本类型原子类"></a>1. 基本类型原子类</h4><ul>
+<li>包括 AtomicInteger、AtomicLong、AtomicBoolean</li>
+<li>提供了基本类型的 getAndSet、compareAndSet 等原子操作</li>
+<li>底层基于 Unsafe#compareAndSwapInt、Unsafe#compareAndSwapLong 等实现</li>
+</ul>
+<h4 id="2-数组类型原子类"><a href="#2-数组类型原子类" class="headerlink" title="2. 数组类型原子类"></a>2. 数组类型原子类</h4><ul>
+<li>包括 AtomicIntegerArray、AtomicLongArray、AtomicReferenceArray</li>
+<li>数组里的元素都可以保证其原子性，相当于把基本类型原子类聚合起来，组合成一个数组</li>
+</ul>
+<h4 id="3-引用类型原子类"><a href="#3-引用类型原子类" class="headerlink" title="3. 引用类型原子类"></a>3. 引用类型原子类</h4><ul>
+<li>包括 AtomicReference、AtomicStampedReference、AtomicMarkableReference</li>
+<li>用于让一个对象保证原子性，底层基于 Unsafe#compareAndSwapObject 等实现</li>
+<li>AtomicStampedReference 是对 AtomicReference 的升级，在此基础上加了时间戳，用于解决 CAS 的 ABA 问题</li>
+</ul>
+<h4 id="4-升级类型原子类"><a href="#4-升级类型原子类" class="headerlink" title="4. 升级类型原子类"></a>4. 升级类型原子类</h4><ul>
+<li>包括 AtomicIntegerFieldUpdater、AtomicLongFieldUpdater、AtomicReferenceFieldUpdater</li>
+<li>对于非原子的基本或引用类型，在不改变其原类型的前提下，提供原子更新的能力</li>
+<li>适用于由于历史原因改动成本太大或极少情况用到原子性的场景</li>
+</ul>
+<h4 id="5-累加器"><a href="#5-累加器" class="headerlink" title="5. 累加器"></a>5. 累加器</h4><ul>
+<li>包括 LongAdder、DoubleAdder</li>
+<li>相比于基本类型原子类，累加器没有 compareAndSwap、addAndGet 等方法，功能较少</li>
+<li>设计原理：将 value 分散到一个数组中，不同线程只针对自己命中的槽位进行修改，减小高并发场景的线程竞争概率，类似于 ConcurrentHashMap 的分段锁思想</li>
+<li>可解决高并发场景 AtomicLong 的过多自旋问题</li>
+</ul>
+<h4 id="6-积累器"><a href="#6-积累器" class="headerlink" title="6. 积累器"></a>6. 积累器</h4><ul>
+<li>包括 LongAccumulator、DoubleAccumulator</li>
+<li>是 LongAdder、DoubleAdder 的功能增强版，提供了自定义的函数操作</li>
+</ul>
+<h4 id="7-原子类与锁"><a href="#7-原子类与锁" class="headerlink" title="7. 原子类与锁"></a>7. 原子类与锁</h4><ul>
+<li>都是为了保证并发场景下线程安全</li>
+<li>原子类粒度更细，竞争范围为变量级别</li>
+<li>原子类效率更高，底层采取 CAS 操作，不会阻塞线程</li>
+<li>原子类不适用于高并发场景，因为无限循环的 CAS 操作会占用 CPU</li>
+</ul>
+<h4 id="8-原子类与-volatile"><a href="#8-原子类与-volatile" class="headerlink" title="8. 原子类与 volatile"></a>8. 原子类与 volatile</h4><ul>
+<li>volatile 具有可见性和有序性，但不具备原子性</li>
+<li>volatile 修饰 boolean 类型通常保证线程安全，因为赋值操作具有原子性</li>
+<li>volatile 修饰 int 类型通常无法保证线程安全，因为 int 类型的计算操作需要读取、修改、赋值回去，不是原子操作，这时需要使用原子类</li>
+</ul>
+<h2 id="六、Java-内存模型"><a href="#六、Java-内存模型" class="headerlink" title="六、Java 内存模型"></a>六、Java 内存模型</h2><h4 id="1-内存结构与内存模型"><a href="#1-内存结构与内存模型" class="headerlink" title="1. 内存结构与内存模型"></a>1. 内存结构与内存模型</h4><ul>
+<li>内存结构描述了 JVM 运行时内存区域结构，包括：堆、方法区、虚拟机栈、本地方法栈、程序计数器、运行时常量池</li>
+<li>内存模型（JMM）是和多线程相关的一组规范，与 Java 并发编程有关</li>
+</ul>
+<h4 id="2-主内存和工作内存"><a href="#2-主内存和工作内存" class="headerlink" title="2. 主内存和工作内存"></a>2. 主内存和工作内存</h4><ul>
+<li>CPU 有多级缓存，会存在数据不同步的情况，JMM 屏蔽了 CPU 缓存的底层细节，抽象为主内存和工作内存</li>
+<li>工作内存中存在一份主内存数据的副本，每个线程只能接触工作内存，无法直接操作主内存</li>
+</ul>
+<h4 id="3-内存可见性"><a href="#3-内存可见性" class="headerlink" title="3. 内存可见性"></a>3. 内存可见性</h4><ul>
+<li>指一个线程修改了工作内存的值后，其他线程能正确感知到最新的值</li>
+<li>满足于 happens-before 关系的原则具备可见行，比如单线程、volatile、锁同步等规则</li>
+</ul>
+<h4 id="4-指令重排序"><a href="#4-指令重排序" class="headerlink" title="4. 指令重排序"></a>4. 指令重排序</h4><ul>
+<li>编译器、JVM 或者 CPU 都有可能出于优化等目的，对于实际指令执行的顺序进行调整，这就是重排序</li>
+<li>volatile 具备禁止重排序的特性</li>
+<li>单例模式的双重检查模式需要添加 volatile 修饰，规避指令重排序导致的对象引用判断不为 null，但对象仍未初始化完的问题</li>
+</ul>
+<h2 id="七、线程协作"><a href="#七、线程协作" class="headerlink" title="七、线程协作"></a>七、线程协作</h2><h4 id="1-Semaphore"><a href="#1-Semaphore" class="headerlink" title="1. Semaphore"></a>1. Semaphore</h4><ul>
+<li>通过控制许可证的发放和归还实现统一时刻可执行某任务的最大线程数</li>
+<li>信号量可以被 FixedThreadPool 代替吗？不能，信号量具有可跨线程、跨线程池的特性，相比 FixedThreadPool 更灵活，更适合于限制并发访问的线程数</li>
+</ul>
+<h4 id="2-CountDownLatch"><a href="#2-CountDownLatch" class="headerlink" title="2. CountDownLatch"></a>2. CountDownLatch</h4><ul>
+<li>用于并发流程控制，等到一个设定的数值达到之后，才能开始执行</li>
+<li>不可重用，若已完成倒数，则不能再重置使用</li>
+</ul>
+<h4 id="3-CyclicBarrier"><a href="#3-CyclicBarrier" class="headerlink" title="3. CyclicBarrier"></a>3. CyclicBarrier</h4><ul>
+<li>与 CountDownLatch 类似，都能阻塞一个或一组线程，直到某个预设的条件达成，再统一出发</li>
+<li>CountDownLatch 作用于一个线程，CountDownLatch 作用于事件</li>
+<li>可重用，若已达成条件，可重置继续使用</li>
+<li>可定义条件达成后的自定义执行动作</li>
+</ul>
+<h2 id="八、AQS-框架"><a href="#八、AQS-框架" class="headerlink" title="八、AQS 框架"></a>八、AQS 框架</h2><h4 id="1-AQS-及存在的意义？"><a href="#1-AQS-及存在的意义？" class="headerlink" title="1. AQS 及存在的意义？"></a>1. AQS 及存在的意义？</h4><ul>
+<li>AQS 是一个用于构建锁、同步器等线程协作工具类的框架，即 AbstractQueuedSynchronizer 类</li>
+<li>ReentrantLock、Semaphore、CountDownLatch 等工具类的工作都是类似的，AQS 就是这些类似工作提取出来的公共部分，比如阀门功能、调度线程等</li>
+<li>AQS 可以极大的减少上层工具类的开发工作量，也可以避免上层处理不当导致的线程安全问题</li>
+</ul>
+<h4 id="2-AQS-内部的关键原理"><a href="#2-AQS-内部的关键原理" class="headerlink" title="2. AQS 内部的关键原理"></a>2. AQS 内部的关键原理</h4><ul>
+<li>state 值：AQS 中具有一个 int 类型的 state 变量，在不同工具类中代表不同的含义，比如在 Semaphore 中代表剩余许可证的数量；在 CountDownLatch 中代表需要倒数的数量；在 ReentrantLock 中代表锁的占有情况，0 代表没被占有，1 代表被占有，大于 1 代表同个线程重入了</li>
+<li>FIFO 队列：用于存储、管理等待的线程</li>
+<li>获取、释放锁：需工具类自行实现，比如 Semaphore#acquire、ReentrantLock#lock 为获取； Semaphore#release、ReentrantLock#unlock 为释放</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/d55eb6b/" data-id="ckicxuszi001i33cawtliddnh" class="article-share-link" data-share="baidu" data-title="Java 并发编程知识点总结">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/并发编程/">并发编程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/线程池/">线程池</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/52cb86d4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Android 消息屏障与异步消息
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/a5b629de/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 方法插桩 plugin 开发实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。">
+<meta name="keywords" content="FFmpeg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/ddeb5551/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-47a9f35d6fe5fc1f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-2080bfe3becfe3ab?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-25b7f6a5f1e6cb8e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-5c6ab1cbb264afee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-4a8b509cc615ca20?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2020-12-06T06:59:08.591Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg">
+<meta name="twitter:description" content="上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-47a9f35d6fe5fc1f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Android-集成-FFmpeg-二-以命令方式调用-FFmpeg" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/ddeb5551/" class="article-date">
+  <time datetime="2017-09-22T07:17:03.000Z" itemprop="datePublished">2017-09-22</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/音视频/">音视频</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>上一篇文章实现了 FFmpeg 编译及 Android 端的简单调用，成功获取了 FFmpeg 支持的编解码信息，而在实际使用时，需要调用 FFmpeg 内部函数，或通过命令行方式调用，但后者简单很多。</p>
+<a id="more"></a>
+<p>怎么让 FFmpeg 运行命令呢？很简单，调用 FFmpeg 中执行命令的函数即可，这个函数位于源码的 ffmpeg.c 文件中：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char **argv)</span><br></pre></td></tr></table></figure>
+<p>我们的目的很简单：<strong>将 FFmpeg 命令传递给 main 函数并执行</strong>。而这个传递过程需要编写底层代码实现，在这个底层接口代码中，接收上层传递过来的 FFmpeg 命令 ，然后调用 ffmpeg.c 中的 main 函数执行该命令。</p>
+<p>开始集成之前，首先回顾一下 JNI 标准接入步骤：</p>
+<ol>
+<li>编写带有 native 方法的 Java 类</li>
+<li>生成该类扩展名为 .h 的头文件</li>
+<li>创建该头文件的 C/C++ 文件，实现 native 方法</li>
+<li>将该 C/C++ 文件编译成动态链接库</li>
+<li>在Java 程序中加载该动态链接库</li>
+</ol>
+<p>接下来按照此步骤开始集成，实现 Android 端以命令方式调用 FFmpeg ，这里假设你已经编译过 FFmpeg 源码，具体编译方法可查看本系列第一篇。如果你是新手或对 Android 端集成底层库不太熟悉，强烈建议先阅读本系列第一篇 <a href="http://www.yhao.xyz/2017/08/12/Android%20%E9%9B%86%E6%88%90%20FFmpeg%20(%E4%B8%80" target="_blank" rel="noopener">Android 集成 FFmpeg (一）基础知识及简单调用</a>%20%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%8F%8A%E7%AE%80%E5%8D%95%E8%B0%83%E7%94%A8/)  。</p>
+<p>首先新建一个文件夹 ndkBuild 作为工作空间，在 ndkBuild 目录下新建 jni 文件夹, 作为编译工作目录。</p>
+<h2 id="1-编写带有-native-方法的-Java-类"><a href="#1-编写带有-native-方法的-Java-类" class="headerlink" title="1. 编写带有 native 方法的 Java 类"></a><strong>1. 编写带有 native 方法的 Java 类</strong></h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.jni;</span><br><span class="line"></span><br><span class="line">public class FFmpegJni &#123;</span><br><span class="line">   </span><br><span class="line">    public static native int run(String[] commands);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-生成该类扩展名为-h-的头文件"><a href="#2-生成该类扩展名为-h-的头文件" class="headerlink" title="2. 生成该类扩展名为 .h 的头文件"></a><strong>2. 生成该类扩展名为 .h 的头文件</strong></h2><p>在 Android Studio 的 Terminal 中 切换到 java 目录下，运行 javah 命令生成头文件：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-47a9f35d6fe5fc1f?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>可以看到在 java 目录下生成了头文件：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-2080bfe3becfe3ab?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>然后将此头文件剪切到 jni 目录下。</p>
+<h2 id="3-创建该头文件的-C-C-文件，实现-native-方法"><a href="#3-创建该头文件的-C-C-文件，实现-native-方法" class="headerlink" title="3. 创建该头文件的 C/C++ 文件，实现 native 方法"></a><strong>3. 创建该头文件的 C/C++ 文件，实现 native 方法</strong></h2><p>在 jni 目录下创建对应的 C 文件 com_jni_FFmpegJni.c :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;android_log.h&quot;</span><br><span class="line">#include &quot;com_jni_FFmpegJni.h&quot;</span><br><span class="line">#include &quot;ffmpeg.h&quot;</span><br><span class="line"></span><br><span class="line">JNIEXPORT jint JNICALL Java_com_jni_FFmpegJni_run(JNIEnv *env, jclass obj, jobjectArray commands) &#123;</span><br><span class="line">    int argc = (*env)-&gt;GetArrayLength(env, commands);</span><br><span class="line">    char *argv[argc];</span><br><span class="line">    int i;</span><br><span class="line">    for (i = 0; i &lt; argc; i++) &#123;</span><br><span class="line">        jstring js = (jstring) (*env)-&gt;GetObjectArrayElement(env, commands, i);</span><br><span class="line">        argv[i] = (char*) (*env)-&gt;GetStringUTFChars(env, js, 0);</span><br><span class="line">    &#125;</span><br><span class="line">    LOGD(&quot;----------begin---------&quot;);</span><br><span class="line">    return main(argc, argv);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数的主要作用就是将 Java 端传递过来的 jobjectArray 类型的 FFmpeg 命令，转换为 main 函数所需要的参数 argc 和 argv ，然后调用之。为了将日志输出函数简化为简洁的 “LOGD”、 “LOGE”，需要在同级目录下新建 android_log.h 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#ifdef ANDROID</span><br><span class="line">#include &lt;android/log.h&gt;</span><br><span class="line">#ifndef LOG_TAG</span><br><span class="line">#define  MY_TAG   &quot;MYTAG&quot;</span><br><span class="line">#define  AV_TAG   &quot;AVLOG&quot;</span><br><span class="line">#endif</span><br><span class="line">#define LOGE(format, ...)  __android_log_print(ANDROID_LOG_ERROR, MY_TAG, format, ##__VA_ARGS__)</span><br><span class="line">#define LOGD(format, ...)  __android_log_print(ANDROID_LOG_DEBUG,  MY_TAG, format, ##__VA_ARGS__)</span><br><span class="line">#define  XLOGD(...)  __android_log_print(ANDROID_LOG_INFO,AV_TAG,__VA_ARGS__)</span><br><span class="line">#define  XLOGE(...)  __android_log_print(ANDROID_LOG_ERROR,AV_TAG,__VA_ARGS__)</span><br><span class="line">#else</span><br><span class="line">#define LOGE(format, ...)  printf(MY_TAG format &quot;\n&quot;, ##__VA_ARGS__)</span><br><span class="line">#define LOGD(format, ...)  printf(MY_TAG format &quot;\n&quot;, ##__VA_ARGS__)</span><br><span class="line">#define XLOGE(format, ...)  fprintf(stdout, AV_TAG &quot;: &quot; format &quot;\n&quot;, ##__VA_ARGS__)</span><br><span class="line">#define XLOGI(format, ...)  fprintf(stderr, AV_TAG &quot;: &quot; format &quot;\n&quot;, ##__VA_ARGS__)</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+<p>其中 XLOGD 和 XLOGE 方法是为了将 FFmpeg 内部日志信息自动输出到 logcat，后面会用到。除 android_log.h 之外，很显然，还需要添加 ffmpeg.c 、ffmpeg.h 文件，实际上 ffmpeg.c 的 main 函数中还会调用到其他文件，所以需要从源码中拷贝 ffmpeg.h、ffmpeg.c、ffmpeg_opt.c、ffmpeg_filter.c、cmdutils.c、cmdutils.h 以及 cmdutils_common_opts.h 共 7 个文件到 jni 目录下。  </p>
+<p>此时 jni 目录下应该有以下 10 个文件：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-25b7f6a5f1e6cb8e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>接下来还要修改 ffmpeg.c 、cmdutils.c 以及 cmdutils.h 三个文件使其适用于 Android 端调用，按功能分为以下三点：</p>
+<p><strong>1.日志输出到 logcat （修改 ffmpeg.c）</strong></p>
+<p>在执行命令过程中，FFmpeg 内部的日志系统会输出很多有用的信息，但是在 Android 的 logcat 中是看不到的，所以需要修改源码将 FFmpeg 内部日志输出 logcat 中，方便调试，其实这是十分必要的。修改方法很简单，只需修改 ffmpeg.c 文件三处：</p>
+<p>引入 android_log.h 头文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;android_log.h&quot;</span><br></pre></td></tr></table></figure>
+<p>修改 log_callback_null 方法为下：（原方法为空）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">static void log_callback_null(void *ptr, int level, const char *fmt, va_list vl)</span><br><span class="line">&#123;</span><br><span class="line">    static int print_prefix = 1;</span><br><span class="line">    static int count;</span><br><span class="line">    static char prev[1024];</span><br><span class="line">    char line[1024];</span><br><span class="line">    static int is_atty;</span><br><span class="line">    av_log_format_line(ptr, level, fmt, vl, line, sizeof(line), &amp;print_prefix);</span><br><span class="line">    strcpy(prev, line);</span><br><span class="line">    if (level &lt;= AV_LOG_WARNING)&#123;</span><br><span class="line">        XLOGE(&quot;%s&quot;, line);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        XLOGD(&quot;%s&quot;, line);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置日志回调方法为 log_callback_null：（main 函数开始处）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, char **argv)</span><br><span class="line">&#123;</span><br><span class="line">    av_log_set_callback(log_callback_null);</span><br><span class="line">    int i, ret;</span><br><span class="line">    ......</span><br></pre></td></tr></table></figure>
+<p><strong>2.执行命令后清除数据（修改 ffmpeg.c）</strong></p>
+<p>由于 Android 端执行一条 FFmpeg 命令后并不需要结束进程，所以需要初始化相关变量，否则执行下一条命令时就会崩溃。首先找到 ffmpeg.c 的 ffmpeg_cleanup 方法，在该方法的末尾添加以下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">nb_filtergraphs = 0;</span><br><span class="line">nb_output_files = 0;</span><br><span class="line">nb_output_streams = 0;</span><br><span class="line">nb_input_files = 0;</span><br><span class="line">nb_input_streams = 0;</span><br></pre></td></tr></table></figure>
+<p>然后在 main 函数的最后调用 ffmpeg_cleanup 方法，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    ......</span><br><span class="line">    ffmpeg_cleanup(0);</span><br><span class="line">    return main_return_code;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>3.执行结束后不结束进程（修改 cmdutils.c、cmdutils.h）</strong></p>
+<p>FFmpeg 在执行过程中出现异常或执行结束后会自动销毁进程，而我们在 Android 中调用时，只想让它作为一个普通的方法，不需要销毁进程，只需要正常返回就可以了，这就需要修改 cmdutils.c 中的 exit_program 方法，源码中为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void exit_program(int ret)</span><br><span class="line">&#123;</span><br><span class="line">    if (program_exit)</span><br><span class="line">        program_exit(ret);</span><br><span class="line"></span><br><span class="line">    exit(ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int exit_program(int ret)</span><br><span class="line">&#123;</span><br><span class="line">   return ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此处修改了方法的返回值类型，所以还需要修改对应头文件中的方法声明，即将  cmdutils.h 中的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void exit_program(int ret) av_noreturn;</span><br></pre></td></tr></table></figure>
+<p>修改为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int exit_program(int ret);</span><br></pre></td></tr></table></figure>
+<p>到这里需要修改项都已修改完毕，网上教程实现 FFmpeg 内部日志输出到 logcat 的并不多，但这一步是十分有必要的。很多教程中需要将 ffmpeg 中的 main 方法名字修改为 “run” 、”exec” 等等，其实完全没必要，为什么要对方法名这么在意，乃至不惜徒增新手学习的复杂度呢？ 我不知道修改的原因和意义所在。 有些教程中需要把 config.h 文件也拷贝到 jni 目录下，而我并没有拷贝，那么到底需不需要呢？FFmpeg 的命令数不胜数，我只能说我执行过的命令都不需要拷贝 config.h ，尽管源码 ffmpeg.c 中就声明了引入 config.h 文件。</p>
+<h2 id="4-将该-C-C-文件编译成动态链接库"><a href="#4-将该-C-C-文件编译成动态链接库" class="headerlink" title="4. 将该 C/C++ 文件编译成动态链接库"></a><strong>4. 将该 C/C++ 文件编译成动态链接库</strong></h2><p>在 jni 目录下创建 Android.mk 文件 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">LOCAL_PATH:= $(call my-dir)</span><br><span class="line"></span><br><span class="line">#编译好的 FFmpeg 头文件目录</span><br><span class="line">INCLUDE_PATH:=/home/yhao/sf/ffmpeg-3.3.3/Android/arm/include</span><br><span class="line"></span><br><span class="line">#编译好的 FFmpeg 动态库目录</span><br><span class="line">FFMPEG_LIB_PATH:=/home/yhao/sf/ffmpeg-3.3.3/Android/arm/lib</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libavcodec</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libavcodec-57.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"> </span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libavformat</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libavformat-57.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"> </span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libswscale</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libswscale-4.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"> </span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libavutil</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libavutil-55.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"> </span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libavfilter</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libavfilter-6.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"> </span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libswresample</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libswresample-2.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libpostproc</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libpostproc-54.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE:= libavdevice</span><br><span class="line">LOCAL_SRC_FILES:= $(FFMPEG_LIB_PATH)/libavdevice-57.so</span><br><span class="line">LOCAL_EXPORT_C_INCLUDES := $(INCLUDE_PATH)</span><br><span class="line">include $(PREBUILT_SHARED_LIBRARY)</span><br><span class="line"></span><br><span class="line">include $(CLEAR_VARS)</span><br><span class="line">LOCAL_MODULE := ffmpeg</span><br><span class="line">LOCAL_SRC_FILES := com_jni_FFmpegJni.c \</span><br><span class="line">                  cmdutils.c \</span><br><span class="line">                  ffmpeg.c \</span><br><span class="line">                  ffmpeg_opt.c \</span><br><span class="line">                  ffmpeg_filter.c   </span><br><span class="line">LOCAL_C_INCLUDES := /home/yhao/sf/ffmpeg-3.3.3</span><br><span class="line">LOCAL_LDLIBS := -lm -llog</span><br><span class="line">LOCAL_SHARED_LIBRARIES := libavcodec libavfilter libavformat libavutil libswresample libswscale libavdevice</span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure>
+<p>此处使用的 FFmpeg 为本系列上篇文章中的编译配置，其中引入了 libmp3lame 库以支持 mp3 格式编码，与上篇文章不同的是最后对 ffmpeg 动态库的编译，加入了  ffmpeg.c 、cmdutils.c  等文件。</p>
+<p>然后在 jni 目录下创建 Application.mk 文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">APP_ABI := armeabi-v7a</span><br><span class="line">APP_PLATFORM=android-14</span><br><span class="line">NDK_TOOLCHAIN_VERSION=4.9</span><br></pre></td></tr></table></figure>
+<p>这时 jni 目录应该有以下 12 个文件：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-5c6ab1cbb264afee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>一切准备就绪，在 jni 目录下运行 ndk 编译命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ndk-build</span><br></pre></td></tr></table></figure>
+<p>然后就可以在 ndkBuild 目录下看到生成的 libs 和 obj 文件夹了。</p>
+<h2 id="5-在Java-程序中加载该动态链接库"><a href="#5-在Java-程序中加载该动态链接库" class="headerlink" title="5.在Java 程序中加载该动态链接库"></a><strong>5.在Java 程序中加载该动态链接库</strong></h2><p>将 libs 目录下生成的 armeabi-v7a 动态库拷贝到 Android 工程中，此时工程应该是这样的：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-4a8b509cc615ca20?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
+<p>在 FFmpegJni.java 中加载动态库：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package com.jni;</span><br><span class="line"></span><br><span class="line">public class FFmpegJni &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;avutil-55&quot;);</span><br><span class="line">        System.loadLibrary(&quot;avcodec-57&quot;);</span><br><span class="line">        System.loadLibrary(&quot;avformat-57&quot;);</span><br><span class="line">        System.loadLibrary(&quot;avdevice-57&quot;);</span><br><span class="line">        System.loadLibrary(&quot;swresample-2&quot;);</span><br><span class="line">        System.loadLibrary(&quot;swscale-4&quot;);</span><br><span class="line">        System.loadLibrary(&quot;postproc-54&quot;);</span><br><span class="line">        System.loadLibrary(&quot;avfilter-6&quot;);</span><br><span class="line">        System.loadLibrary(&quot;ffmpeg&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static native int run(String[] commands);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>记得在应用的 build.gradle 文件中 android 节点下添加动态库加载路径：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sourceSets &#123;</span><br><span class="line">    main &#123;</span><br><span class="line">        jniLibs.srcDirs = [&apos;libs&apos;]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>OK，至此集成工作就全部完成了，在程序中调用 run 方法，就能以命令方式调用 FFmpeg  。</p>
+<p>接下来以剪切 mp3 文件为例，验证是否集成成功，首先需要准备一个 mp3 文件，这里我提供两首歌：<a href="http://download.csdn.net/download/yhaolpz/9954422" target="_blank" rel="noopener">泡沫、童话镇</a>，下载解压后直接将其放到手机根目录下即可。</p>
+<p>直接给出 MainActivity 代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">import com.jni.FFmpegJni;</span><br><span class="line"></span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line"></span><br><span class="line">        if ( ActivityCompat.checkSelfPermission(this,</span><br><span class="line">                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ) &#123;</span><br><span class="line">            ActivityCompat.requestPermissions(this,new String[]&#123;Manifest.permission.WRITE_EXTERNAL_STORAGE &#125;, 1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void run(View view) &#123;</span><br><span class="line">        String dir = Environment.getExternalStorageDirectory().getPath() + &quot;/ffmpegTest/&quot;;</span><br><span class="line"></span><br><span class="line">        //ffmpeg -i source_mp3.mp3 -ss 00:01:12 -t 00:01:42 -acodec copy output_mp3.mp3</span><br><span class="line">        String[] commands = new String[10];</span><br><span class="line">        commands[0] = &quot;ffmpeg&quot;;</span><br><span class="line">        commands[1] = &quot;-i&quot;;</span><br><span class="line">        commands[2] = dir+&quot;paomo.mp3&quot;;</span><br><span class="line">        commands[3] = &quot;-ss&quot;;</span><br><span class="line">        commands[4] = &quot;00:01:00&quot;;</span><br><span class="line">        commands[5] = &quot;-t&quot;;</span><br><span class="line">        commands[6] = &quot;00:01:00&quot;;</span><br><span class="line">        commands[7] = &quot;-acodec&quot;;</span><br><span class="line">        commands[8] = &quot;copy&quot;;</span><br><span class="line">        commands[9] = dir+&quot;paomo_cut_mp3.mp3&quot;;</span><br><span class="line"></span><br><span class="line">        int result = FFmpegJni.run(commands);</span><br><span class="line">        Toast.makeText(MainActivity.this, &quot;命令行执行完成 result=&quot;+result, Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>记得在 AndroidManifest.xml 中声明权限：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;uses-permission android:name=&quot;android.permission.READ_EXTERNAL_STORAGE&quot; /&gt;</span><br><span class="line">&lt;uses-permission android:name=&quot;android.permission.WRITE_EXTERNAL_STORAGE&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>运行之后，播放生成的 paomo_cut_mp3 试试，剪切成功～ 但是一个例子不够过瘾，再来一个延时播放的命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">String[] commands = new String[12];</span><br><span class="line">commands[0] = &quot;ffmpeg&quot;;</span><br><span class="line">commands[1] = &quot;-i&quot;;</span><br><span class="line">commands[2] = dir+&quot;paomo.mp3&quot;;</span><br><span class="line">commands[3] = &quot;-filter_complex&quot;;</span><br><span class="line">commands[4] = &quot;adelay=5000|5000&quot;;</span><br><span class="line">commands[5] = &quot;-ac&quot;; //声道数</span><br><span class="line">commands[6] = &quot;1&quot;;</span><br><span class="line">commands[7] = &quot;-ar&quot;; //采样率</span><br><span class="line">commands[8] = &quot;24k&quot;;</span><br><span class="line">commands[9] = &quot;-ab&quot;; //比特率</span><br><span class="line">commands[10] = &quot;32k&quot;;</span><br><span class="line">commands[11] = dir+&quot;adelay_output.mp3&quot;;</span><br></pre></td></tr></table></figure>
+<h2 id="更简单的方法实现"><a href="#更简单的方法实现" class="headerlink" title="更简单的方法实现"></a><strong>更简单的方法实现</strong></h2><p>本文的核心工作是 ffmpeg.c 等文件的修改及编译，其实这些文件的修改是一劳永逸的。无论你的 FFmpeg 如何配置编译选项，不管是支持 mp3 编码还是支持 h264 编码，对 ffmpeg.c 等文件的修改内容都是固定的，所以我把这个工作目录上传到了 github ，方便大家直接拿来使用。</p>
+<p>github 地址 : <a href="https://github.com/yhaolpz/ffmpeg-command-ndkBuild" target="_blank" rel="noopener">https://github.com/yhaolpz/ffmpeg-command-ndkBuild</a></p>
+<p>接下来演示一下如何使用，首先要将 ffmpeg-command-ndkBuild 克隆到你的电脑上，注意这里默认你已经编译过 FFmpeg，编译方法见本系列第一章。</p>
+<ol>
+<li>编写带有 native 方法的 Java 类</li>
+</ol>
+<hr>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.jni;</span><br><span class="line"></span><br><span class="line">public class FFmpegJni &#123;</span><br><span class="line">   </span><br><span class="line">    public static native int run(String[] commands);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你编写的 Java 类跟上面这个类的包名、类名和方法都相同，那就直接跳到第 4 步，因为你可以直接使用 jni 目录中的 com_jni_FFmpegJni.c 和 com_jni_FFmpegJni.h 。</p>
+<ol start="2">
+<li>生成该类扩展名为 .h 的头文件</li>
+</ol>
+<hr>
+<p> 在 Android Studio 的 Terminal 中 切换到 Java 目录下，运行 javah 命令生成头文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -classpath .  com.包名.类名</span><br></pre></td></tr></table></figure>
+<p>将该头文件拷贝到 jni 目录下，并且删除 com_jni_FFmpegJni.h 文件。</p>
+<ol start="3">
+<li>创建该头文件的 C/C++ 文件，实现 native 方法</li>
+</ol>
+<hr>
+<p>  这里不需要重新创建 C 文件，直接在 com_jni_FFmpegJni.c 基础上修改即可。</p>
+<ul>
+<li>修改第2行 com_jni_FFmpegJni.h 为你自己的头文件名</li>
+<li>修改 Java_com_jni_FFmpegJni_run 方法名为你自己的头文件中的方法名</li>
+<li>修改 com_jni_FFmpegJni.c 文件名为你自己的头文件名</li>
+<li>修改 Android.mk 中文件最后的 com_jni_FFmpegJni.c 为你自己的 C 文件名</li>
+</ul>
+<ol start="4">
+<li>将该 C/C++ 文件编译成动态链接库</li>
+</ol>
+<hr>
+<p>​    </p>
+<ul>
+<li>修改 Android.mk 中的 INCLUDE_PATH 、FFMPEG_LIB_PATH 为你自己编译好的 FFmpeg 动态库路径</li>
+<li>修改 Android.mk 倒数第四行的 LOCAL_C_INCLUDES 为你自己的 FFmpeg 源码路径。</li>
+</ul>
+<p>OK~ 直接运行 ndk-build 命令编译吧，最后一步 “在Java 程序中加载该动态链接库” 以及调用案例在上文中已经描述的很详细了，就不再赘述了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><p>本文延续第一篇的规则，将编译工作置于 Android 工程之外进行，直到生成最后可用的 so 库再移植到 Android 工程中，我相信这样对 jni 的理解会更清晰一些。</p>
+<p>本文中还有两个问题待解决，在 Application.mk 文件中通过 NDK_TOOLCHAIN_VERSION=4.9 指定编译器为 4.9 版本的 gcc，若不指定，将默认使用 clang 编译器，这时编译会报错，提示缺少一些文件。第二个问题就是 Application.mk 中通过 APP_ABI := armeabi-v7a 指定生成 armv7 架构动态库，若改成 armeabi 架构编译则会报错，提示不支持该模式，后续尽快解决这两个问题。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/ddeb5551/" data-id="ckicxuszb001033caj0dbhtke" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/FFmpeg/">FFmpeg</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/8d13674/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          Andorid 应用内悬浮控件实践方案总结
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/e0b4d9fc/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 集成 FFmpeg (一) 基础知识及简单调用</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

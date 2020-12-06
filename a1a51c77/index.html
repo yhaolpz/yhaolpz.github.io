@@ -1,0 +1,428 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多 | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在 动手打造史上最简单的 Recycleview 侧滑菜单 中，萌生了将这种方案封装为一个开源库的想法，旨在实现调用方式最简单，且又不失可定制性。本库最大的特点的是采用了 Glide 简洁明了的链式调用方式，一句代码即可添加侧滑菜单、头部底部等。">
+<meta name="keywords" content="RecycleView,侧滑菜单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/a1a51c77/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="在 动手打造史上最简单的 Recycleview 侧滑菜单 中，萌生了将这种方案封装为一个开源库的想法，旨在实现调用方式最简单，且又不失可定制性。本库最大的特点的是采用了 Glide 简洁明了的链式调用方式，一句代码即可添加侧滑菜单、头部底部等。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-463b9883c19925cd?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-46aa359037016816?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-31c02e2f527c5071?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-3ee0b87e61bf9b52?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-bd3d347162245f1d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-b92cc866d58adca4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-2c4691de383d3e39?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-3187648e5b22a1a3?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-317ba4d21f6bc258?imageMogr2/auto-orient/strip">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-b91bc4d52767e21b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/qrcode.jpg">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.315Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多">
+<meta name="twitter:description" content="在 动手打造史上最简单的 Recycleview 侧滑菜单 中，萌生了将这种方案封装为一个开源库的想法，旨在实现调用方式最简单，且又不失可定制性。本库最大的特点的是采用了 Glide 简洁明了的链式调用方式，一句代码即可添加侧滑菜单、头部底部等。">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-463b9883c19925cd?imageMogr2/auto-orient/strip">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-一句代码搞定-RecycleView-侧滑菜单、添加头部底部、加载更多" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/a1a51c77/" class="article-date">
+  <time datetime="2017-06-24T07:10:20.000Z" itemprop="datePublished">2017-06-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在 动手打造史上最简单的 Recycleview 侧滑菜单 中，萌生了将这种方案封装为一个开源库的想法，旨在实现调用方式最简单，且又不失可定制性。本库最大的特点的是采用了 Glide 简洁明了的链式调用方式，一句代码即可添加侧滑菜单、头部底部等。</p>
+<a id="more"></a>
+<h1 id="特性："><a href="#特性：" class="headerlink" title="特性："></a>特性：</h1><p>1.自定义侧滑菜单布局<br>2.添加头部、底部<br>3.轻松实现加载更多<br>4.设置 item 间距<br>5.多种 item 类型<br>6.支持 LinearLayout 及 GridLayout<br>7.一句代码实现所有功能</p>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果:"></a>效果:</h1><p><strong>左侧滑菜单、右侧滑菜单、自定义菜单布局：</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-463b9883c19925cd?imageMogr2/auto-orient/strip" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-46aa359037016816?imageMogr2/auto-orient/strip" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-31c02e2f527c5071?imageMogr2/auto-orient/strip" alt=" "></p>
+<p><strong>头部、多头部：</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-3ee0b87e61bf9b52?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-bd3d347162245f1d?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-b92cc866d58adca4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" "></p>
+<p><strong>底部、多底部、加载更多：</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-2c4691de383d3e39?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-3187648e5b22a1a3?imageMogr2/auto-orient/strip" alt=" ">  <img src="http://upload-images.jianshu.io/upload_images/4679478-317ba4d21f6bc258?imageMogr2/auto-orient/strip" alt=" "></p>
+<h1 id="集成："><a href="#集成：" class="headerlink" title="集成："></a>集成：</h1><p>第 1 步、在工程的 build.gradle 中添加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">allprojects &#123;</span><br><span class="line">	repositories &#123;</span><br><span class="line">		...</span><br><span class="line">		maven &#123; url &apos;https://jitpack.io&apos; &#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第 2 步、在应用的  build.gradle 中添加：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">        compile &apos;com.github.yhaolpz:SlideAdapter:1.0.0&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="使用："><a href="#使用：" class="headerlink" title="使用："></a>使用：</h1><p>下面通过简单案例演示如何在程序中使用 SlideAdapter，假设  item.xml 为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">              android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">              android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">              android:orientation=<span class="string">"vertical"</span></span><br><span class="line">              android:background=<span class="string">"#fff"</span></span><br><span class="line">    &gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:id=<span class="string">"@+id/textView"</span></span><br><span class="line">        android:layout_width=<span class="string">"wrap_content"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:padding=<span class="string">"16dp"</span></span><br><span class="line">        android:textColor=<span class="string">"#000"</span></span><br><span class="line">        android:textSize=<span class="string">"14sp"</span></span><br><span class="line">        /&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+<p>数据类为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Bean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String info;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Bean</span><span class="params">(String info)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.info = info;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 省略 get、set 方法...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>数据为：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> List&lt;Bean&gt; data = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">30</span>; i++) &#123;</span><br><span class="line">    data.add(<span class="keyword">new</span> Bean(<span class="string">"我是第"</span> + i + <span class="string">"个item"</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="1-基本写法-："><a href="#1-基本写法-：" class="headerlink" title="1.基本写法 ："></a>1.基本写法 ：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)           <span class="comment">//加载数据</span></span><br><span class="line">            .item(R.layout.item)  <span class="comment">//指定布局</span></span><br><span class="line">            .into(recyclerView);  <span class="comment">//填充到recyclerView中</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-数据绑定及事件监听："><a href="#2-数据绑定及事件监听：" class="headerlink" title="2.数据绑定及事件监听："></a>2.数据绑定及事件监听：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .bind(itemBind)       <span class="comment">//视图绑定</span></span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<p>在 itemBind 中进行数据绑定及控件的事件监听，相当于 Adapter 中的 onBindViewHolder ，实现 ItemBind 时需传入数据类型：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">ItemBind itemBind = <span class="keyword">new</span> ItemBind&lt;Bean&gt;() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBind</span><span class="params">(ItemView itemView, Bean data, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">         itemView.setText(R.id.textView, data.getInfo()) </span><br><span class="line">                 .setOnClickListener(<span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">                     <span class="meta">@Override</span></span><br><span class="line">                     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">//点击item</span></span><br><span class="line">                     &#125;</span><br><span class="line">                  &#125;)</span><br><span class="line">                 .setOnClickListener(R.id.textView, <span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">                     <span class="meta">@Override</span></span><br><span class="line">                     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">//点击textView</span></span><br><span class="line">                     &#125;</span><br><span class="line">                 &#125;);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-添加-item-间距："><a href="#3-添加-item-间距：" class="headerlink" title="3.添加 item 间距："></a>3.添加 item 间距：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)           </span><br><span class="line">            .item(R.layout.item)  </span><br><span class="line">            .padding(<span class="number">2</span>)           <span class="comment">//item间距</span></span><br><span class="line">            .bind(itemBind)       </span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<h2 id="4-添加侧滑菜单："><a href="#4-添加侧滑菜单：" class="headerlink" title="4.添加侧滑菜单："></a>4.添加侧滑菜单：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)           </span><br><span class="line">            .item(R.layout.item，<span class="number">0</span>，<span class="number">0</span>，R.layout.menu，<span class="number">0.35f</span>)  <span class="comment">//添加右侧侧滑菜单，宽为屏幕宽度的 35%  </span></span><br><span class="line">            .padding(<span class="number">2</span>)           </span><br><span class="line">            .bind(itemBind)       </span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)           </span><br><span class="line">            .item(R.layout.item，R.layout.menu，<span class="number">0.4f</span>，<span class="number">0</span>，<span class="number">0</span>)  <span class="comment">//添加左侧侧滑菜单，宽为屏幕宽度的 40%  </span></span><br><span class="line">            .padding(<span class="number">2</span>)           </span><br><span class="line">            .bind(itemBind)       </span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)           </span><br><span class="line">            .item(R.layout.item，R.layout.menu，<span class="number">0.4f</span>，R.layout.menu，<span class="number">0.35</span>)  <span class="comment">//添加左侧和右侧侧滑菜单  </span></span><br><span class="line">            .padding(<span class="number">2</span>)           </span><br><span class="line">            .bind(itemBind)       </span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<p>上面调用的 item 方法为 ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">item (<span class="keyword">int</span> itemLayoutId, </span><br><span class="line">      <span class="keyword">int</span> leftMenuLayoutId, <span class="keyword">float</span> leftMenuRatio, </span><br><span class="line">      <span class="keyword">int</span> rightMenuLayoutId, <span class="keyword">float</span> rightMenuRatio)</span><br></pre></td></tr></table></figure>
+<p>不添加哪一侧，就把对应参数传入 0 即可。</p>
+<h2 id="5-侧滑菜单的数据绑定及事件监听："><a href="#5-侧滑菜单的数据绑定及事件监听：" class="headerlink" title="5.侧滑菜单的数据绑定及事件监听："></a>5.侧滑菜单的数据绑定及事件监听：</h2><p>菜单布局为 itemView 的一部分，所以对侧滑菜单的数据绑定及事件监听直接在 ItemBind 中进行即可。</p>
+<p>比如侧滑菜单布局 menu.xml 为下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">              android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">              android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">              android:background=<span class="string">"#e61313"</span></span><br><span class="line">              android:gravity=<span class="string">"center"</span>&gt;</span><br><span class="line">        &lt;ImageView</span><br><span class="line">            android:id=<span class="string">"@+id/rightMenu_Like"</span></span><br><span class="line">            android:layout_width=<span class="string">"30dp"</span></span><br><span class="line">            android:layout_height=<span class="string">"30dp"</span></span><br><span class="line">            android:src=<span class="string">"@drawable/like"</span>/&gt;</span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+<p>对 rightMenu_Like 控件设置点击事件监听，就像对 item 中的普通控件设置一样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ItemBind itemBind = <span class="keyword">new</span> ItemBind&lt;Bean&gt;() &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBind</span><span class="params">(ItemView itemView, Bean data, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">         itemView.setOnClickListener(R.id.rightMenu_Like, <span class="keyword">new</span> View.OnClickListener() &#123;</span><br><span class="line">                     <span class="meta">@Override</span></span><br><span class="line">                     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View view)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">//点击rightMenu_Like</span></span><br><span class="line">                     &#125;</span><br><span class="line">                 &#125;);</span><br><span class="line">     &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="6-多种-item-布局："><a href="#6-多种-item-布局：" class="headerlink" title="6.多种 item 布局："></a>6.多种 item 布局：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item,<span class="number">0</span>,<span class="number">0</span>,R.layout.menu,<span class="number">0.35</span>)   <span class="comment">// 添加次序为 1</span></span><br><span class="line">            .item(R.layout.item)                          <span class="comment">// 添加次序为 2</span></span><br><span class="line">            .type(<span class="keyword">new</span> ItemType&lt;Bean&gt;() &#123;</span><br><span class="line">                 <span class="meta">@Override</span></span><br><span class="line">                 <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemOrder</span><span class="params">(Bean data, <span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">                      <span class="comment">// 返回 item 添加次序</span></span><br><span class="line">                      <span class="keyword">return</span> position % <span class="number">2</span> == <span class="number">0</span> ? <span class="number">1</span> : <span class="number">2</span>;</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;)</span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<h2 id="7-添加头部："><a href="#7-添加头部：" class="headerlink" title="7.添加头部："></a>7.添加头部：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .header(R.layout.head,<span class="number">0.1f</span>) <span class="comment">//添加一个头部，高为屏幕高度的 10%</span></span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .header(R.layout.head)        <span class="comment">//添加第1个头部</span></span><br><span class="line">            .header(R.layout.head2,<span class="number">0.1f</span>)  <span class="comment">//添加第2个头部</span></span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<h2 id="8-头部的数据绑定及事件监听："><a href="#8-头部的数据绑定及事件监听：" class="headerlink" title="8.头部的数据绑定及事件监听："></a>8.头部的数据绑定及事件监听：</h2><p>假设头部布局 head.xml 为下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">              android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">              android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">              android:background=<span class="string">"#fff"</span></span><br><span class="line">              android:gravity=<span class="string">"center"</span></span><br><span class="line">    &gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:layout_gravity=<span class="string">"center"</span></span><br><span class="line">        android:id=<span class="string">"@+id/headText"</span></span><br><span class="line">        android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:text=<span class="string">"头部"</span></span><br><span class="line">        android:textColor=<span class="string">"#000"</span></span><br><span class="line">        android:gravity=<span class="string">"center"</span></span><br><span class="line">        /&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+<p>对头部的数据绑定及事件监听在 HeaderBind 中实现：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .header(R.layout.head,<span class="number">0.2f</span>)    <span class="comment">//添加第1个头部</span></span><br><span class="line">            .header(R.layout.head2)        <span class="comment">//添加第2个头部</span></span><br><span class="line">            .bind(<span class="keyword">new</span> HeaderBind() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBind</span><span class="params">(ItemView header, <span class="keyword">int</span> order)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">if</span> (order == <span class="number">1</span>) &#123;</span><br><span class="line">                            header.setText(R.id.headText, <span class="string">"我是第一个头部"</span>);                 </span><br><span class="line">                        &#125;</span><br><span class="line">                        ...</span><br><span class="line">                    &#125;</span><br><span class="line">             &#125;)</span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure></p>
+<h2 id="9-添加底部："><a href="#9-添加底部：" class="headerlink" title="9.添加底部："></a>9.添加底部：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .footer(R.layout.foot,<span class="number">0.1f</span>)    <span class="comment">//添加一个底部，高为屏幕高度的 10%</span></span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .footer(R.layout.foot)        <span class="comment">//添加第1个底部</span></span><br><span class="line">            .footer(R.layout.foot,<span class="number">0.1f</span>)   <span class="comment">//添加第2个底部</span></span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<h2 id="10-底部的数据绑定及事件监听："><a href="#10-底部的数据绑定及事件监听：" class="headerlink" title="10.底部的数据绑定及事件监听："></a>10.底部的数据绑定及事件监听：</h2><p>假设底部布局 foot.xml 为下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=<span class="string">"1.0"</span> encoding=<span class="string">"utf-8"</span>?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=<span class="string">"http://schemas.android.com/apk/res/android"</span></span><br><span class="line">              android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">              android:layout_height=<span class="string">"match_parent"</span></span><br><span class="line">              android:background=<span class="string">"#fff"</span></span><br><span class="line">              android:gravity=<span class="string">"center"</span></span><br><span class="line">    &gt;</span><br><span class="line"></span><br><span class="line">    &lt;TextView</span><br><span class="line">        android:layout_gravity=<span class="string">"center"</span></span><br><span class="line">        android:id=<span class="string">"@+id/footerText"</span></span><br><span class="line">        android:layout_width=<span class="string">"match_parent"</span></span><br><span class="line">        android:layout_height=<span class="string">"wrap_content"</span></span><br><span class="line">        android:text=<span class="string">"底部"</span></span><br><span class="line">        android:textColor=<span class="string">"#000"</span></span><br><span class="line">        android:gravity=<span class="string">"center"</span></span><br><span class="line">        /&gt;</span><br><span class="line"></span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure>
+<p>对头部的数据绑定及事件监听在 FooterBind 中实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)</span><br><span class="line">            .footer(R.layout.foot)            <span class="comment">//添加第1个底部</span></span><br><span class="line">            .footer(R.layout.foot,<span class="number">0.1f</span>)       <span class="comment">//添加第2个底部</span></span><br><span class="line">            .bind(<span class="keyword">new</span> FooterBind() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBind</span><span class="params">(ItemView footer, <span class="keyword">int</span> order)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">if</span> (order == <span class="number">2</span>) &#123;</span><br><span class="line">                            footer.setText(R.id.footerText, <span class="string">"我是第2个底部"</span>);                 </span><br><span class="line">                        &#125;</span><br><span class="line">                        ...</span><br><span class="line">                    &#125;</span><br><span class="line">             &#125;)</span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<h2 id="11-加载更多："><a href="#11-加载更多：" class="headerlink" title="11.加载更多："></a>11.加载更多：</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">SlideAdapter.load(data)</span><br><span class="line">            .item(R.layout.item)         </span><br><span class="line">            .footer(R.layout.foot,<span class="number">0.1f</span>)      </span><br><span class="line">            .padding(<span class="number">2</span>)</span><br><span class="line">            .bind(itemBind)</span><br><span class="line">            .listen(<span class="keyword">new</span> BottomListener() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onBottom</span><span class="params">(<span class="keyword">final</span> ItemView footer, <span class="keyword">final</span> SlideAdapter slideAdapter)</span> </span>&#123;</span><br><span class="line">                       footer.setText(R.id.footerText, <span class="string">"正在加载，请稍后..."</span>);</span><br><span class="line">                       List data2 = getMoreData();</span><br><span class="line">                       slideAdapter.loadMore(data2);   </span><br><span class="line">                       footer.setText(R.id.footerText, <span class="string">"加载完成"</span>);              </span><br><span class="line">                    &#125;</span><br><span class="line">             &#125;)</span><br><span class="line">            .into(recyclerView);</span><br></pre></td></tr></table></figure>
+<p>onBottom 方法中的 footer 为最后一个底部，若未添加底部，则 footer 为空。其中 SlideAdapter  的 loadMore() 方法专门用来加载更多数据，需在主线程中调用。</p>
+<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><h2 id="1-如何实现链式调用"><a href="#1-如何实现链式调用" class="headerlink" title="1.如何实现链式调用"></a>1.如何实现链式调用</h2><p>虽然这部分并不难，但毕竟是 SlideAdapter 异于其他库的一大特点，简单介绍一下，直接看代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SlideAdapter</span> <span class="keyword">extends</span> <span class="title">RecyclerView</span>.<span class="title">Adapter</span>&lt;<span class="title">ItemView</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Builder mBuilder = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">        List data;</span><br><span class="line">        <span class="keyword">int</span> itemPadding;</span><br><span class="line">        <span class="comment">//省略...</span></span><br><span class="line">        <span class="function">Builder <span class="title">load</span><span class="params">(List data)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.data = data;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> Builder <span class="title">padding</span><span class="params">(<span class="keyword">int</span> itemPadding)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.itemPadding = itemPadding;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//省略...</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> SlideAdapter <span class="title">into</span><span class="params">(RecyclerView recyclerView)</span> </span>&#123;</span><br><span class="line">            SlideAdapter adapter = <span class="keyword">new</span> SlideAdapter(mBuilder, recyclerView);</span><br><span class="line">            mBuilder = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">return</span> adapter;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Builder <span class="title">load</span><span class="params">(List data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getBuilder().load(data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Builder <span class="title">getBuilder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (mBuilder == <span class="keyword">null</span>) &#123;</span><br><span class="line">            mBuilder = <span class="keyword">new</span> Builder();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mBuilder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SlideAdapter 中以 Builder load(List data) 方法为入口，然后进入 Builder 内部链式调用一系列方法，将配置属性暂时记录在 Builder 中，最后通过 SlideAdapter into(RecyclerView recyclerView) 方法将这一系列配置属性传入到 SlideAdapter 的构造函数中使其配置生效。</p>
+<h2 id="2-如何实现侧滑菜单"><a href="#2-如何实现侧滑菜单" class="headerlink" title="2.如何实现侧滑菜单"></a>2.如何实现侧滑菜单</h2><p>本库基于一种非常简单的侧滑菜单实现方案：</p>
+<blockquote>
+<p><strong>在 item 布局外部添加一层可以滑动的  HorizontalScrollView ，菜单布局也置于其中</strong></p>
+</blockquote>
+<p>也就是说，本库要做的工作是： <strong>自动在 item 布局外部添加一层可以滑动的  HorizontalScrollView 容器</strong>。我们要考虑的问题有两个：1.什么时候添加？ 2.怎么添加？首先来看第一个问题，答案很简单，当然是在 onCreateViewHolder 中新建 item 布局时添加；怎么添加呢？可以提前写一个布局文件，准备好这层可以滑动的容器，比如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;com.wyh.slideAdapter.SlideLayout</span><br><span class="line">    xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    android:id=&quot;@+id/slideLayout&quot;</span><br><span class="line">    android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">    android:layout_height=&quot;wrap_content&quot;&gt;</span><br><span class="line">    &lt;LinearLayout</span><br><span class="line">        android:id=&quot;@+id/linearLayout&quot;</span><br><span class="line">        android:layout_width=&quot;wrap_content&quot;</span><br><span class="line">        android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">        android:orientation=&quot;horizontal&quot;</span><br><span class="line">        /&gt;</span><br><span class="line">&lt;/com.wyh.slideAdapter.SlideLayout&gt;</span><br></pre></td></tr></table></figure>
+<p>其中 SlideLayout 继承自 HorizontalScrollView ，就是这层可以滑动的容器，我们只要把 item 布局塞到 LinearLayout 内部就可以了，怎么塞呢？很简单：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">View itemView = LayoutInflater.from(context).inflate(R.layout.layout, parent, <span class="keyword">false</span>);<span class="comment">//外部容器</span></span><br><span class="line">LinearLayout linearLayout = itemView.findViewById(R.id.linearLayout);</span><br><span class="line">View content = LayoutInflater.from(context).inflate(itemLayoutId, linearLayout, <span class="keyword">false</span>);<span class="comment">//item布局</span></span><br><span class="line">linearLayout.addView(content);</span><br></pre></td></tr></table></figure>
+<p>这样就成功的把 item 外层裹上可以滑动的 SlideLayout 了，如果要添加侧滑菜单，同理，像 item 布局一样把菜单布局也塞进去就行了，本库是这样实现的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (slideItem.leftMenuLayoutId != <span class="number">0</span>) &#123;<span class="comment">//添加左侧侧滑菜单</span></span><br><span class="line">    leftMenu = LayoutInflater.from(context).inflate(slideItem.leftMenuLayoutId, linearLayout, <span class="keyword">false</span>);</span><br><span class="line">    linearLayout.addView(leftMenu);</span><br><span class="line">&#125;</span><br><span class="line">content = LayoutInflater.from(context).inflate(slideItem.itemLayoutId, linearLayout, <span class="keyword">false</span>);</span><br><span class="line">linearLayout.addView(content);</span><br><span class="line"><span class="keyword">if</span> (slideItem.rightMenuLayoutId != <span class="number">0</span>) &#123;<span class="comment">//添加右侧侧滑菜单</span></span><br><span class="line">    rightMenu = LayoutInflater.from(context).inflate(slideItem.rightMenuLayoutId, linearLayout, <span class="keyword">false</span>);</span><br><span class="line">    linearLayout.addView(rightMenu);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>linearLayout 的 addView 方法是按添加顺序从左到右排列的，所以可以这样实现。其中有一个问题很明显，当没添加侧滑菜单时，仍然给 item 外层添加了 SlideLayout，这的确属于一个漏洞。</p>
+<p>最后再说一下 SlideLayout 的实现，其实十分简单，主要就是控制它的滑动，比如当滑开一半多菜单时松手的话，调用其 smoothScrollTo 方法完全打开。还有就是控制菜单打开的唯一性，我自创的方案与主流的 QQ、微信都不同，感兴趣的可以查看<a href="http://www.jianshu.com/p/987dbaa4ad5b" target="_blank" rel="noopener">动手打造史上最简单的 Recycleview 侧滑菜单</a> 或阅读源码。</p>
+<h2 id="3-如何初始化侧滑菜单"><a href="#3-如何初始化侧滑菜单" class="headerlink" title="3.如何初始化侧滑菜单"></a>3.如何初始化侧滑菜单</h2><p>侧滑菜单的初始化包括两部分，一是根据传入的 float 类型数据，初始化侧滑菜单占屏幕宽度的比例，二是初始化侧滑菜单的滑动位置，比如有左侧侧滑菜单时，需要滑动到刚好隐藏掉左侧侧滑菜单的位置。</p>
+<p>初始化时机于 onBindViewHolder 中，关键代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> SlideItem item = mSlideItems.get(getItemViewType(position) - <span class="number">1</span>);</span><br><span class="line">View rightMenu = holder.getRightMenu();</span><br><span class="line"><span class="keyword">if</span> (rightMenu != <span class="keyword">null</span>) &#123;</span><br><span class="line">    LinearLayout.LayoutParams rightMenuParams = (LinearLayout.LayoutParams) rightMenu.getLayoutParams();</span><br><span class="line">    rightMenuParams.width = (<span class="keyword">int</span>) (ScreenSize.w(holder.itemView.getContext()) * item.rightMenuRatio);</span><br><span class="line">    rightMenu.setLayoutParams(rightMenuParams);</span><br><span class="line">    ((SlideLayout) holder.getView(R.id.yhaolpz_slideLayout)).setRightMenuWidth(rightMenuParams.width);</span><br><span class="line">&#125;</span><br><span class="line">View leftMenu = holder.getLeftMenu();</span><br><span class="line"><span class="keyword">if</span> (leftMenu != <span class="keyword">null</span>) &#123;</span><br><span class="line">    LinearLayout.LayoutParams leftMenuParams = (LinearLayout.LayoutParams) leftMenu.getLayoutParams();</span><br><span class="line">    leftMenuParams.width = (<span class="keyword">int</span>) (ScreenSize.w(holder.itemView.getContext()) * item.leftMenuRatio);</span><br><span class="line">    leftMenu.setLayoutParams(leftMenuParams);</span><br><span class="line">    holder.getView(R.id.yhaolpz_slideLayout).scrollTo(leftMenuParams.width, <span class="number">0</span>);</span><br><span class="line">    ((SlideLayout) holder.getView(R.id.yhaolpz_slideLayout)).setLeftMenuWidth(leftMenuParams.width);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先看代码的第 1 行，mSlideItems 中存放了所有类型的 item 的相关数据，包括 item 的 layoutId 、菜单的 layoutId 及其宽度比例。获取到此 postion 对应的 item 类型信息后，再根据宽度比例设置菜单的宽度即可。</p>
+<p>怎么初始化 SlideLayout 的滑动位置呢？可以看到程序将侧滑菜单的宽度记录在 SlideLayout 中，有了侧滑菜单的具体宽度，就很容易初始化 SlideLayout 的滑动位置了，重写 SlideLayout 的 onLayout 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">protected void onLayout(boolean changed, int l, int t, int r, int b) &#123;</span><br><span class="line">    super.onLayout(changed, l, t, r, b);</span><br><span class="line">    scrollTo(mLeftMenuWidth, 0);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="4-如何兼容-LinearLayout-和-GridLayout"><a href="#4-如何兼容-LinearLayout-和-GridLayout" class="headerlink" title="4.如何兼容 LinearLayout 和 GridLayout"></a>4.如何兼容 LinearLayout 和 GridLayout</h2><p>LinearLayout 和 GridLayout 的兼容包括两部分，一是 item 之间的间距，即分割线在 LinearLayout 与 GridLayout 下都能合理分布；二是头部和底部的宽度，若为 GridLayout ，头部底部宽度应该与 RecycleView 宽度一致。</p>
+<p>首先来看第一个问题，在 SlideAdapter 构造函数中是这样设置 item 之间间距的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mItemPadding &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    mRecycleView.addItemDecoration(<span class="keyword">new</span> SlideItemDecoration(mItemPadding));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SlideItemDecoration 中重写了 getItemOffsets 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getItemOffsets</span><span class="params">(Rect outRect, View view, RecyclerView parent, RecyclerView.State state)</span> </span>&#123;</span><br><span class="line">    RecyclerView.LayoutManager layoutManager = parent.getLayoutManager();</span><br><span class="line">    <span class="keyword">if</span> (layoutManager <span class="keyword">instanceof</span> LinearLayoutManager) &#123;  </span><br><span class="line">        outRect.set(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, mItemPadding);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (layoutManager <span class="keyword">instanceof</span> GridLayoutManager) &#123;</span><br><span class="line">        outRect.set(mItemPadding, mItemPadding, mItemPadding, mItemPadding);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码很简单，如果是 LinearLayout，就把分割线添加在 item 的下方，如果是 GridLayout ，就把分割线添加在 item 的四周。其实严格来说，这不能叫做分割线，只能叫间距，这种情况下如果要设置“分割线”的颜色，就只能设置 RecycleView 的背景色来实现，当然你也可以添加自己的 ItemDecoration 实现更多分割线效果。</p>
+<p>来看第二个问题，如何兼容 item、头部底部的宽度，同样在 SlideAdapter 的构造函数中，把 item 和头部底部的宽度先确定下来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">RecyclerView.LayoutManager layoutManager = mRecycleView.getLayoutManager();</span><br><span class="line">mHeadFootViewWidth = ScreenSize.w(mRecycleView.getContext()) - recyclerViewMargin - recyclerViewPadding;</span><br><span class="line"><span class="keyword">if</span> (layoutManager <span class="keyword">instanceof</span> LinearLayoutManager) &#123;</span><br><span class="line">    mItemViewWidth = mHeadFootViewWidth;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (layoutManager <span class="keyword">instanceof</span> GridLayoutManager) &#123;</span><br><span class="line">    ((GridLayoutManager) layoutManager).setSpanSizeLookup(<span class="keyword">new</span> GridLayoutManager.SpanSizeLookup() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getSpanSize</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> isHeader(getItemViewType(position)) || isFooter(getItemViewType(position)) ?</span><br><span class="line">                    ((GridLayoutManager) layoutManager).getSpanCount() : <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">   mItemViewWidth = (ScreenSize.w(mRecycleView.getContext()) - recyclerViewMargin - recyclerViewPadding</span><br><span class="line">                    - mItemPadding * ((GridLayoutManager) layoutManager).getSpanCount() * <span class="number">2</span>) /</span><br><span class="line">                    ((GridLayoutManager) layoutManager).getSpanCount();</span><br><span class="line">   mHeadFootViewWidth -= mItemPadding * <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码 2 行把头部底部的宽度确定了下来，值就是 RecycleView 的宽度。如果是 LinearLayout ，item 的宽度就等同于头部底部的宽度；如果是 GridLayout ，item 的宽度就要除以列数并减去 item 间距值。</p>
+<p>把 item 、头部底部的宽度值都确定下来以后，在 onBindViewHolder 中直接设置宽度，就成功的实现兼容 LinearLayout 和 GridLayout 了。</p>
+<h2 id="5-如何实现多头部、多底部"><a href="#5-如何实现多头部、多底部" class="headerlink" title=" 5.如何实现多头部、多底部"></a> 5.如何实现多头部、多底部</h2><p>多头部、多底部无非就是不同的 viewType ， SlideAdapter 中规定 item 的 viewType 范围为 1-99 ,头部、底部对应 viewType 的范围为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_HEADER_ORIGIN = <span class="number">101</span>; <span class="comment">//头部：101~200</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> TYPE_FOOTER_ORIGIN = <span class="number">201</span>; <span class="comment">//底部：201~</span></span><br></pre></td></tr></table></figure>
+<p>相信 100 种 viewType 足够使用了。在 getItemViewType 中确定对应范围：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getItemViewType</span><span class="params">(<span class="keyword">int</span> position)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (getHeaderNum() &gt; <span class="number">0</span> &amp;&amp; position &lt; getHeaderNum()) &#123;</span><br><span class="line">        <span class="keyword">return</span> TYPE_HEADER_ORIGIN + position;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (getFooterNum() &gt; <span class="number">0</span> &amp;&amp; position &gt;= getHeaderNum() + mData.size()) &#123;</span><br><span class="line">        <span class="keyword">return</span> TYPE_FOOTER_ORIGIN + position - getHeaderNum() - mData.size();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> mIItemType == <span class="keyword">null</span> || mSlideItems.size() == <span class="number">1</span> ? <span class="number">1</span> : mIItemType.type(</span><br><span class="line">            mData.get(position - getHeaderNum()),</span><br><span class="line">            position - getHeaderNum());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 getHeaderNum、getFooterNum 方法为下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getHeaderNum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mHeaders == <span class="keyword">null</span> ? <span class="number">0</span> : mHeaders.size();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getFooterNum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mFooters == <span class="keyword">null</span> ? <span class="number">0</span> : mFooters.size();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中 mHeaders 、mFooters 中分别存储着所有的头部、所有的底部信息，包括 layoutId 和高度比例。确定好 item 、头部及底部的 viewType 后，就可以在 onCreateViewHolder 中根据不同的 viewType 创建不同的 viewHolder 了：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public ItemView onCreateViewHolder(ViewGroup parent, int viewType) &#123;</span><br><span class="line">    if (isHeader(viewType)) &#123;</span><br><span class="line">        return ItemView.create(parent.getContext(), parent, mHeaders.get(viewType - TYPE_HEADER_ORIGIN));</span><br><span class="line">    &#125;</span><br><span class="line">    if (isFooter(viewType)) &#123;</span><br><span class="line">        return ItemView.create(parent.getContext(), parent, mFooters.get(viewType - TYPE_FOOTER_ORIGIN));</span><br><span class="line">    &#125;</span><br><span class="line">    return ItemView.create(parent.getContext(), parent, mSlideItems.get(viewType - 1));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中的 isHeader、isFooter 方法很简单，根据 viewType 的范围判断即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isHeader</span><span class="params">(<span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> viewType &gt;= TYPE_HEADER_ORIGIN &amp;&amp; viewType &lt; TYPE_FOOTER_ORIGIN;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isFooter</span><span class="params">(<span class="keyword">int</span> viewType)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> viewType &gt;= TYPE_FOOTER_ORIGIN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ok，在成功创建对应的头部、底部后，还要注意的就是数据的移位，此时 onBindViewHolder 中提供的 position 不能直接用来索引 data 数据，应该减去头部的数量，比如在调用 ItemBind 接口方法时：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mIItemBind != <span class="keyword">null</span>) &#123;</span><br><span class="line">    mIItemBind.bind(holder, mData.get(position - getHeaderNum()),</span><br><span class="line">            position - getHeaderNum());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现原理的部分就介绍这么多吧，其实到这里已经把本库的关键点都拿出来剖析说明了，剩下的比如加载更多等功能都比较简单，当然如果你感兴趣的话可以阅读源码，内容并不多，最后附上本库的所有文件：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/4679478-b91bc4d52767e21b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt=" "></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>这是我的第一个开源库，功力尚浅，如果你在使用过程中遇到了什么问题，随时可以向我反馈，我会第一时间回复并改正。如果你想在此库的基础上添加自己的功能，欢迎 fork、欢迎 star 。</p>
+<p><strong>源码：</strong><a href="https://github.com/yhaolpz/SlideAdapter" target="_blank" rel="noopener">https://github.com/yhaolpz/SlideAdapter</a></p>
+<p><img src="../img/qrcode.jpg" alt></p>
+<center>关注公众号，Get 更多知识点</center>
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a1a51c77/" data-id="ckicxuszn001x33caxd9m9550" class="article-share-link" data-share="baidu" data-title="一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/RecycleView/">RecycleView</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/侧滑菜单/">侧滑菜单</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/yhaowa/321a08c4/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
+        
+          一款纯 Kotlin 编写的开源安卓应用 Smile
+        
+      </div>
+    </a>
+  
+  
+    <a href="/yhaowa/c034d1cd/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">动手打造史上最简单的 Recycleview 侧滑菜单</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>
