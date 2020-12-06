@@ -1,446 +1,105 @@
+
 <!DOCTYPE html>
-<html lang="zh-CN">
-    <!-- title -->
-
-
-
-
-<!-- keywords -->
-
-
-
-
+<html>
 <head><meta name="generator" content="Hexo 3.9.0">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <meta name="author" content="Ahab">
-    <meta name="renderer" content="webkit">
-    <meta name="copyright" content="Ahab">
-    
-    <meta name="keywords" content="hexo,王英豪,hexo-theme,hexo-blog">
-    
-    <meta name="description" content>
-    <meta name="description" content="介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？">
-<meta name="keywords" content="Android,window,vsync">
+  <meta charset="utf-8">
+  
+  <title>开发编写的 View 控件，是怎么变成屏幕上图像的？ | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？">
+<meta name="keywords" content="window,vsync,surface">
 <meta property="og:type" content="article">
 <meta property="og:title" content="开发编写的 View 控件，是怎么变成屏幕上图像的？">
 <meta property="og:url" content="http://yhaowa.gitee.io/f9fd2518/index.html">
-<meta property="og:site_name" content="Great hopes make great man">
+<meta property="og:site_name" content="what is your main focus for today?">
 <meta property="og:description" content="介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-11-15T04:38:27.218Z">
+<meta property="og:updated_time" content="2020-12-06T06:59:08.595Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发编写的 View 控件，是怎么变成屏幕上图像的？">
 <meta name="twitter:description" content="介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？">
-    <meta http-equiv="Cache-control" content="no-cache">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    
-    <link rel="alternate" href="/atom.xml" title="Ahab&#39;s Studio." type="application/atom+xml">
-    
-    <title>开发编写的 View 控件，是怎么变成屏幕上图像的？ · Ahab&#39;s Studio</title>
-    <style type="text/css">
-    @font-face {
-        font-family: 'Oswald-Regular';
-        src: url("/font/Oswald-Regular.ttf");
-    }
-
-    body {
-        margin: 0;
-    }
-
-    header,
-    footer,
-    .back-top,
-    .sidebar,
-    .container,
-    .site-intro-meta,
-    .toc-wrapper {
-        display: none;
-    }
-
-    .site-intro {
-        position: relative;
-        z-index: 3;
-        width: 100%;
-        /* height: 50vh; */
-        overflow: hidden;
-    }
-
-    .site-intro-placeholder {
-        position: absolute;
-        z-index: -2;
-        top: 0;
-        left: 0;
-        width: calc(100% + 300px);
-        height: 100%;
-        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
-        background-position: center center;
-        transform: translate3d(-226px, 0, 0);
-        animation: gradient-move 2.5s ease-out 0s infinite;
-    }
-
-    @keyframes gradient-move {
-        0% {
-            transform: translate3d(-226px, 0, 0);
-        }
-        100% {
-            transform: translate3d(0, 0, 0);
-        }
-    }
-
-</style>
-
-    <link rel="preload" href="/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <link rel="stylesheet" href="/css/mobile.css?v=20180824" media="(max-width: 980px)">
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    
-    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
-/* This file is meant as a standalone workflow for
-- testing support for link[rel=preload]
-- enabling async CSS loading in browsers that do not support rel=preload
-- applying rel preload css once loaded, whether supported or not.
-*/ -->
-<script>
-(function( w ){
-	"use strict";
-	// rel=preload support test
-	if( !w.loadCSS ){
-		w.loadCSS = function(){};
-	}
-	// define on the loadCSS obj
-	var rp = loadCSS.relpreload = {};
-	// rel=preload feature support test
-	// runs once and returns a function for compat purposes
-	rp.support = (function(){
-		var ret;
-		try {
-			ret = w.document.createElement( "link" ).relList.supports( "preload" );
-		} catch (e) {
-			ret = false;
-		}
-		return function(){
-			return ret;
-		};
-	})();
-
-	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
-	// then change that media back to its intended value on load
-	rp.bindMediaToggle = function( link ){
-		// remember existing media attr for ultimate state, or default to 'all'
-		var finalMedia = link.media || "all";
-
-		function enableStylesheet(){
-			link.media = finalMedia;
-		}
-
-		// bind load handlers to enable media
-		if( link.addEventListener ){
-			link.addEventListener( "load", enableStylesheet );
-		} else if( link.attachEvent ){
-			link.attachEvent( "onload", enableStylesheet );
-		}
-
-		// Set rel and non-applicable media type to start an async request
-		// note: timeout allows this to happen async to let rendering continue in IE
-		setTimeout(function(){
-			link.rel = "stylesheet";
-			link.media = "only x";
-		});
-		// also enable media after 3 seconds,
-		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
-		setTimeout( enableStylesheet, 3000 );
-	};
-
-	// loop through link elements in DOM
-	rp.poly = function(){
-		// double check this to prevent external calls from running
-		if( rp.support() ){
-			return;
-		}
-		var links = w.document.getElementsByTagName( "link" );
-		for( var i = 0; i < links.length; i++ ){
-			var link = links[ i ];
-			// qualify links to those with rel=preload and as=style attrs
-			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
-				// prevent rerunning on link
-				link.setAttribute( "data-loadcss", true );
-				// bind listeners to toggle media back
-				rp.bindMediaToggle( link );
-			}
-		}
-	};
-
-	// if unsupported, run the polyfill
-	if( !rp.support() ){
-		// run once at least
-		rp.poly();
-
-		// rerun poly on an interval until onload
-		var run = w.setInterval( rp.poly, 500 );
-		if( w.addEventListener ){
-			w.addEventListener( "load", function(){
-				rp.poly();
-				w.clearInterval( run );
-			} );
-		} else if( w.attachEvent ){
-			w.attachEvent( "onload", function(){
-				rp.poly();
-				w.clearInterval( run );
-			} );
-		}
-	}
-
-
-	// commonjs
-	if( typeof exports !== "undefined" ){
-		exports.loadCSS = loadCSS;
-	}
-	else {
-		w.loadCSS = loadCSS;
-	}
-}( typeof global !== "undefined" ? global : this ) );
-</script>
-
-    <link rel="icon" href="/assets/android.ico">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script">
-    <link rel="preload" href="/scripts/main.js" as="script">
-    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
-    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    
-    <!-- fancybox -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
-    <!-- 百度统计  -->
-    
-    <!-- 谷歌统计  -->
-    
-</head>
-
-    
-        <body class="post-body">
-    
-    
-<header class="header">
-
-    <div class="read-progress"></div>
-    <div class="header-sidebar-menu">&#xe775;</div>
-    <!-- post页的toggle banner  -->
-    
-    <div class="banner">
-            <div class="blog-title">
-                <a href="/" >Ahab&#39;s Studio.</a>
-            </div>
-            <div class="post-title">
-                <a href="#" class="post-name">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
-            </div>
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
     </div>
-    
-    <a class="home-link" href=/>Ahab's Studio.</a>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io">
+        </form>
+      </div>
+    </div>
+  </div>
 </header>
-    <div class="wrapper">
-        <div class="site-intro" style="
-
-
-
-
-
-
-
-height:50vh;
-">
+    <div class="outer">
+      <section id="main"><article id="post-Android 屏幕显示原理" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/f9fd2518/" class="article-date">
+  <time datetime="2020-11-08T06:24:57.000Z" itemprop="datePublished">2020-11-08</time>
+</a>
     
-    <!-- 主页  -->
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Framework/">Framework</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
     
     
-    <!-- 404页  -->
-            
-    <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/intro/post-bg.jpg)"></div>
-    <div class="site-intro-meta">
-        <!-- 标题  -->
-        <h1 class="intro-title">
-            <!-- 主页  -->
-            
-            开发编写的 View 控件，是怎么变成屏幕上图像的？
-            <!-- 404 -->
-            
-        </h1>
-        <!-- 副标题 -->
-        <p class="intro-subtitle">
-            <!-- 主页副标题  -->
-            
-            
-            <!-- 404 -->
-            
-        </p>
-        <!-- 文章页meta -->
+      <header class="article-header">
         
-            <div class="post-intros">
-                <!-- 文章页标签  -->
-                
-                    <div class= post-intro-tags >
+  
+    <h1 class="article-title" itemprop="name">
+      开发编写的 View 控件，是怎么变成屏幕上图像的？
+    </h1>
+  
+
+      </header>
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Android">Android</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "window">window</a>
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "vsync">vsync</a>
-    
-</div>
-                
-                
-                    <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">1.9k</span>阅读时长: <span class="post-count reading-time">8 min</span></span>
-                    </div>
-                
-                <div class="post-intro-meta">
-                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2020/11/08</span>
-                    
-                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
-                        <span class="iconfont-archer">&#xe602;</span>
-                        <span id="busuanzi_value_page_pv"></span>
-                    </span>
-                    
-                    <span class="shareWrapper">
-                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
-                        <span class="shareText">Share</span>
-                        <ul class="shareList">
-                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
-                                <div class="share-qrcode"></div>
-                            </li>
-                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
-                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
-                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
-                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
-                        </ul>
-                    </span>
-                </div>
-            </div>
-        
-    </div>
-</div>
-        <script>
- 
-  // get user agent
-  var browser = {
-    versions: function () {
-      var u = window.navigator.userAgent;
-      return {
-        userAgent: u,
-        trident: u.indexOf('Trident') > -1, //IE内核
-        presto: u.indexOf('Presto') > -1, //opera内核
-        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
-        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
-        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
-        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
-        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
-        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
-        iPad: u.indexOf('iPad') > -1, //是否为iPad
-        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
-        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
-        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
-      };
-    }()
-  }
-  console.log("userAgent:" + browser.versions.userAgent);
-
-  // callback
-  function fontLoaded() {
-    console.log('font loaded');
-    if (document.getElementsByClassName('site-intro-meta')) {
-      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
-      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
-      var postIntros = document.getElementsByClassName('post-intros')[0]
-      if (postIntros) {
-        postIntros.classList.add('post-fade-in');
-      }
-    }
-  }
-
-  // UC不支持跨域，所以直接显示
-  function asyncCb(){
-    if (browser.versions.uc) {
-      console.log("UCBrowser");
-      fontLoaded();
-    } else {
-      WebFont.load({
-        custom: {
-          families: ['Oswald-Regular']
-        },
-        loading: function () {  //所有字体开始加载
-          // console.log('loading');
-        },
-        active: function () {  //所有字体已渲染
-          fontLoaded();
-        },
-        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
-          console.log('inactive: timeout');
-          fontLoaded();
-        },
-        timeout: 5000 // Set the timeout to two seconds
-      });
-    }
-  }
-
-  function asyncErr(){
-    console.warn('script load from CDN failed, will load local script')
-  }
-
-  // load webfont-loader async, and add callback function
-  function async(u, cb, err) {
-    var d = document, t = 'script',
-      o = d.createElement(t),
-      s = d.getElementsByTagName(t)[0];
-    o.src = u;
-    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
-    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
-    s.parentNode.insertBefore(o, s);
-  }
-
-  var asyncLoadWithFallBack = function(arr, success, reject) {
-      var currReject = function(){
-        reject()
-        arr.shift()
-        if(arr.length)
-          async(arr[0], success, currReject)
-        }
-
-      async(arr[0], success, currReject)
-  }
-
-  asyncLoadWithFallBack([
-    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
-    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
-    "/lib/webfontloader.min.js"
-  ], asyncCb, asyncErr)
-</script>        
-        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
-        <div class="container container-unloaded">
-            <main class="main post-page">
-    <article class="article-entry">
+    <div class="article-entry" itemprop="articleBody">
+      
         <blockquote>
 <p>介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？</p>
 </blockquote>
 <a id="more"></a>
-<p>这个问题该怎么回答呢？一个思路是先整体串讲，宏观的把<em>Android UI 显示原理</em>的关键知识点都涉及到，然后再细化具体介绍，知识点如下：</p>
-<ul>
-<li>一、Activity 与 Window<ol>
-<li>setContentView 原理</li>
-<li>Activity 窗口添加过程</li>
-</ol>
-</li>
-<li>二、UI 刷新机制<ol>
-<li>发起 UI 重绘请求</li>
-<li>执行 UI 绘制时机</li>
-<li>vSync 的生成与分发</li>
-</ol>
-</li>
-<li>三、UI 绘制流程</li>
-<li>四、Surface 与 SurfaceFlinger</li>
-</ul>
-<h1 id="一、Activity-与-Window"><a href="#一、Activity-与-Window" class="headerlink" title="一、Activity 与 Window"></a>一、Activity 与 Window</h1><h3 id="1-setContentView-原理"><a href="#1-setContentView-原理" class="headerlink" title="1. setContentView 原理"></a>1. setContentView 原理</h3><p>Activity 中将 setContentView 工作交给了 Window 对象去处理：</p>
+<h1 id="Activity-与-Window"><a href="#Activity-与-Window" class="headerlink" title="Activity 与 Window"></a>Activity 与 Window</h1><h2 id="setContentView-原理"><a href="#setContentView-原理" class="headerlink" title="setContentView 原理"></a>setContentView 原理</h2><p>Activity 中将 setContentView 工作交给了 Window 对象去处理：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setContentView</span><span class="params">(@LayoutRes <span class="keyword">int</span> layoutResID)</span> </span>&#123;</span><br><span class="line">    getWindow().setContentView(layoutResID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>每个 Activity 内部都持有一个 Window 对象，而 Window 对象是在创建 Activity 流程中 attach 时就实例化的：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">attach</span><span class="params">(...)</span></span>&#123;</span><br><span class="line">    mWindow = <span class="keyword">new</span> PhoneWindow(<span class="keyword">this</span>, window, activityConfigCallback);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -450,7 +109,7 @@ height:50vh;
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">installDecor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mDecor == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mDecor = <span class="keyword">new</span> DecorView(...);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (mContentParent == <span class="keyword">null</span>) &#123;</span><br><span class="line">        mContentParent = (ViewGroup)mDecor.findViewById(R.id.content);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>每个 Activity 内部都持有一个 window 对象，其实现为 PhoneWindow，在 Activity attachContext 时创建。</p>
 <p>PhoneWindow 的根布局为 DecorView，其包括 TitleView 和 ContentView，Activity 的 setContentView 就是把布局添加到 ContentView。</p>
-<h3 id="2-Activity-窗口添加过程"><a href="#2-Activity-窗口添加过程" class="headerlink" title="2. Activity 窗口添加过程"></a>2. Activity 窗口添加过程</h3><p>setContentView 只是创建好了 View 视图结构，还没告知 WMS。在 ActivityThread handleResumeActivity 方法中，才会与 WMS 通信开始添加 Activity 窗口，代码如下：</p>
+<h2 id="Activity-窗口添加过程"><a href="#Activity-窗口添加过程" class="headerlink" title="Activity 窗口添加过程"></a>Activity 窗口添加过程</h2><p>setContentView 只是创建好了 View 视图结构，还没告知 WMS。在 ActivityThread handleResumeActivity 方法中，才会与 WMS 通信开始添加 Activity 窗口，代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleResumeActivity</span><span class="params">(IBinder token, ...)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> ActivityClientRecord r = performResumeActivity(token, ...);</span><br><span class="line">    <span class="keyword">final</span> Activity a = r.activity;</span><br><span class="line">    <span class="keyword">if</span> (r.window == <span class="keyword">null</span> &amp;&amp; !a.mFinished &amp;&amp; willBeVisible) &#123;</span><br><span class="line">        r.window = r.activity.getWindow();</span><br><span class="line">        View decor = r.window.getDecorView();</span><br><span class="line">        ViewManager wm = a.getWindowManager();</span><br><span class="line">        a.mDecor = decor;</span><br><span class="line">        wm.addView(decor, l);</span><br><span class="line">    &#125;</span><br><span class="line">    r.activity.makeVisible();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中 performResumeActivity 方法会回调 onResume 生命周期，之后调用 WindowManager 的 addView 方法并将 DecorView 传入。这里的 WindowManager 为 WindowManagerImpl 对象，与 Activity 内部的 window 一样，都是在 Activity attachContext 时创建。</p>
 <p>WindowManagerImpl 中 addView 方法如下：</p>
@@ -480,14 +139,14 @@ height:50vh;
 <li>在 ViewRootImpl 中与 WMS 发生交互，应用端通过 WindowSession 调用 WMS，WMS 通过 IWindow 调用应用端</li>
 <li>WMS 中会对窗口进行权限、类型等检查，最终将应用窗口信息记录下来</li>
 </ul>
-<h1 id="二、UI-刷新机制"><a href="#二、UI-刷新机制" class="headerlink" title="二、UI 刷新机制"></a>二、UI 刷新机制</h1><h3 id="1-发起-UI-重绘请求"><a href="#1-发起-UI-重绘请求" class="headerlink" title="1. 发起 UI 重绘请求"></a>1. 发起 UI 重绘请求</h3><p>ViewRootImpl 中的 performTraversals 中会依次调用 performMeasure、performLayout、performDraw，分别对应于 measure、layout、draw，由顶而下的进行界面绘制逻辑。</p>
+<h1 id="UI-刷新机制"><a href="#UI-刷新机制" class="headerlink" title="UI 刷新机制"></a>UI 刷新机制</h1><h2 id="发起-UI-重绘请求"><a href="#发起-UI-重绘请求" class="headerlink" title="发起 UI 重绘请求"></a>发起 UI 重绘请求</h2><p>ViewRootImpl 中的 performTraversals 中会依次调用 performMeasure、performLayout、performDraw，分别对应于 measure、layout、draw，由顶而下的进行界面绘制逻辑。</p>
 <p>调用 View 控件 requestLayout、invalidate 等方法请求 UI 重绘时，会统一调用到 ViewRootImpl 的 scheduleTraversals 方法，代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">scheduleTraversals</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!mTraversalScheduled) &#123;</span><br><span class="line">        mTraversalScheduled = <span class="keyword">true</span>;</span><br><span class="line">        mTraversalBarrier = mHandler.getLooper().getQueue().postSyncBarrier();</span><br><span class="line">        mChoreographer.postCallback(</span><br><span class="line">                Choreographer.CALLBACK_TRAVERSAL, mTraversalRunnable, <span class="keyword">null</span>);</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其中 postSyncBarrier 插入一个消息屏障 block 普通消息，以保证主线程可以优先来执行接下来的绘制工作。mTraversalRunnable 的实现如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> TraversalRunnable mTraversalRunnable = <span class="keyword">new</span> TraversalRunnable();</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">TraversalRunnable</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            doTraversal();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doTraversal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (mTraversalScheduled) &#123;</span><br><span class="line">        mTraversalScheduled = <span class="keyword">false</span>;</span><br><span class="line">        mHandler.getLooper().getQueue().removeSyncBarrier(mTraversalBarrier);</span><br><span class="line">        performTraversals();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>通过 mTraversalScheduled 变量可以看出，不是每次调用 requestLayout、invalidate 方法就会触发一次 UI 重绘的，而是要等 mTraversalRunnable 被执行后才会接收下一次的重绘请求。</p>
 <p>在 mTraversalRunnable 中调用了 performTraversals() 进行真正的 UI 绘制，而 UI 真正绘制的时机则取决于 mChoreographer 触发回调的时机。</p>
-<h3 id="执行-UI-绘制时机"><a href="#执行-UI-绘制时机" class="headerlink" title="执行 UI 绘制时机"></a>执行 UI 绘制时机</h3><p>ViewRootImpl 接收 UI 重绘请求后，将真正的 UI 绘制时机交给了 Choreographer，而 Choreographer 中会在每次 vSync 信号到来时执行 UI 绘制。</p>
+<h2 id="执行-UI-绘制时机"><a href="#执行-UI-绘制时机" class="headerlink" title="执行 UI 绘制时机"></a>执行 UI 绘制时机</h2><p>ViewRootImpl 接收 UI 重绘请求后，将真正的 UI 绘制时机交给了 Choreographer，而 Choreographer 中会在每次 vsync 信号到来时执行 UI 绘制。</p>
 <p>调用 Choreographer 的 postCallback 方法将 UI 绘制 TraversalRunnable 传入后，会进一步调用 Choreographer 的 postCallbackDelayedInternal 方法，代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">postCallbackDelayedInternal</span><span class="params">(<span class="keyword">int</span> callbackType,</span></span></span><br><span class="line"><span class="function"><span class="params">        Object action, Object token, <span class="keyword">long</span> delayMillis)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> now = SystemClock.uptimeMillis();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> dueTime = now + delayMillis;</span><br><span class="line">        mCallbackQueues[callbackType].addCallbackLocked(dueTime, action, token);</span><br><span class="line">        <span class="keyword">if</span> (dueTime &lt;= now) &#123;</span><br><span class="line">            scheduleFrameLocked(now);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            Message msg = mHandler.obtainMessage(MSG_DO_SCHEDULE_CALLBACK, action);</span><br><span class="line">            msg.arg1 = callbackType;</span><br><span class="line">            msg.setAsynchronous(<span class="keyword">true</span>);</span><br><span class="line">            mHandler.sendMessageAtTime(msg, dueTime);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>首先将 UI 绘制 action 记录到 mCallbackQueues 队列中，然后根据处理时间决定立即调用 scheduleFrameLocked ，或发送异步消息延时调用 scheduleFrameLocked。</p>
@@ -495,1225 +154,319 @@ height:50vh;
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scheduleFrameLocked</span><span class="params">(<span class="keyword">long</span> now)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// If running on the Looper thread, then schedule the vsync immediately,</span></span><br><span class="line">    <span class="comment">// otherwise post a message to schedule the vsync from the UI thread</span></span><br><span class="line">    <span class="comment">// as soon as possible.</span></span><br><span class="line">    <span class="keyword">if</span> (isRunningOnLooperThreadLocked()) &#123;</span><br><span class="line">        scheduleVsyncLocked();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Message msg = mHandler.obtainMessage(MSG_DO_SCHEDULE_VSYNC);</span><br><span class="line">        msg.setAsynchronous(<span class="keyword">true</span>);</span><br><span class="line">        mHandler.sendMessageAtFrontOfQueue(msg);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>如注释所示，scheduleFrameLocked 中需要切换到指定线程中调用 scheduleVsyncLocked：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scheduleVsyncLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mDisplayEventReceiver.scheduleVsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>scheduleVsync 表示要接受下一次 vSync 信号，等到 vSync 信号到来时会由 SurfaceFlinger 回调通知。直接来看 Choreographer 接受到 vSync 信号后的处理，关键代码如下：</p>
+<p>scheduleVsync 表示要接受下一次 vsync 信号，等到 vsync 信号到来时会由 SurfaceFlinger 回调通知。直接来看 Choreographer 接受到 vsync 信号后的处理，关键代码如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">doFrame</span><span class="params">(<span class="keyword">long</span> frameTimeNanos, <span class="keyword">int</span> frame)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">long</span> startNanos;</span><br><span class="line">    <span class="keyword">synchronized</span> (mLock) &#123;</span><br><span class="line">        <span class="keyword">long</span> intendedFrameTimeNanos = frameTimeNanos;</span><br><span class="line">        startNanos = System.nanoTime();</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> jitterNanos = startNanos - frameTimeNanos;</span><br><span class="line">        <span class="keyword">if</span> (jitterNanos &gt;= mFrameIntervalNanos) &#123;</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">long</span> skippedFrames = jitterNanos / mFrameIntervalNanos;</span><br><span class="line">            <span class="keyword">if</span> (skippedFrames &gt;= SKIPPED_FRAME_WARNING_LIMIT) &#123;</span><br><span class="line">                Log.i(TAG, <span class="string">"Skipped "</span> + skippedFrames + <span class="string">" frames!  "</span></span><br><span class="line">                        + <span class="string">"The application may be doing too much work on its main thread."</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">    doCallbacks(Choreographer.CALLBACK_TRAVERSAL, frameTimeNanos);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当要绘制的图像时间戳晚于一个帧刷新周期时，会去进一步计算异常跳过的帧数，如果跳过的帧数过大，就可以看到非常眼熟的一条日志了：<em>“Skipped xx frames! The application may be doing too much work on its main thread”</em> </p>
 <p>随后通过 doCallbacks 回调触发执行 UI 绘制，也就是执行 ViewRootImpl 传过来的 TraversalRunnable、调用 performTraversals 方法，由顶而下的执行界面绘制逻辑。</p>
-
-    </article>
-    <!-- license  -->
-    
-        <div class="license-wrapper">
-            <p>原文作者：<a href="http://yhaowa.gitee.io">Ahab</a>
-            <p>原文链接：<a href="http://yhaowa.gitee.io/f9fd2518/">http://yhaowa.gitee.io/f9fd2518/</a>
-            <p>发表日期：<a href="http://yhaowa.gitee.io/f9fd2518/">November 8th 2020, 2:24:57 pm</a>
-            <p>更新日期：<a href="http://yhaowa.gitee.io/f9fd2518/">November 15th 2020, 12:38:27 pm</a>
-            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
-        </div>
-    
-    <!-- paginator  -->
-    <ul class="post-paginator">
-        <li class="next">
-            
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/649d55e5/" title= "Android Handler epoll 机制分析">
-                    <div class="nextTitle">Android Handler epoll 机制分析</div>
-                </a>
-            
-        </li>
-        <li class="previous">
-            
-                <div class="prevSlogan">Previous Post</div>
-                <a href= "/52cb86d4/" title= "Android 消息屏障与异步消息">
-                    <div class="prevTitle">Android 消息屏障与异步消息</div>
-                </a>
-            
-        </li>
-    </ul>
-    <!-- 评论插件 -->
-    <!-- 来必力City版安装代码 -->
-
-<!-- City版安装代码已完成 -->
-    
-    
-    <!-- gitalk评论 -->
-
-    <!-- utteranc评论 -->
-
-    <!-- partial('_partial/comment/changyan') -->
-    <!--PC版-->
-
-
-    
-    
-    <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
-    <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
-    <div id="comment"></div>
-    <script>
-    new Valine({
-        el: '#comment' ,
-        notify:false, 
-        verify:false, 
-        appId: "pqNIOUBwlQxLmkYU4PEdS6It-gzGzoHsz",
-        appKey: "2YFKt2819EhmEaa9G9xKs5Vy",
-        placeholder: "",
-        path:window.location.pathname, 
-        avatar:'mm' 
-    });
-    </script>
-
-
-    <!-- 评论 -->
-</main>
-            <!-- profile -->
-            
-        </div>
-        <footer class="footer footer-unloaded">
-    <!-- social  -->
-    
-    <div class="social">
-        
-    
-        
-            
-                <a href="mailto:yhaowa@foxmail.com" class="iconfont-archer email" title=email ></a>
-            
-        
-    
-        
-            
-                <a href="//github.com/yhaolpz" class="iconfont-archer github" target="_blank" title=github></a>
-            
-        
-    
-        
-            
-                <span class="iconfont-archer wechat" title=wechat>
-                  
-                  <img class="profile-qr" src="/assets/wechat.jpg" />
-                </span>
-            
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-    
-        
-            
-                <a href="https://www.jianshu.com/u/bf20b3c0da59" class="iconfont-archer others" target="_blank" title=others></a>
-            
-        
-    
-        
-    
-
+<h2 id="vsync-信号的生成"><a href="#vsync-信号的生成" class="headerlink" title="vsync 信号的生成"></a>vsync 信号的生成</h2><p><strong>vsync 信号在 SurfaceFlinger 中生成，并且有硬件、软件两种生成方式</strong> — 仅通过这种高度总结的描述，我们能得到多少信息呢？ 具体是如何生成？是优先选硬件生成还是软件生成还是同时存在？</p>
+<p>下面就通过源码来一探究竟，既然在 SurfaceFlinger 中生成，那先来看 SurfaceFlinger 的 init 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> SurfaceFlinger::init() &#123;</span><br><span class="line">    ...</span><br><span class="line">    mHwc = new HWComposer(<span class="keyword">this</span>);</span><br><span class="line">    mHwc-&gt;setEventHandler(static_cast&lt;HWComposer::EventHandler*&gt;(<span class="keyword">this</span>));</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>HWComposer 是 vsync 信号实际生成的类，SurfaceFlinger 通过 setEventHandler 向 HWComposer 注册了一个回调，使 SurfaceFlinger 能够接受由 HWComposer 生成的 vsync 信号，EventHandler 中的回调方法如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="keyword">void</span> onVSyncReceived(int32_t disp, nsecs_t timestamp)</span><br></pre></td></tr></table></figure>
+<p>下面来看实际生成 vsync 的 HWComposer，其构造方法关键代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">HWComposer::HWComposer(...)&#123;</span><br><span class="line">    <span class="keyword">bool</span> needVSyncThread = <span class="literal">true</span>;</span><br><span class="line">    loadHwcModule(); <span class="comment">//加载硬件</span></span><br><span class="line">    <span class="keyword">if</span>(mHwc)&#123; <span class="comment">//硬件加载成功</span></span><br><span class="line">        mCBContext-&gt;procs.vsync = &amp;hook_vsync; <span class="comment">//注册硬件源回调</span></span><br><span class="line">        mHwc-&gt;registerProcs(mHwc, &amp;mCBContext-&gt;procs);</span><br><span class="line">        needVSyncThread = <span class="literal">false</span>; <span class="comment">//不使用软件方式</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(needVSyncThread)&#123;</span><br><span class="line">        <span class="comment">//如果硬件不支持，则用软件模拟</span></span><br><span class="line">        mVSyncThread = new VSyncThread(*<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>逻辑十分简单，首先去加载硬件，优先使用硬件生成方式，如果硬件不支持，则用软件模拟。</p>
+<p>硬件源生成的回调 hook_vsync 方法调用如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> HWComposer::hook_vsync(<span class="keyword">const</span> <span class="keyword">struct</span> hwc_procs* procs, <span class="keyword">int</span> disp,</span><br><span class="line">        int64_t timestamp) &#123;</span><br><span class="line">    cb_context* ctx = reinterpret_cast&lt;cb_context*&gt;(</span><br><span class="line">            const_cast&lt;hwc_procs_t*&gt;(procs));</span><br><span class="line">    ctx-&gt;hwc-&gt;vsync(disp, timestamp); <span class="comment">//调用 vsync 方法</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> HWComposer::vsync(<span class="keyword">int</span> disp, int64_t timestamp) &#123;</span><br><span class="line">    mEventHandler.onVSyncReceived(disp, timestamp); <span class="comment">//回调出去</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此 HWComposer 中的 vsync 硬件生成方式流程完毕，最后调用了 mEventHandler 回调，交由 SurfaceFlinger 处理。</p>
+<p>再来看软件模拟生成方式，其通过 VSyncThread 类实现，VSyncThread 继承了 Thread 类，自然也继承了 Thread 类的 <em>threadLoop</em> 方法。</p>
+<p>如果 threadLoop 方法返回 true，那当工作线程启动后，基类 Thread 会循环的调用 threadLoop 方法。而软件模拟生成的 vsync 信号就是在 threadLoop 方法中生成的，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> HWComposer::VSyncThread::threadLoop() &#123;</span><br><span class="line">    <span class="keyword">const</span> nsecs_t period = mRefreshPeriod; <span class="comment">// vsync 周期</span></span><br><span class="line">    <span class="keyword">const</span> nsecs_t now = systemTime(<span class="built_in">CLOCK_MONOTONIC</span>); <span class="comment">//当前时间</span></span><br><span class="line">    nsecs_t next_vsync = mNextFakeVSync; <span class="comment">//本次要生成的 vsync 信号时间</span></span><br><span class="line">    nsecs_t sleep = next_vsync - now;</span><br><span class="line">    <span class="keyword">if</span> (sleep &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">// 错过了，重新计算本次要生成的 vsync 信号时间</span></span><br><span class="line">        sleep = (period - ((now - next_vsync) % period));</span><br><span class="line">        next_vsync = now + sleep;</span><br><span class="line">    &#125;</span><br><span class="line">    mNextFakeVSync = next_vsync + period; <span class="comment">// 下一个 vsync 信号时间</span></span><br><span class="line">    <span class="keyword">struct</span> timespec spec;</span><br><span class="line">    spec.tv_sec  = next_vsync / <span class="number">1000000000</span>;</span><br><span class="line">    spec.tv_nsec = next_vsync % <span class="number">1000000000</span>;</span><br><span class="line">    <span class="keyword">int</span> err;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        <span class="comment">//休眠到 next_vsync 即本次 vsync 信号时间 </span></span><br><span class="line">        err = clock_nanosleep(<span class="built_in">CLOCK_MONOTONIC</span>, TIMER_ABSTIME, &amp;spec, <span class="literal">NULL</span>);</span><br><span class="line">    &#125; <span class="keyword">while</span> (err&lt;<span class="number">0</span> &amp;&amp; errno == EINTR);</span><br><span class="line">    <span class="keyword">if</span> (err == <span class="number">0</span>) &#123;</span><br><span class="line">        mHwc.mEventHandler.onVSyncReceived(<span class="number">0</span>, next_vsync);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>; <span class="comment">//让系统循环调用此方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如何在指定的时间点产生信号呢？如代码所示，在每次循环时采用休眠的方式主动等待至 vsync 时间点。</p>
+<p>第一次执行时， next_vsync、mNextFakeVSync 都为 0，所以 sleep &lt; 0 进而会重新计算 next_vsync 为 now + period，也就是基于当前时间再等一个 vsync 周期。</p>
+<p>后续每次循环也会重新修正 vsync 信号的时间，避免回调 onVSyncReceived 方法或其他耗时操作导致 vsync 信号时间变得越来越晚。</p>
+<p>小结一下，vsync 信号在 SurfaceFlinger 进程的 HWComposer 类中生成，优先使用硬件源生成方式，如果硬件不支持则使用软件方式模拟生成。不管是硬件生成还是软件生成，都会通过相同的回调统一通知，最后交由 SurfaceFlinger 进一步处理。</p>
+<h2 id="vsync-信号的分发"><a href="#vsync-信号的分发" class="headerlink" title="vsync 信号的分发"></a>vsync 信号的分发</h2><h3 id="SurfaceFlinger-gt-DispSync"><a href="#SurfaceFlinger-gt-DispSync" class="headerlink" title="SurfaceFlinger -&gt; DispSync"></a>SurfaceFlinger -&gt; DispSync</h3><p>vsync 信号由 HWComposer 类生成后，会回调 SurfaceFlinger.cpp 的 onVSyncReceived 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> SurfaceFlinger::onVSyncReceived(int32_t type, nsecs_t timestamp) &#123;</span><br><span class="line">    mPrimaryDispSync.addResyncSample(timestamp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>mPrimaryDispSync 为 DispSync 类型，DispSync 在构造时开启了一个 DispSyncThread 工作线程，专门负责 vsync 信号的分发：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DispSync::DispSync(<span class="keyword">const</span> <span class="keyword">char</span>* name) :</span><br><span class="line">        mName(name),</span><br><span class="line">        mRefreshSkipCount(<span class="number">0</span>),</span><br><span class="line">        mThread(new DispSyncThread(name)) &#123;</span><br><span class="line">    mThread-&gt;run(<span class="string">"DispSync"</span>, PRIORITY_URGENT_DISPLAY + PRIORITY_MORE_FAVORABLE);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着看 DispSync 的 addResyncSample 方法是如何处理 vsync 信号的：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> DispSync::addResyncSample(nsecs_t timestamp) &#123;</span><br><span class="line">    mResyncSamples[idx] = timestamp; <span class="comment">//vsync 信号时间戳</span></span><br><span class="line">    updateModelLocked();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> DispSync::updateModelLocked() &#123;</span><br><span class="line">    mThread-&gt;updateModel(mPeriod, mPhase, mReferenceTime);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DispSync 内部记录下 vsync 信号时间戳后，通过 updateModel 方法通知内部工作线程 DispSyncThread：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> updateModel(nsecs_t period, nsecs_t phase, nsecs_t referenceTime) &#123;</span><br><span class="line">    Mutex::Autolock lock(mMutex); <span class="comment">//锁</span></span><br><span class="line">    mPeriod = period;</span><br><span class="line">    mCond.signal(); <span class="comment">//唤醒</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意当前还处于 vsync 信号生成线程，若是软件生成则还处于 HWComposer 的 VSyncThread 线程，为了不影响 vsync 信号的生成工作，这里切换到另外的线程去分发。</p>
+<p>具体而言，就是通过 mCond.signal() 方法通知 DispSyncThread 线程去进一步分发，DispSyncThread 的分发工作在其 threadLoop 方法中：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="keyword">bool</span> threadLoop() &#123;</span><br><span class="line">  <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">     &#123;</span><br><span class="line">        Mutex::Autolock lock(mMutex); <span class="comment">//锁</span></span><br><span class="line">        <span class="keyword">if</span> (mPeriod == <span class="number">0</span>) &#123;</span><br><span class="line">            mCond.wait(mMutex); <span class="comment">//没 vsync 信号就阻塞</span></span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        now = systemTime(SYSTEM_TIME_MONOTONIC);</span><br><span class="line">        <span class="comment">// 收集注册了需要接受 vsync 信号的回调</span></span><br><span class="line">        callbackInvocations = gatherCallbackInvocationsLocked(now);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="keyword">if</span> (callbackInvocations.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">         <span class="comment">//分发回调</span></span><br><span class="line">         fireCallbackInvocations(callbackInvocations);</span><br><span class="line">     &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此 DispSync 中对 vsync 信号的分发工作执行完毕。</p>
+<h3 id="DispSync-gt-DispSyncSource"><a href="#DispSync-gt-DispSyncSource" class="headerlink" title="DispSync -&gt; DispSyncSource"></a>DispSync -&gt; DispSyncSource</h3><p>在 DispSync 内部工作线程 DispSyncThread 中，对注册需要接受 vsync 信号的回调进行调用，完成了 vsync 信号分发工作。</p>
+<p>那具体是谁注册了监听？是谁需要进一步接受 vsync 信号呢？还是要从 DispSyncThread 的 threadLoop 方法入手，它通过 gatherCallbackInvocationsLocked 方法获取到当前已注册的监听，代码如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Vector&lt;CallbackInvocation&gt; gatherCallbackInvocationsLocked(nsecs_t now) &#123;</span><br><span class="line">    Vector&lt;CallbackInvocation&gt; callbackInvocations;</span><br><span class="line">    <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; mEventListeners.size(); i++) &#123;</span><br><span class="line">        CallbackInvocation ci;</span><br><span class="line">        ci.mCallback = mEventListeners[i].mCallback;</span><br><span class="line">        callbackInvocations.push(ci);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> callbackInvocations;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后通过 fireCallbackInvocations 方法回调了监听：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> fireCallbackInvocations(<span class="keyword">const</span> Vector&lt;CallbackInvocation&gt;&amp; callbacks) &#123;</span><br><span class="line">    <span class="keyword">for</span> (size_t i = <span class="number">0</span>; i &lt; callbacks.size(); i++) &#123;</span><br><span class="line">        callbacks[i].mCallback-&gt;onDispSyncEvent(callbacks[i].mEventTime);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DispSync 内部对监听进行了封装，我们只关注外部传来的 mCallback，其为 DispSync::Callback 类型。通过以上代码可以知道 mCallback 被记录在 mEventListeners 中，那只要再看下哪里将监听添加到 mEventListeners 中，就能知道到底是谁注册的监听了。</p>
+<p>在 SurfaceFlinger 初始化时 DispSyncSource 与 DispSync(mPrimaryDispSync) 产生关联：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> SurfaceFlinger::init() &#123;</span><br><span class="line">    sp&lt;VSyncSource&gt; vsyncSrc = new DispSyncSource(&amp;mPrimaryDispSync,</span><br><span class="line">            vsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">"app"</span>);</span><br><span class="line">    mEventThread = new EventThread(vsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    sp&lt;VSyncSource&gt; sfVsyncSrc = new DispSyncSource(&amp;mPrimaryDispSync,</span><br><span class="line">            sfVsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">"sf"</span>);</span><br><span class="line">    mSFEventThread = new EventThread(sfVsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>也就是说 DispSyncSource 内部持有 DispSync，在 DispSyncSource 内部将监听注册到 DispSync 中：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="keyword">void</span> setVSyncEnabled(<span class="keyword">bool</span> enable) &#123;</span><br><span class="line">    Mutex::Autolock lock(mVsyncMutex);</span><br><span class="line">    <span class="keyword">if</span> (enable) &#123;</span><br><span class="line">        status_t err = mDispSync-&gt;addEventListener(mName, mPhaseOffset,</span><br><span class="line">                static_cast&lt;DispSync::Callback*&gt;(<span class="keyword">this</span>));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        status_t err = mDispSync-&gt;removeEventListener(</span><br><span class="line">                static_cast&lt;DispSync::Callback*&gt;(<span class="keyword">this</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    mEnabled = enable;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DispSyncSource 本身继承了 DispSync::Callback 接口，即直接将自身作为监听注册到 DispSync 中。</p>
+<p>也就是说，在 DispSync 内部工作线程中通过 fireCallbackInvocations 分发 vsync 信号，实际上调用了 DispSyncSource 的 onDispSyncEvent 方法。</p>
+<p>需要注意的是，SurfaceFlinger init 时创建了两个 DispSyncSource，分别是上层 app 和 surfaceFlinger 自身，为什么要分这两种呢？仅仅是代码上的逻辑分离吗？</p>
+<p>仔细观察 SurfaceFlinger init 中对这两个 DispSyncSource 的构造入参，分别传入了 vsyncPhaseOffsetNs 和 sfVsyncPhaseOffsetNs，这是要实现 vsync 信号的错时分发，即不同时分发 vsync 信号给上层 app 和 surfaceFlinger。</p>
+<h3 id="DispSyncSource-gt-EventThread"><a href="#DispSyncSource-gt-EventThread" class="headerlink" title="DispSyncSource -&gt; EventThread"></a>DispSyncSource -&gt; EventThread</h3><p>接着来看 DispSyncSource 的 onDispSyncEvent 方法是如何处理 vsync 信号的：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">virtual <span class="keyword">void</span> onDispSyncEvent(nsecs_t when) &#123;</span><br><span class="line">    sp&lt;VSyncSource::Callback&gt; callback;</span><br><span class="line">    &#123;</span><br><span class="line">        Mutex::Autolock lock(mCallbackMutex);</span><br><span class="line">        callback = mCallback;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (callback != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        callback-&gt;onVSyncEvent(when);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>又是一个 callBack 回调了出去，这个 callBack 又是谁呢？可以再看一下上面的 SurfaceFlinger init 方法，类似于 DispSyncSource 向 DispSync 注册监听，EventThread 构造时传入了 DispSyncSource，EventThread 向 DispSyncSource 注册了监听。</p>
+<p>callBack 类型为 VSyncSource::Callback，而 EventThread 自身也实现了这个接口：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> EventThread : public Thread, private VSyncSource::Callback</span><br></pre></td></tr></table></figure>
+<p>接着来看 EventThread 内部实现的 onVSyncEvent 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> EventThread::onVSyncEvent(nsecs_t timestamp) &#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.type = DisplayEventReceiver::DISPLAY_EVENT_VSYNC;</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.id = <span class="number">0</span>;</span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].header.timestamp = timestamp; <span class="comment">//vsync 时间戳</span></span><br><span class="line">    mVSyncEvent[<span class="number">0</span>].vsync.count++;</span><br><span class="line">    mCondition.broadcast();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意当前还处于 DispSync 的工作线程，这里将 vsync 信号记录到 DisplayEventReceiver::Event 类型的 mVSyncEvent 数组中后，通过 mCondition.broadcast() 通知 EventThread 工作线程去处理，即从 DispSync 工作线程切换到了 EventThread 工作线程。</p>
+<p>下面来看 EventThread 的工作线程中是如何处理的：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">bool</span> EventThread::threadLoop() &#123;</span><br><span class="line">    DisplayEventReceiver::Event event;</span><br><span class="line">    Vector&lt; sp&lt;EventThread::Connection&gt; &gt; signalConnections;</span><br><span class="line">    signalConnections = waitForEvent(&amp;event);</span><br><span class="line">    <span class="keyword">const</span> size_t count = signalConnections.size();</span><br><span class="line">    <span class="keyword">for</span> (size_t i=<span class="number">0</span> ; i&lt;count ; i++) &#123;</span><br><span class="line">        <span class="keyword">const</span> sp&lt;Connection&gt;&amp; conn(signalConnections[i]);</span><br><span class="line">        status_t err = conn-&gt;postEvent(event);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样是通过返回 true 来实现线程无限循环调用 threadLoop 方法，其中比较关键的是 waitForEvent 方法，关键逻辑如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Vector&lt; sp&lt;EventThread::Connection&gt; &gt; EventThread::waitForEvent(</span><br><span class="line">        DisplayEventReceiver::Event* event)&#123;</span><br><span class="line">    Vector&lt; sp&lt;EventThread::Connection&gt; &gt; signalConnections;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        检测 mVSyncEvent 数组中是否有 vsync 信号</span><br><span class="line">        如果有传递给 event 参数，并开始遍历所有注册的 connection</span><br><span class="line">        如果 connection.count &gt;= <span class="number">0</span>，就加到 signalConnections 中</span><br><span class="line">        <span class="keyword">if</span>(waitForVSync)&#123;</span><br><span class="line">            mCondition.waitRelative(mLock, timeout); <span class="comment">//休眠等待</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">while</span> (signalConnections.isEmpty());</span><br><span class="line">    <span class="keyword">return</span> signalConnections;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>梳理一下 EventThread 工作线程中的逻辑：通过 waitForEvent 方法进入休眠等待 vsync 信号，如果有 vsync 信号会唤醒，并将 vsync 信号传递给 event，返回 Connection，随后将 vsync 信号分发给了 Connection。</p>
+<p>现在我们的关注点变为 EventThread::Connection，它是谁注册的？其 postEvent 方法又是如何进一步分发 vsync 信号的呢？</p>
+<h3 id="Connection-gt-SurfaceFlinger"><a href="#Connection-gt-SurfaceFlinger" class="headerlink" title="Connection -&gt; SurfaceFlinger"></a>Connection -&gt; SurfaceFlinger</h3><p>依然聚焦于 vsync 的传递为脉络，接着来看 Connection 的 postEvent 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">status_t EventThread::Connection::postEvent(</span><br><span class="line">        <span class="keyword">const</span> DisplayEventReceiver::Event&amp; event) &#123;</span><br><span class="line">    DisplayEventReceiver::sendEvents(mChannel, &amp;event, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ssize_t DisplayEventReceiver::sendEvents(<span class="keyword">const</span> sp&lt;BitTube&gt;&amp; dataChannel,</span><br><span class="line">        Event <span class="keyword">const</span>* events, size_t count)&#123;</span><br><span class="line">    <span class="keyword">return</span> BitTube::sendObjects(dataChannel, events, count);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ssize_t BitTube::sendObjects(<span class="keyword">const</span> sp&lt;BitTube&gt;&amp; tube,</span><br><span class="line">        <span class="keyword">void</span> <span class="keyword">const</span>* events, size_t count, size_t objSize)&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span>* vaddr = reinterpret_cast&lt;<span class="keyword">const</span> <span class="keyword">char</span>*&gt;(events);</span><br><span class="line">    ssize_t size = tube-&gt;write(vaddr, count*objSize);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 Connection 内部持有一个 BitTube，BitTube 是用来处理进程间通讯的机制，和管道类似，基于 SocketPair 封装实现。SocketPair 用来创建一对未命名、互相连接的套接字，套接字的一端可以进行读和写的操作，用来实现全双工的通讯。</p>
+<p>在 Connection 中将 vsync 信号数据写入了 BitTube，那在哪里监听读呢？这就要分 SurfaceFlinger 与 app 两路了，首先来看 SurfaceFlinger 是如何接受的。再回到 SurfaceFlinger 的 init 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> SurfaceFlinger::init() &#123;</span><br><span class="line">    sp&lt;VSyncSource&gt; vsyncSrc = new DispSyncSource(&amp;mPrimaryDispSync,</span><br><span class="line">            vsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">"app"</span>);</span><br><span class="line">    mEventThread = new EventThread(vsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">    sp&lt;VSyncSource&gt; sfVsyncSrc = new DispSyncSource(&amp;mPrimaryDispSync,</span><br><span class="line">            sfVsyncPhaseOffsetNs, <span class="literal">true</span>, <span class="string">"sf"</span>);</span><br><span class="line">    mSFEventThread = new EventThread(sfVsyncSrc, *<span class="keyword">this</span>);</span><br><span class="line">    mEventQueue.setEventThread(mSFEventThread);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在构造完 SurfaceFlinger 的 EventThread 后，通过 setEventThread 方法将 EventThread 设置给 mEventQueue，mEventQueue 为 MessageQueue 类型，方法如下：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> MessageQueue::setEventThread(<span class="keyword">const</span> sp&lt;EventThread&gt;&amp; eventThread)&#123;</span><br><span class="line">    mEventThread = eventThread;</span><br><span class="line">    mEvents = eventThread-&gt;createEventConnection();</span><br><span class="line">    mEventTube = mEvents-&gt;getDataChannel();</span><br><span class="line">    mLooper-&gt;addFd(mEventTube-&gt;getFd(), <span class="number">0</span>, Looper::EVENT_INPUT,</span><br><span class="line">            MessageQueue::cb_eventReceiver, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这下就全走通了，SurfaceFlinger 的消息队列监听了 Connection 中的 BitTube，当 vsync 信号在 EventThread 中分发给 Connection 写入 BitTube 后，SurfaceFlinger 的消息队列就能收到通知了。</p>
+<p>接着来看 SurfaceFlinger 的 MessageQueue 如何进一步处理 vsync 消息，在 MessageQueue 的 setEventThread 方法中设置接受到 vsync 后回调 cb_eventReceiver 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> MessageQueue::cb_eventReceiver(<span class="keyword">int</span> fd, <span class="keyword">int</span> events, <span class="keyword">void</span>* data) &#123;</span><br><span class="line">    MessageQueue* queue = reinterpret_cast&lt;MessageQueue *&gt;(data);</span><br><span class="line">    <span class="keyword">return</span> queue-&gt;eventReceiver(fd, events);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>cb_eventReceiver 进一步调用 eventReceiver 方法：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> MessageQueue::eventReceiver(<span class="keyword">int</span> <span class="comment">/*fd*/</span>, <span class="keyword">int</span> <span class="comment">/*events*/</span>) &#123;</span><br><span class="line">    ssize_t n;</span><br><span class="line">    DisplayEventReceiver::Event buffer[<span class="number">8</span>];</span><br><span class="line">    <span class="keyword">while</span> ((n = DisplayEventReceiver::getEvents(mEventTube, buffer, <span class="number">8</span>)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span> ; i&lt;n ; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (buffer[i].header.type == DisplayEventReceiver::DISPLAY_EVENT_VSYNC) &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> INVALIDATE_ON_VSYNC</span></span><br><span class="line">                mHandler-&gt;dispatchInvalidate();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">                mHandler-&gt;dispatchRefresh();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到读取出 vsync 信号数据后，只用到了 type 信息，然后通过 Handler 回调出去处理。</p>
+<p>至此 vsync -&gt; SurfaceFlinger 的分发流程分析完毕。</p>
+<h3 id="Connection-gt-app"><a href="#Connection-gt-app" class="headerlink" title="Connection -&gt; app"></a>Connection -&gt; app</h3><p>尽管 vsync 传递给 SurfaceFlinger 的流程都发生在同个进程，却使用了支持跨进程的 BitTube。如果是将 vsync 信号传递给上层 app 进程，那就必须使用 BitTube 传递了。</p>
+<p>我们知道上层 app 会统一将 UI 刷新请求发给 Choreographer，Choreographer 会在下次 vsync 信号到来时真正执行 UI 绘制。 </p>
+<p>具体而言，Choreographer 中实际与 vsync 信号相关逻辑在 DisplayEventReceiver 中，初始化 Choreographer 时会构造 DisplayEventReceiver：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="title">Choreographer</span><span class="params">(Looper looper, <span class="keyword">int</span> vsyncSource)</span> </span>&#123;</span><br><span class="line">    mLooper = looper;</span><br><span class="line">    mHandler = <span class="keyword">new</span> FrameHandler(looper);</span><br><span class="line">    mDisplayEventReceiver = USE_VSYNC</span><br><span class="line">            ? <span class="keyword">new</span> FrameDisplayEventReceiver(looper, vsyncSource)</span><br><span class="line">            : <span class="keyword">null</span>;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>DisplayEventReceiver 构造函数中会调用到 DisplayEventReceiver.java 的 nativeInit 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">long</span> <span class="title">nativeInit</span><span class="params">(WeakReference&lt;DisplayEventReceiver&gt; receiver,</span></span></span><br><span class="line"><span class="function"><span class="params">            MessageQueue messageQueue, <span class="keyword">int</span> vsyncSource)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>底层实现位于 android_view_DisplayEventReceiver.cpp 中：</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> jlong nativeInit(JNIEnv* env, jclass clazz, jobject receiverWeak,</span><br><span class="line">        jobject messageQueueObj) &#123;</span><br><span class="line">    sp&lt;MessageQueue&gt; messageQueue = android_os_MessageQueue_getMessageQueue(env, messageQueueObj);</span><br><span class="line">    sp&lt;NativeDisplayEventReceiver&gt; receiver = new NativeDisplayEventReceiver(env,</span><br><span class="line">            receiverWeak, messageQueue);</span><br><span class="line">    status_t status = receiver-&gt;initialize();</span><br><span class="line">    ...</span><br><span class="line">    receiver-&gt;incStrong(gDisplayEventReceiverClassInfo.clazz); <span class="comment">// retain a reference for the object</span></span><br><span class="line">    <span class="keyword">return</span> reinterpret_cast&lt;jlong&gt;(receiver.get());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">status_t DisplayEventDispatcher::initialize() &#123;</span><br><span class="line"><span class="number">42</span>    status_t result = mReceiver.initCheck();</span><br><span class="line"><span class="number">43</span>    <span class="keyword">if</span> (result) &#123;</span><br><span class="line"><span class="number">44</span>        ALOGW(<span class="string">"Failed to initialize display event receiver, status=%d"</span>, result);</span><br><span class="line"><span class="number">45</span>        <span class="keyword">return</span> result;</span><br><span class="line"><span class="number">46</span>    &#125;</span><br><span class="line"><span class="number">47</span></span><br><span class="line"><span class="number">48</span>    <span class="keyword">int</span> rc = mLooper-&gt;addFd(mReceiver.getFd(), <span class="number">0</span>, Looper::EVENT_INPUT,</span><br><span class="line"><span class="number">49</span>            <span class="keyword">this</span>, <span class="literal">NULL</span>);</span><br><span class="line"><span class="number">50</span>    <span class="keyword">if</span> (rc &lt; <span class="number">0</span>) &#123;</span><br><span class="line"><span class="number">51</span>        <span class="keyword">return</span> UNKNOWN_ERROR;</span><br><span class="line"><span class="number">52</span>    &#125;</span><br><span class="line"><span class="number">53</span>    <span class="keyword">return</span> OK;</span><br><span class="line"><span class="number">54</span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">scheduleVsyncLocked</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    mDisplayEventReceiver.scheduleVsync();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终会调用到 DisplayEventReceiver 的 native 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">nativeScheduleVsync</span><span class="params">(<span class="keyword">long</span> receiverPtr)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> nativeScheduleVsync(JNIEnv* env, jclass clazz, jlong receiverPtr) &#123;</span><br><span class="line"><span class="number">151</span>    sp&lt;NativeDisplayEventReceiver&gt; receiver =</span><br><span class="line"><span class="number">152</span>            reinterpret_cast&lt;NativeDisplayEventReceiver*&gt;(receiverPtr);</span><br><span class="line"><span class="number">153</span>    status_t status = receiver-&gt;scheduleVsync();</span><br><span class="line"><span class="number">154</span>    <span class="keyword">if</span> (status) &#123;</span><br><span class="line"><span class="number">155</span>        String8 message;</span><br><span class="line"><span class="number">156</span>        message.appendFormat(<span class="string">"Failed to schedule next vertical sync pulse.  status=%d"</span>, status);</span><br><span class="line"><span class="number">157</span>        jniThrowRuntimeException(env, message.string());</span><br><span class="line"><span class="number">158</span>    &#125;</span><br><span class="line"><span class="number">159</span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">status_t DisplayEventDispatcher::scheduleVsync() &#123;</span><br><span class="line"><span class="number">65</span>    <span class="keyword">if</span> (!mWaitingForVsync) &#123;</span><br><span class="line"><span class="number">66</span>        ALOGV(<span class="string">"dispatcher %p ~ Scheduling vsync."</span>, <span class="keyword">this</span>);</span><br><span class="line"><span class="number">67</span></span><br><span class="line"><span class="number">68</span>        <span class="comment">// Drain all pending events.</span></span><br><span class="line"><span class="number">69</span>        nsecs_t vsyncTimestamp;</span><br><span class="line"><span class="number">70</span>        int32_t vsyncDisplayId;</span><br><span class="line"><span class="number">71</span>        uint32_t vsyncCount;</span><br><span class="line"><span class="number">72</span>        <span class="keyword">if</span> (processPendingEvents(&amp;vsyncTimestamp, &amp;vsyncDisplayId, &amp;vsyncCount)) &#123;</span><br><span class="line"><span class="number">73</span>            ALOGE(<span class="string">"dispatcher %p ~ last event processed while scheduling was for %"</span> PRId64 <span class="string">""</span>,</span><br><span class="line"><span class="number">74</span>                    <span class="keyword">this</span>, ns2ms(static_cast&lt;nsecs_t&gt;(vsyncTimestamp)));</span><br><span class="line"><span class="number">75</span>        &#125;</span><br><span class="line"><span class="number">76</span></span><br><span class="line"><span class="number">77</span>        status_t status = mReceiver.requestNextVsync();</span><br><span class="line"><span class="number">78</span>        <span class="keyword">if</span> (status) &#123;</span><br><span class="line"><span class="number">79</span>            ALOGW(<span class="string">"Failed to request next vsync, status=%d"</span>, status);</span><br><span class="line"><span class="number">80</span>            <span class="keyword">return</span> status;</span><br><span class="line"><span class="number">81</span>        &#125;</span><br><span class="line"><span class="number">82</span></span><br><span class="line"><span class="number">83</span>        mWaitingForVsync = <span class="literal">true</span>;</span><br><span class="line"><span class="number">84</span>    &#125;</span><br><span class="line"><span class="number">85</span>    <span class="keyword">return</span> OK;</span><br><span class="line"><span class="number">86</span>&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sp&lt;EventThread::Connection&gt; EventThread::createEventConnection() <span class="keyword">const</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> new Connection(const_cast&lt;EventThread*&gt;(<span class="keyword">this</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">status_t EventThread::registerDisplayEventConnection(</span><br><span class="line">        <span class="keyword">const</span> sp&lt;EventThread::Connection&gt;&amp; connection) &#123;</span><br><span class="line">    Mutex::Autolock _l(mLock);</span><br><span class="line">    mDisplayEventConnections.add(connection);</span><br><span class="line">    mCondition.broadcast();</span><br><span class="line">    <span class="keyword">return</span> NO_ERROR;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">EventThread::Connection::Connection(</span><br><span class="line">        <span class="keyword">const</span> sp&lt;EventThread&gt;&amp; eventThread)</span><br><span class="line">    : count(<span class="number">-1</span>), mEventThread(eventThread), mChannel(new BitTube())</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> EventThread::Connection::onFirstRef() &#123;</span><br><span class="line">    <span class="comment">// <span class="doctag">NOTE:</span> mEventThread doesn't hold a strong reference on us</span></span><br><span class="line">    mEventThread-&gt;registerDisplayEventConnection(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">sp&lt;BitTube&gt; EventThread::Connection::getDataChannel() <span class="keyword">const</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> mChannel;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> EventThread::Connection::setVsyncRate(uint32_t count) &#123;</span><br><span class="line">    mEventThread-&gt;setVsyncRate(count, <span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> EventThread::Connection::requestNextVsync() &#123;</span><br><span class="line">    mEventThread-&gt;requestNextVsync(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Connection-gt-app-1"><a href="#Connection-gt-app-1" class="headerlink" title="Connection -&gt; app"></a>Connection -&gt; app</h3><h1 id="UI-绘制流程"><a href="#UI-绘制流程" class="headerlink" title="UI 绘制流程"></a>UI 绘制流程</h1><h1 id="Surface-与-SurfaceFlinger"><a href="#Surface-与-SurfaceFlinger" class="headerlink" title="Surface 与 SurfaceFlinger"></a>Surface 与 SurfaceFlinger</h1>
+      
     </div>
-    
-    <!-- powered by Hexo  -->
-    <div class="copyright">
-        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
-    </div>
-    <!-- 不蒜子  -->
-    
-    <div class="busuanzi-container">
-    
-     
-    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
-    
-    </div>
-    
-</footer>
-    </div>
-    <!-- toc -->
-    
-    <div class="toc-wrapper" style=
-    
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/f9fd2518/" data-id="cki1psk9d00004kcanauiqtld" class="article-share-link" data-share="baidu" data-title="开发编写的 View 控件，是怎么变成屏幕上图像的？">分享到</a>
+      
 
+      
 
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/surface/">surface</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vsync/">vsync</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/window/">window</a></li></ul>
 
-
-
-
-
-top:50vh;
-
-    >
-        <div class="toc-catalog">
-            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
-        </div>
-        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、Activity-与-Window"><span class="toc-number">1.</span> <span class="toc-text">一、Activity 与 Window</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-setContentView-原理"><span class="toc-number">1.0.1.</span> <span class="toc-text">1. setContentView 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Activity-窗口添加过程"><span class="toc-number">1.0.2.</span> <span class="toc-text">2. Activity 窗口添加过程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、UI-刷新机制"><span class="toc-number">2.</span> <span class="toc-text">二、UI 刷新机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-发起-UI-重绘请求"><span class="toc-number">2.0.1.</span> <span class="toc-text">1. 发起 UI 重绘请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行-UI-绘制时机"><span class="toc-number">2.0.2.</span> <span class="toc-text">执行 UI 绘制时机</span></a></li></ol></li></ol></li></ol>
-    </div>
-    
-    <div class="back-top iconfont-archer">&#xe639;</div>
-    <div class="sidebar sidebar-hide">
-    <ul class="sidebar-tabs sidebar-tabs-active-0">
-        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
-        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
-        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
-    </ul>
-    <div class="sidebar-content sidebar-content-show-archive">
-          <div class="sidebar-panel-archives">
-    <!-- 在ejs中将archive按照时间排序 -->
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    <div class="total-and-search">
-        <div class="total-archive">
-        Total : 45
-        </div>
-        <!-- search  -->
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/649d55e5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">
         
-    </div>
-    
-    <div class="post-archive">
-    
-    
-    
-    
-    <div class="archive-year"> 2020 </div>
-    <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/15</span><a class="archive-post-title" href= "/649d55e5/" >Android Handler epoll 机制分析</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/08</span><a class="archive-post-title" href= "/f9fd2518/" >开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/52cb86d4/" >Android 消息屏障与异步消息</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">10/07</span><a class="archive-post-title" href= "/d55eb6b/" >Java 并发编程知识点总结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">08/22</span><a class="archive-post-title" href= "/a5b629de/" >Android 方法插桩 plugin 开发实践</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/a183dbba/" >如何绕过 Android 8.0 startService 限制？</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/38614e33/" >细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/c74cb1a3/" >细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">04/23</span><a class="archive-post-title" href= "/a8eae25c/" >细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">04/12</span><a class="archive-post-title" href= "/a7541469/" >细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">04/06</span><a class="archive-post-title" href= "/2d9a78ad/" >细读《深入理解 Android 内核设计思想》（二）内存管理</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/12a8b16b/" >细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制</a>
-        </li>
-    
-    
-    
-    
-    
-        </ul>
-    
-    <div class="archive-year"> 2019 </div>
-    <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/15</span><a class="archive-post-title" href= "/a608ff50/" >Framework & startActivity</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/798144ac/" >Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/16</span><a class="archive-post-title" href= "/2296ca3/" >Android OpenGL ES（二）绘制三角形</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/09</span><a class="archive-post-title" href= "/eeb650a2/" >Android OpenGL ES（一）开发入门</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/01</span><a class="archive-post-title" href= "/c75061d/" >Android 知识简记</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">04/07</span><a class="archive-post-title" href= "/f713728e/" >对 Android 开发的一点思考</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/31</span><a class="archive-post-title" href= "/f346f34f/" >一个轻量的 Android 端日志打印记录库</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/05</span><a class="archive-post-title" href= "/1516a551/" >单例的线程安全及序列化问题</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">03/03</span><a class="archive-post-title" href= "/e89c3ed9/" >[剑指offer] 机器人走格子之回溯法</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/28</span><a class="archive-post-title" href= "/ff815187/" >[剑指offer] 二维数组中的查找</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/26</span><a class="archive-post-title" href= "/2f41d4d1/" >简洁明了的刘海屏适配方案</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/3fe9ef36/" >Glide 源码分析 - 展示 gif 原理</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/a7bea0ed/" >Glide 源码分析 - 下载及预加载</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/693b387a/" >Glide 源码分析 - 加载图片到通知栏和应用小部件中</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/da1371bf/" >Glide 源码分析 - 图片格式及内存优化</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/c135648c/" >Glide 源码分析 - 感知生命周期 </a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/2455213e/" >Glide 源码分析 - 缩略图使用及原理</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/17</span><a class="archive-post-title" href= "/aeb1195c/" >Glide 源码分析 - 请求优先级及原理</a>
-        </li>
-    
-    
-    
-    
-    
-        </ul>
-    
-    <div class="archive-year"> 2018 </div>
-    <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/01</span><a class="archive-post-title" href= "/785f874e/" >Android 端音频变声方案</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">07/02</span><a class="archive-post-title" href= "/13c2b04d/" >Android 集成 ijkplayer 编译及替换 cmake 方式编译</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/22</span><a class="archive-post-title" href= "/186751e8/" >ijkplayer 源码分析（上）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">05/01</span><a class="archive-post-title" href= "/306f0479/" >ijkplayer 学习笔记</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">01/10</span><a class="archive-post-title" href= "/322c0cad/" >视频相关的理论知识与基础概念</a>
-        </li>
-    
-    
-    
-    
-    
-        </ul>
-    
-    <div class="archive-year"> 2017 </div>
-    <ul class="year-list">
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/8837781/" >Android 集成 FFmpeg (三) 获取 FFmpeg 执行进度</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/17</span><a class="archive-post-title" href= "/9cf3ee4d/" >带你彻底理解 Window 和 WindowManager</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">12/04</span><a class="archive-post-title" href= "/fd96e42a/" >Ubuntu16.04 Caffe 安装步骤记录（超详尽）</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">11/17</span><a class="archive-post-title" href= "/8d13674/" >Andorid 应用内悬浮控件实践方案总结</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/22</span><a class="archive-post-title" href= "/ddeb5551/" >Android 集成 FFmpeg (二) 以命令方式调用 FFmpeg</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/e0b4d9fc/" >Android 集成 FFmpeg (一) 基础知识及简单调用</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">09/21</span><a class="archive-post-title" href= "/321a08c4/" >一款纯 Kotlin 编写的开源安卓应用 Smile</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/24</span><a class="archive-post-title" href= "/a1a51c77/" >一句代码搞定 RecycleView 侧滑菜单、添加头部底部、加载更多</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">06/14</span><a class="archive-post-title" href= "/c034d1cd/" >动手打造史上最简单的 Recycleview 侧滑菜单</a>
-        </li>
-    
-    
-        <li class="archive-post-item">
-            <span class="archive-post-date">02/05</span><a class="archive-post-title" href= "/54d8bacc/" >全面掌握 Java 内部类</a>
-        </li>
-    
+          Android Handler epoll 机制分析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/52cb86d4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android 消息屏障与异步消息</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
     </div>
   </div>
-        <div class="sidebar-panel-tags">
-    <div class="sidebar-tags-name">
+
+  
     
-        <span class="sidebar-tag-name" data-tags="Android"><span class="iconfont-archer">&#xe606;</span>Android</span>
-    
-        <span class="sidebar-tag-name" data-tags="内存泄漏"><span class="iconfont-archer">&#xe606;</span>内存泄漏</span>
-    
-        <span class="sidebar-tag-name" data-tags="悬浮控件"><span class="iconfont-archer">&#xe606;</span>悬浮控件</span>
-    
-        <span class="sidebar-tag-name" data-tags="window"><span class="iconfont-archer">&#xe606;</span>window</span>
-    
-        <span class="sidebar-tag-name" data-tags="vsync"><span class="iconfont-archer">&#xe606;</span>vsync</span>
-    
-        <span class="sidebar-tag-name" data-tags="Handler"><span class="iconfont-archer">&#xe606;</span>Handler</span>
-    
-        <span class="sidebar-tag-name" data-tags="epoll"><span class="iconfont-archer">&#xe606;</span>epoll</span>
-    
-        <span class="sidebar-tag-name" data-tags="OpenGL"><span class="iconfont-archer">&#xe606;</span>OpenGL</span>
-    
-        <span class="sidebar-tag-name" data-tags="Plugin"><span class="iconfont-archer">&#xe606;</span>Plugin</span>
-    
-        <span class="sidebar-tag-name" data-tags="ASM"><span class="iconfont-archer">&#xe606;</span>ASM</span>
-    
-        <span class="sidebar-tag-name" data-tags="FFmpeg"><span class="iconfont-archer">&#xe606;</span>FFmpeg</span>
-    
-        <span class="sidebar-tag-name" data-tags="音视频"><span class="iconfont-archer">&#xe606;</span>音视频</span>
-    
-        <span class="sidebar-tag-name" data-tags="ijkplayer"><span class="iconfont-archer">&#xe606;</span>ijkplayer</span>
-    
-        <span class="sidebar-tag-name" data-tags="Framework"><span class="iconfont-archer">&#xe606;</span>Framework</span>
-    
-        <span class="sidebar-tag-name" data-tags="AMS"><span class="iconfont-archer">&#xe606;</span>AMS</span>
-    
-        <span class="sidebar-tag-name" data-tags="glide"><span class="iconfont-archer">&#xe606;</span>glide</span>
-    
-        <span class="sidebar-tag-name" data-tags="Java"><span class="iconfont-archer">&#xe606;</span>Java</span>
-    
-        <span class="sidebar-tag-name" data-tags="多线程"><span class="iconfont-archer">&#xe606;</span>多线程</span>
-    
-        <span class="sidebar-tag-name" data-tags="并发编程"><span class="iconfont-archer">&#xe606;</span>并发编程</span>
-    
-        <span class="sidebar-tag-name" data-tags="Caffe"><span class="iconfont-archer">&#xe606;</span>Caffe</span>
-    
-        <span class="sidebar-tag-name" data-tags="Ubuntu"><span class="iconfont-archer">&#xe606;</span>Ubuntu</span>
-    
-        <span class="sidebar-tag-name" data-tags="日志"><span class="iconfont-archer">&#xe606;</span>日志</span>
-    
-        <span class="sidebar-tag-name" data-tags="Recycleview"><span class="iconfont-archer">&#xe606;</span>Recycleview</span>
-    
-        <span class="sidebar-tag-name" data-tags="侧滑菜单"><span class="iconfont-archer">&#xe606;</span>侧滑菜单</span>
-    
-        <span class="sidebar-tag-name" data-tags="kotlin"><span class="iconfont-archer">&#xe606;</span>kotlin</span>
-    
-        <span class="sidebar-tag-name" data-tags="开源"><span class="iconfont-archer">&#xe606;</span>开源</span>
-    
-        <span class="sidebar-tag-name" data-tags="剑指offer"><span class="iconfont-archer">&#xe606;</span>剑指offer</span>
-    
-        <span class="sidebar-tag-name" data-tags="设计模式"><span class="iconfont-archer">&#xe606;</span>设计模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="service"><span class="iconfont-archer">&#xe606;</span>service</span>
-    
-        <span class="sidebar-tag-name" data-tags="开发模式"><span class="iconfont-archer">&#xe606;</span>开发模式</span>
-    
-        <span class="sidebar-tag-name" data-tags="刘海屏适配"><span class="iconfont-archer">&#xe606;</span>刘海屏适配</span>
-    
-        <span class="sidebar-tag-name" data-tags="Window"><span class="iconfont-archer">&#xe606;</span>Window</span>
-    
-        <span class="sidebar-tag-name" data-tags="读书笔记"><span class="iconfont-archer">&#xe606;</span>读书笔记</span>
-    
-        <span class="sidebar-tag-name" data-tags="Binder"><span class="iconfont-archer">&#xe606;</span>Binder</span>
-    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/tags/COW/" style="font-size: 10px;">COW</a> <a href="/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/ams/" style="font-size: 10px;">ams</a> <a href="/tags/aop/" style="font-size: 10px;">aop</a> <a href="/tags/asm/" style="font-size: 10px;">asm</a> <a href="/tags/binder/" style="font-size: 15px;">binder</a> <a href="/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/tags/h264/" style="font-size: 10px;">h264</a> <a href="/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/tags/log/" style="font-size: 10px;">log</a> <a href="/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/tags/service/" style="font-size: 10px;">service</a> <a href="/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/tags/surface/" style="font-size: 10px;">surface</a> <a href="/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/tags/window/" style="font-size: 12.5px;">window</a> <a href="/tags/wms/" style="font-size: 10px;">wms</a> <a href="/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/tags/单例/" style="font-size: 10px;">单例</a> <a href="/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/tags/总结/" style="font-size: 10px;">总结</a> <a href="/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/tags/采样率/" style="font-size: 10px;">采样率</a>
     </div>
-    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
-    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
-    缺失模块。<br/>
-    1、请确保node版本大于6.2<br/>
-    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
-    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
-    3、在根目录_config.yml里添加配置：
-    <pre style="color: #787878; font-size: 0.6rem;">
-jsonContent:
-  meta: false
-  pages: false
-  posts:
-    title: true
-    date: true
-    path: true
-    text: false
-    raw: false
-    content: false
-    slug: false
-    updated: false
-    comments: false
-    link: false
-    permalink: false
-    excerpt: false
-    categories: true
-    tags: true</pre>
-    </div> 
-    <div class="sidebar-tags-list"></div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+          <li>
+            <a href="/a5b629de/">Android 方法插桩 plugin 开发实践</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
 </div>
-        <div class="sidebar-panel-categories">
-    <div class="sidebar-categories-name">
-    
-        <span class="sidebar-category-name" data-categories="Android"><span class="iconfont-archer">&#xe60a;</span>Android</span>
-    
-        <span class="sidebar-category-name" data-categories="OpenGL"><span class="iconfont-archer">&#xe60a;</span>OpenGL</span>
-    
-        <span class="sidebar-category-name" data-categories="音视频"><span class="iconfont-archer">&#xe60a;</span>音视频</span>
-    
-        <span class="sidebar-category-name" data-categories="Framework"><span class="iconfont-archer">&#xe60a;</span>Framework</span>
-    
-        <span class="sidebar-category-name" data-categories="Glide-源码分析"><span class="iconfont-archer">&#xe60a;</span>Glide-源码分析</span>
-    
-        <span class="sidebar-category-name" data-categories="Java"><span class="iconfont-archer">&#xe60a;</span>Java</span>
-    
-        <span class="sidebar-category-name" data-categories="深度学习"><span class="iconfont-archer">&#xe60a;</span>深度学习</span>
-    
-        <span class="sidebar-category-name" data-categories="kotlin"><span class="iconfont-archer">&#xe60a;</span>kotlin</span>
-    
-        <span class="sidebar-category-name" data-categories="算法之美"><span class="iconfont-archer">&#xe60a;</span>算法之美</span>
-    
-    </div>
-    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
-    <div class="sidebar-categories-list"></div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
 </div>
-    </div>
-</div> 
-    <script>
-    var siteMeta = {
-        root: "/",
-        author: "Ahab"
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
     }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
 </script>
-    <!-- CDN failover -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
-    <script type="text/javascript">
-        if (typeof window.$ === 'undefined')
-        {
-            console.warn('jquery load from jsdelivr failed, will load local script')
-            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
-        }
-    </script>
-    <script src="/scripts/main.js"></script>
-    <!-- algolia -->
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
     
-    <!-- busuanzi  -->
-    
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    
-    <!-- CNZZ  -->
-    
-    </div>
-    <!-- async load share.js -->
-    
-        <script src="/scripts/share.js" async></script>    
-     
-    </body>
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/js/script.js"></script>
+
+</div>
+</body>
 </html>
-
-
