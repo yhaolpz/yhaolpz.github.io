@@ -6,13 +6,13 @@
   
   <title>Android 集成 FFmpeg (一) 基础知识及简单调用 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
+  <meta name="description" content="网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
 <meta name="keywords" content="FFmpeg">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android 集成 FFmpeg (一) 基础知识及简单调用">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/e0b4d9fc/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="前言网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
+<meta property="og:description" content="网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-cbb754453afee75b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-c8d4e61247be5ecc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
@@ -22,10 +22,10 @@
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-902d27920b246a4e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-b0c9a90b69ae013a?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-01ba66a2014e6cf6?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2020-12-06T06:59:08.616Z">
+<meta property="og:updated_time" content="2020-12-06T09:30:13.428Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 集成 FFmpeg (一) 基础知识及简单调用">
-<meta name="twitter:description" content="前言网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
+<meta name="twitter:description" content="网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-cbb754453afee75b?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -104,7 +104,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。</p>
+        <p>网上关于 Android 集成 FFmpeg 的文章很多，但大多数都只介绍了步骤，没有说明背后的原理，若之前没有集成底层库的经验，那就会“神知无知”的走一步看一步，出错几率很大，出错了也不知道原因，然后会乱猜“这篇教程有问题“，“换个版本估计可以”，甚至“电脑有问题，重装下系统试试”。</p>
 <a id="more"></a>
 <p>为什么会出现这种情况，答案很简单：欲速则不达，要实现 Android 端集成 FFmpeg 功能，那就要掌握必需的基础知识，如果连 JNI、NDK都不了解，一上来就参考几秒钟搜出来的集成步骤开始集成，那只会被各种莫名其妙的异常完虐，如果运气好很快就实现了功能呢？ 在我看来这是更大的损失，这些你没有掌握的知识如此接近却又悄悄溜走。</p>
 <p>那么在 Android 端集成 FFmpeg 需要掌握哪些基础知识呢？个人认为以下内容是需要了解的：</p>
@@ -242,7 +242,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/e0b4d9fc/" data-id="ckictuesv000rlvcaipsh3m23" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (一) 基础知识及简单调用">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/e0b4d9fc/" data-id="ckictyirb000rpdca03naohg9" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (一) 基础知识及简单调用">分享到</a>
       
 
       

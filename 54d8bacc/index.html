@@ -6,18 +6,18 @@
   
   <title>全面掌握 Java 内部类 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+  <meta name="description" content="创建内部类与连接外部类 内部类与向上转型 局部内部类 匿名内部类 局部内部类和匿名内部类 嵌套类 内部类的继承 内部类可以被覆盖吗 为什么需要内部类 内部类标识符">
 <meta name="keywords" content="内部类">
 <meta property="og:type" content="article">
 <meta property="og:title" content="全面掌握 Java 内部类">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/54d8bacc/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+<meta property="og:description" content="创建内部类与连接外部类 内部类与向上转型 局部内部类 匿名内部类 局部内部类和匿名内部类 嵌套类 内部类的继承 内部类可以被覆盖吗 为什么需要内部类 内部类标识符">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.246Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.345Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="全面掌握 Java 内部类">
-<meta name="twitter:description" content="一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。">
+<meta name="twitter:description" content="创建内部类与连接外部类 内部类与向上转型 局部内部类 匿名内部类 局部内部类和匿名内部类 嵌套类 内部类的继承 内部类可以被覆盖吗 为什么需要内部类 内部类标识符">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -95,11 +95,22 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>  一直以来以为自己对 java 基础甚是清楚，然而面试时却连内部类和静态内部类的区别都无法回答圆满，so~重新学习一遍，彻底掌握内部类。</p>
+        <blockquote>
+<ol>
+<li>创建内部类与连接外部类</li>
+<li>内部类与向上转型</li>
+<li>局部内部类</li>
+<li>匿名内部类</li>
+<li>局部内部类和匿名内部类</li>
+<li>嵌套类</li>
+<li>内部类的继承</li>
+<li>内部类可以被覆盖吗</li>
+<li>为什么需要内部类</li>
+<li>内部类标识符</li>
+</ol>
+</blockquote>
 <a id="more"></a>
 <p>内部类是一种非常有用的特性，它可以把一些逻辑相关的类组织在一起，并控制位于内部的类的可视性，下文中内部类均指非静态内部类。</p>
-<p>内部类的学习分为以下10个知识点：</p>
-<p><strong>1.创建内部类与连接外部类</strong><br><strong>2.内部类与向上转型</strong><br><strong>3.局部内部类</strong><br><strong>4.匿名内部类</strong><br><strong>5.局部内部类和匿名内部类</strong><br><strong>6.嵌套类</strong><br><strong>7.内部类的继承</strong><br><strong>8.内部类可以被覆盖吗</strong><br><strong>9.为什么需要内部类</strong><br><strong>10.内部类标识符</strong></p>
 <h1 id="1、创建内部类与连接外部类"><a href="#1、创建内部类与连接外部类" class="headerlink" title=" 1、创建内部类与连接外部类"></a> <strong>1、创建内部类与连接外部类</strong></h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Car</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> speed = <span class="number">100</span>;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Tyre</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">getSpeed</span><span class="params">()</span> </span>&#123; <span class="comment">//访问外部类成员</span></span><br><span class="line">            <span class="keyword">return</span> speed;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function">Car <span class="title">getCar</span><span class="params">()</span> </span>&#123; <span class="comment">//通过.this获取外部类对象</span></span><br><span class="line">            <span class="keyword">return</span> Car.<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Car car = <span class="keyword">new</span> Car();</span><br><span class="line">        Car.Tyre tyre = car.<span class="keyword">new</span> Tyre();</span><br><span class="line">        tyre.getSpeed();</span><br><span class="line">        System.out.println(car == tyre.getCar()); <span class="comment">// true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>要想创建内部类的对象，必须使用外部类的对象，如上，且必须地具体指明这个对象的类型：OuterClassName.InnerClassName，然后通过 OuterClassInstance.new InnerClassName() 来创建内部类对象。</p>
 <p>内部类对象会暗暗连接到创建它的外部类对象上，捕获外部类的对象引用，然后在内部类中访问此外部类的成员时，就是通过这个引用来访问的，并且拥有其外部类的所有元素的访问权。正是由于此原因，Android 中非静态内部类创建静态实例才会造成内存泄漏。</p>
@@ -174,7 +185,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/54d8bacc/" data-id="ckictuet7001ylvcawnn3uezl" class="article-share-link" data-share="baidu" data-title="全面掌握 Java 内部类">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/54d8bacc/" data-id="ckictyirn001wpdcamd9nzwva" class="article-share-link" data-share="baidu" data-title="全面掌握 Java 内部类">分享到</a>
       
 
       

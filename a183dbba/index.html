@@ -6,18 +6,18 @@
   
   <title>如何绕过 Android 8.0 startService 限制？ | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。">
+  <meta name="description" content="限制了什么？ 什么是前台应用? 正确理解后台服务限制 后台服务限制源码分析 适配 Android 8.0 startService 限制策略 如何绕过 Android 8.0 startService 限制？">
 <meta name="keywords" content="service">
 <meta property="og:type" content="article">
 <meta property="og:title" content="如何绕过 Android 8.0 startService 限制？">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/a183dbba/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。">
+<meta property="og:description" content="限制了什么？ 什么是前台应用? 正确理解后台服务限制 后台服务限制源码分析 适配 Android 8.0 startService 限制策略 如何绕过 Android 8.0 startService 限制？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.225Z">
+<meta property="og:updated_time" content="2020-12-06T09:26:42.337Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="如何绕过 Android 8.0 startService 限制？">
-<meta name="twitter:description" content="应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。">
+<meta name="twitter:description" content="限制了什么？ 什么是前台应用? 正确理解后台服务限制 后台服务限制源码分析 适配 Android 8.0 startService 限制策略 如何绕过 Android 8.0 startService 限制？">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -96,23 +96,31 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。</p>
+<ol>
+<li>限制了什么？</li>
+<li>什么是前台应用?</li>
+<li>正确理解后台服务限制</li>
+<li>后台服务限制源码分析</li>
+<li>适配 Android 8.0 startService 限制策略</li>
+<li>如何绕过 Android 8.0 startService 限制？</li>
+</ol>
 </blockquote>
 <a id="more"></a>
-<h2 id="限制了什么？"><a href="#限制了什么？" class="headerlink" title="限制了什么？"></a>限制了什么？</h2><p><em>1. 后台应用对后台服务的访问受到限制</em></p>
+<p>应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。</p>
+<h2 id="1-限制了什么？"><a href="#1-限制了什么？" class="headerlink" title="1. 限制了什么？"></a>1. 限制了什么？</h2><p><em>1. 后台应用对后台服务的访问受到限制</em></p>
 <p>在不与用户直接交互的后台应用中，运行 Service 会消耗系统资源，这可能会影响前台应用的正常运行。Android 8.0 及更高版本<strong>不允许后台应用运行后台服务</strong>，需要通过 startForegroundService() 指定为前台服务运行，或者使用 JobScheduler 替代。</p>
 <p><em>2. 注册隐式广播接收器受到限制</em></p>
 <p>对于一些系统隐式广播（非全部），系统不允许应用在 AndroidManifest 中注册对应的广播接收器，从而避免系统广播导致诸多应用快速、连续消耗系统资源，从而影响用户体验，需要通过 Context.registerReceiver() 动态注册或 JobScheduler 代替。</p>
 <p><em>3. 降低了后台应用接收位置更新的频率</em></p>
 <p>为节约电池电量、保持良好的用户体验和确保系统健康运行，在运行 Android 8.0 的设备上使用后台应用时，降低了后台应用接收位置更新的频率。</p>
-<h2 id="什么是前台应用"><a href="#什么是前台应用" class="headerlink" title="什么是前台应用?"></a>什么是前台应用?</h2><p>系统可以区分前台和后台应用。如果满足以下任意条件，应用将被视为处于前台：</p>
+<h2 id="2-什么是前台应用"><a href="#2-什么是前台应用" class="headerlink" title="2. 什么是前台应用?"></a>2. 什么是前台应用?</h2><p>系统可以区分前台和后台应用。如果满足以下任意条件，应用将被视为处于前台：</p>
 <ol>
 <li>具有可见 Activity</li>
 <li>具有前台 Service</li>
 <li>另一个前台应用已关联到该应用（绑定 Service 或使用 content providers）</li>
 </ol>
 <p>如果以上条件均不满足，应用将被视为处于后台。</p>
-<h2 id="正确理解后台服务限制"><a href="#正确理解后台服务限制" class="headerlink" title="正确理解后台服务限制"></a>正确理解后台服务限制</h2><p><strong>不允许后台应用运行后台服务</strong></p>
+<h2 id="3-正确理解后台服务限制"><a href="#3-正确理解后台服务限制" class="headerlink" title="3. 正确理解后台服务限制"></a>3. 正确理解后台服务限制</h2><p><strong>不允许后台应用运行后台服务</strong></p>
 <p>官网的这句描述很简单，但你真的明白它的含义吗？顺着这句话推导一下：</p>
 <p>后台应用无法启动后台服务</p>
 <p>-&gt; 前台应用可以启动后台服务</p>
@@ -125,7 +133,7 @@
 </ol>
 <p>通过第三种场景的验证结果，可以知道 <em>不允许后台应用运行后台服务</em> 这个描述是不准确、有歧义的，更精准的描述应该是：</p>
 <p><strong>不允许启动属于后台应用的后台服务</strong></p>
-<h2 id="后台服务限制源码分析"><a href="#后台服务限制源码分析" class="headerlink" title="后台服务限制源码分析"></a>后台服务限制源码分析</h2><p>若在 Android 8.0 设备上通过 startService 启动一个属于后台应用的后台服务，会直接崩溃：</p>
+<h2 id="4-后台服务限制源码分析"><a href="#4-后台服务限制源码分析" class="headerlink" title="4. 后台服务限制源码分析"></a>4. 后台服务限制源码分析</h2><p>若在 Android 8.0 设备上通过 startService 启动一个属于后台应用的后台服务，会直接崩溃：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Caused by: java.lang.IllegalStateException: Not allowed to start service Intent</span><br><span class="line">        &#123; act=intent.action.ServerService pkg=com.server &#125;: app is in background uid <span class="keyword">null</span></span><br><span class="line">   at android.app.ContextImpl.startServiceCommon(ContextImpl.java:<span class="number">1577</span>)</span><br><span class="line">   at android.app.ContextImpl.startService(ContextImpl.java:<span class="number">1532</span>)</span><br><span class="line">   at android.content.ContextWrapper.startService(ContextWrapper.java:<span class="number">664</span>)</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
 <p>下面以此异常为线索，一步一步来看源码中是如何限制的。异常在 ContextImpl 中抛出：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ComponentName <span class="title">startServiceCommon</span><span class="params">(Intent service, <span class="keyword">boolean</span> requireForeground,</span></span></span><br><span class="line"><span class="function"><span class="params">        UserHandle user)</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    ComponentName cn = ActivityManager.getService().startService(</span><br><span class="line">        mMainThread.getApplicationThread(), service, service.resolveTypeIfNeeded(</span><br><span class="line">                    getContentResolver()), requireForeground,</span><br><span class="line">                    getOpPackageName(), user.getIdentifier());</span><br><span class="line">    <span class="keyword">if</span> (cn != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (cn.getPackageName().equals(<span class="string">"!"</span>)) &#123;</span><br><span class="line">            ...</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (cn.getPackageName().equals(<span class="string">"?"</span>)) &#123;</span><br><span class="line">            <span class="comment">//这里抛出启动服务限制的异常</span></span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(</span><br><span class="line">                    <span class="string">"Not allowed to start service "</span> + service + <span class="string">": "</span> + cn.getClassName());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> cn;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -141,7 +149,7 @@
 <p>普通应用会走通用的限制策略，继续看 appRestrictedInBackgroundLocked 方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">appRestrictedInBackgroundLocked</span><span class="params">(<span class="keyword">int</span> uid, String packageName, <span class="keyword">int</span> packageTargetSdk)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (packageTargetSdk &gt;= Build.VERSION_CODES.O) &#123;</span><br><span class="line">        <span class="keyword">return</span> ActivityManager.APP_START_MODE_DELAYED_RIGID;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//tartget API 小于 8.0 的应用走旧的限制策略，众所周知的不会被限制</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>可以看到这里对 tartget API 做的限制，8.0 及以上的应用会被限制启动服务，是上层抛出异常的根本原因。</p>
-<h2 id="适配-Android-8-0-startService-限制策略"><a href="#适配-Android-8-0-startService-限制策略" class="headerlink" title="适配 Android 8.0 startService 限制策略"></a>适配 Android 8.0 startService 限制策略</h2><p>了解了系统的限制原理后，结合上文对 AMS 启动服务限制的源码分析，列举可能的适配方案：</p>
+<h2 id="5-适配-Android-8-0-startService-限制策略"><a href="#5-适配-Android-8-0-startService-限制策略" class="headerlink" title="5. 适配 Android 8.0 startService 限制策略"></a>5. 适配 Android 8.0 startService 限制策略</h2><p>了解了系统的限制原理后，结合上文对 AMS 启动服务限制的源码分析，列举可能的适配方案：</p>
 <ol>
 <li>使用 startForegroundService 代替</li>
 <li>使用 JobScheduler 代替</li>
@@ -155,7 +163,7 @@
 <p>方案 3 和方案 4 需要系统侧配合，适用于系统或预装应用，对绝大多数的第三方应用来说不可行</p>
 <p>方案 5 可行，但极不推荐这种固步自封的方式</p>
 <p>方案 6 可行，但不符合谷歌推进此限制策略的意愿，违背提高用户体验的初衷</p>
-<h2 id="如何绕过-Android-8-0-startService-限制？"><a href="#如何绕过-Android-8-0-startService-限制？" class="headerlink" title="如何绕过 Android 8.0 startService 限制？"></a>如何绕过 Android 8.0 startService 限制？</h2><p>别忘了标题，最终想要实现的是绕过 Android 8.0 startService 的限制，即不修改为前台服务，调用 startService 方法，仍旧可以启动属于后台应用的后台服务，怎么实现呢？</p>
+<h2 id="6-如何绕过-Android-8-0-startService-限制？"><a href="#6-如何绕过-Android-8-0-startService-限制？" class="headerlink" title="6. 如何绕过 Android 8.0 startService 限制？"></a>6. 如何绕过 Android 8.0 startService 限制？</h2><p>别忘了标题，最终想要实现的是绕过 Android 8.0 startService 的限制，即不修改为前台服务，调用 startService 方法，仍旧可以启动属于后台应用的后台服务，怎么实现呢？</p>
 <p>通过上面的方案 6 ：<strong>启动服务前，先将服务所在应用从后台切换到前台</strong> 便可实现，如何将应用从后台切换到前台呢？上文介绍了应用被视为处于前台的条件：</p>
 <ol>
 <li>具有可见 Activity</li>
@@ -176,7 +184,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a183dbba/" data-id="ckictueta0025lvcavt0c32f7" class="article-share-link" data-share="baidu" data-title="如何绕过 Android 8.0 startService 限制？">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a183dbba/" data-id="ckictyirr0028pdcazjkvgd9v" class="article-share-link" data-share="baidu" data-title="如何绕过 Android 8.0 startService 限制？">分享到</a>
       
 
       

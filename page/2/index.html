@@ -92,7 +92,24 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>操作系统内存管理基础<ol>
+<li>虚拟内存</li>
+<li>内存分配与回收</li>
+<li>mmap</li>
+<li>Copy on Write</li>
+</ol>
+</li>
+<li>Android 内存管理<ol>
+<li>Low Memory Killer</li>
+<li>Ashmem 驱动</li>
+<li>MemoryFile 原理</li>
+</ol>
+</li>
+<li>总结</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/2d9a78ad/#more">Read More</a>
@@ -102,7 +119,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/2d9a78ad/" data-id="ckictuetg002olvcaulw5fqwf" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（二）内存管理">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/2d9a78ad/" data-id="ckictyirx002ppdcavg9s88dr" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（二）内存管理">分享到</a>
       
 
       
@@ -143,7 +160,32 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>进程间通信的经典实现<ol>
+<li>共享内存</li>
+<li>管道</li>
+<li>UNIX Domain Socket</li>
+<li>Remote Procedure Calls</li>
+</ol>
+</li>
+<li>同步机制的经典实现<ol>
+<li>信号量</li>
+<li>Mutex</li>
+<li>管程</li>
+<li>Linux Futex</li>
+</ol>
+</li>
+<li>Android 中的进程间同步机制<ol>
+<li>进程间同步 Mutex</li>
+<li>条件判断 Condition</li>
+<li>加解锁的自动化操作 Autolock</li>
+<li>Mutex+Autolock+Condition 示例</li>
+</ol>
+</li>
+<li>最后</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/12a8b16b/#more">Read More</a>
@@ -153,7 +195,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/12a8b16b/" data-id="ckictuete002ilvcaf18fz66k" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/12a8b16b/" data-id="ckictyirv002ipdca2v9gdnoc" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">分享到</a>
       
 
       
@@ -195,7 +237,20 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>源码基于 <a href="https://cs.android.com/android/platform/superproject/+/android-10.0.0_r30:" target="_blank" rel="noopener">Android 10</a></p>
+<ol>
+<li>理解 Instrumentation</li>
+<li>IPC 发生在何处？</li>
+<li>Activity 栈是如何管理的？</li>
+<li>何处读取 manifest 中 Activity 节点的启动模式等配置</li>
+<li>何处检测 Activity 是否在 manifest 注册？</li>
+<li>为什么单独配置 taskAffinity 不会生效</li>
+<li>理解 ClientTransactionItem 与 ActivityLifecycleItem</li>
+<li>为什么不能在 Activity 的 onPause 方法中做耗时操作？</li>
+<li>activity 实例在何处创建？</li>
+<li>Launcher 中点击图标启动 App</li>
+<li>理解 ActivityThread 与 ApplicationThread</li>
+<li>如何启动一个未在 manifest 中注册的 Activity ？</li>
+</ol>
 </blockquote>
         
           <p class="article-more-link">
@@ -206,7 +261,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a608ff50/" data-id="ckictuesz0014lvcadffernlo" class="article-share-link" data-share="baidu" data-title="Framework &amp; startActivity">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a608ff50/" data-id="ckictyirg0016pdcapioppg9k" class="article-share-link" data-share="baidu" data-title="Framework &amp; startActivity">分享到</a>
       
 
       
@@ -258,7 +313,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/798144ac/" data-id="ckictuesx000ylvcaifr6k2ip" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/798144ac/" data-id="ckictyire0011pdcaflaj5mae" class="article-share-link" data-share="baidu" data-title="Android 集成 FFmpeg (四) 轻松实现一个音视频编辑 App">分享到</a>
       
 
       
@@ -310,7 +365,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/2296ca3/" data-id="ckictuesn0009lvcaz7csmqwy" class="article-share-link" data-share="baidu" data-title="Android OpenGL ES（二）绘制三角形">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/2296ca3/" data-id="ckictyir4000cpdcaq9bih6zh" class="article-share-link" data-share="baidu" data-title="Android OpenGL ES（二）绘制三角形">分享到</a>
       
 
       
@@ -367,7 +422,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/eeb650a2/" data-id="ckictuesm0008lvcawf5amygg" class="article-share-link" data-share="baidu" data-title="Android OpenGL ES（一）开发入门">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/eeb650a2/" data-id="ckictyiqz0006pdcaz3avceym" class="article-share-link" data-share="baidu" data-title="Android OpenGL ES（一）开发入门">分享到</a>
       
 
       
@@ -408,655 +463,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <ul>
-<li>网络：分层模型、TCP、UDP、HTTP、HTTPS</li>
-<li>算法：数据结构、常用算法</li>
-<li>Java 基础：StringBuilder、泛型擦除、Exception、IO、容器</li>
-<li>Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁</li>
-<li>Java 设计模式：六大原则、23 种设计模式、动态代理</li>
-<li>Java 虚拟机：内存模型、内存结构、GC、四种引用、ClassLoader</li>
-<li>Android 基础：Activity、View 绘制、动画、Window、SurfaceView、事件分发</li>
-<li>Android 通信：Handler、Parcelable、IPC、Binder</li>
-<li>Android 系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk 打包、Apk 安装</li>
-<li>Android 优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native Crash</li>
-<li>其他：解析 XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack</li>
-</ul>
-<h1 id="网络：分层模型、TCP、UDP、HTTP、HTTPS"><a href="#网络：分层模型、TCP、UDP、HTTP、HTTPS" class="headerlink" title="网络：分层模型、TCP、UDP、HTTP、HTTPS"></a>网络：分层模型、TCP、UDP、HTTP、HTTPS</h1><h4 id="分层模型"><a href="#分层模型" class="headerlink" title="分层模型"></a>分层模型</h4><ul>
-<li>应用层：负责处理特定的应用程序细节，如 HTTP、FTP、DNS</li>
-<li>运输层：为两台主机提供端到端的基础通信，如 TCP、UDP</li>
-<li>网络层：控制分组传输、路由选择等，如 IP</li>
-<li>链路层：操作系统设备驱动程序、网卡相关接口</li>
-</ul>
-<h4 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h4><ul>
-<li>UDP 头结构：来源端口、目的端口、长度域、校验和</li>
-<li>特点：不可靠、无序、面向报文、速度快、轻量</li>
-<li>适用场景：适用于即时通讯、视频通话等</li>
-<li>应用：DHCP、DNS、QUCI、VXLAN、GTP-U、TFTP、SNMP</li>
-</ul>
-<h4 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h4><ul>
-<li>TCP 头结构：来源端口、目的端口、序号、确认序号、SYN/ACK 等状态位、窗口大小、校验和、紧急指针</li>
-<li>特点：面向字节流、有拥塞和流量控制、可靠、有序、速度慢、较重量，通过滑动窗口实现流量控制、用塞控制</li>
-<li>适用场景：文件传输、浏览器等</li>
-<li>应用：HTTP、HTTPS、RTMP、FTP、SMTP、POP3</li>
-<li><p>三次握手：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. C-&gt;S：SYN，seq=x（你能听到吗？）</span><br><span class="line">2. S-&gt;C：SYN，seq=y，ack=x+1（我能听到，你能听到吗？）</span><br><span class="line">3. C-&gt;S：ACK，seq=x+1，ack=y+1（我能听到，开始吧）</span><br><span class="line"></span><br><span class="line">两方都要能确保：我说的话，你能听到；你说的话，我能听到。所以需要三次握手</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>四次挥手:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. C-&gt;S：FIN，seq=p（我说完了）</span><br><span class="line">2. S-&gt;C：ACK，ack=p+1（我知道了，等一下，我可能还没说完）</span><br><span class="line">3. S-&gt;C：FIN，seq=q，ACK，ack=p+1（我也说完了）</span><br><span class="line">4. C-&gt;S：ACK，ack=q+1（我知道了，结束吧）</span><br><span class="line"></span><br><span class="line">S 收到 C 结束的消息后 S 可能还没说完，没法立即回复结束标示，只能等说完后再告诉 C ：我说完了</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h4 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h4><ul>
-<li>超文本传输协议，明文传输，默认 80 端口</li>
-<li>POST 和 GET：Get 参数放在 url 中；Post 参数放在 request Body 中</li>
-<li>访问网页过程：DNS 域名解析、TCP 三次握手建立连接、发起 HTTP 请求</li>
-</ul>
-<h4 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h4><ul>
-<li>默认 443 端口，使用 SSL 协议对 HTTP 传输数据进行了加密，安全</li>
-<li>加密过程：Client/Server 通过非对称加密生成密钥，然后用这个密钥去对称加密传输数据</li>
-</ul>
-<h1 id="算法：数据结构、常用算法"><a href="#算法：数据结构、常用算法" class="headerlink" title="算法：数据结构、常用算法"></a>算法：数据结构、常用算法</h1><h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><ul>
-<li>数组、链表</li>
-<li>栈、队列</li>
-<li>散列表</li>
-<li>树、堆、图</li>
-</ul>
-<h4 id="常用算法"><a href="#常用算法" class="headerlink" title="常用算法"></a>常用算法</h4><ul>
-<li>排序</li>
-<li>双指针、滑动窗口、字符串</li>
-<li>递归、分治、二分</li>
-<li>回溯、贪心、动态规划</li>
-</ul>
-<h1 id="Java-基础：StringBuilder、泛型擦除、Exception、IO、容器"><a href="#Java-基础：StringBuilder、泛型擦除、Exception、IO、容器" class="headerlink" title="Java 基础：StringBuilder、泛型擦除、Exception、IO、容器"></a>Java 基础：StringBuilder、泛型擦除、Exception、IO、容器</h1><h4 id="StringBuilder"><a href="#StringBuilder" class="headerlink" title="StringBuilder"></a>StringBuilder</h4><ul>
-<li>StringBuffer 线程安全，StringBuilder 线程不安全</li>
-<li>+实际上是用 StringBuilder 来实现的，所以非循环体可以直接用 +，循环体不行，因为会频繁创建 StringBuilder</li>
-<li>String.concat 实质是 new String ，效率也低，耗时排序：StringBuilder &lt; StringBuffer &lt; concat &lt; +</li>
-</ul>
-<h4 id="泛型擦除"><a href="#泛型擦除" class="headerlink" title="泛型擦除"></a>泛型擦除</h4><ul>
-<li>修饰成员变量等类结构相关的泛型不会被擦除</li>
-<li>容器类泛型会被擦除</li>
-</ul>
-<h4 id="Exception-和-Error"><a href="#Exception-和-Error" class="headerlink" title="Exception 和 Error"></a>Exception 和 Error</h4><ul>
-<li>Exception 和 Error 都继承自 Throwable</li>
-<li>Error 大部分是指不可恢复的错误状态，比如 OOM，所以也不需要捕获</li>
-<li>Exception 分为 CheckedException 和 UnCheckedException<ul>
-<li>CheckedException：必须显式捕获，受编译器检查，比如 io 操作</li>
-<li>UnCheckedException：不用显示捕获，比如空指针、数组越界等</li>
-</ul>
-</li>
-</ul>
-<h4 id="IO-、-NIO、-OKIO"><a href="#IO-、-NIO、-OKIO" class="headerlink" title="IO 、 NIO、 OKIO"></a>IO 、 NIO、 OKIO</h4><ul>
-<li>IO 是面向流的，一次一个字节的处理，NIO 是面向缓冲区的，一次产生或消费一个数据块</li>
-<li>IO 是阻塞的，NIO 是非阻塞的</li>
-<li>NIO 支持内存映射方式</li>
-<li>okio 相比 io 和 nio，api 更简单易用</li>
-<li>okio 支持超时机制</li>
-<li>okio 引入 ByteString 空间换时间提高性能</li>
-<li>okio 采用 segment 机制进行内存共享，节省 copy 时间消耗</li>
-</ul>
-<h4 id="ArrayList、LinkedList"><a href="#ArrayList、LinkedList" class="headerlink" title="ArrayList、LinkedList"></a>ArrayList、LinkedList</h4><ul>
-<li>ArrayList<ul>
-<li>基于数组实现，查找快：o(1)，增删慢：o(n)</li>
-<li>初始容量为10，扩容通过 System.arrayCopy 方法</li>
-</ul>
-</li>
-<li>LinkedList<ul>
-<li>基于双向链表实现，查找慢：o(n)，增删快：o(1)</li>
-<li>封装了队列和栈的调用</li>
-</ul>
-</li>
-</ul>
-<h4 id="HashMap-、HashTable、HashSet"><a href="#HashMap-、HashTable、HashSet" class="headerlink" title="HashMap 、HashTable、HashSet"></a>HashMap 、HashTable、HashSet</h4><ul>
-<li><p>HashMap（允许 key/value 为 null）</p>
-<ul>
-<li>基于数组和单向链表实现，数组是 HashMap 的主体；链表是为解决哈希冲突而存在的，存放的是key和value结合的实体</li>
-<li>数组索引通过 key.hashCode（还会二次 hash） 得到，在链表上通过 key.equals 索引</li>
-<li>哈希冲突落在同一个桶中时，直接放在链表头部（java1.8后放到尾部）</li>
-<li>JAVA 8 中链表数量大于 8 时会转为红黑树存储，查找时间由 O(n) 变为 O(logn)</li>
-<li>数组长度总是2的n次方：这样就能通过位运算实现取余，从而让 index 能落在数组长度范围内</li>
-<li>加载因子（默认0.75）表示添加到多少填充比时进行扩容，填充比大：链表较长，查找慢；填充比小：链表短，查找快</li>
-<li>扩容时直接创建原数组两倍的长度，然后将原有对象再进行hash找到新的index，重新放</li>
-</ul>
-</li>
-<li><p>HashTable（不允许 key/value 为 null)</p>
-<ul>
-<li>数据结构和 HashMap 一样</li>
-<li>线程安全</li>
-</ul>
-</li>
-<li><p>HashSet</p>
-<ul>
-<li>基于 HashMap 实现，元素就是 HashMap 的 key，Value 传入了一个固定值</li>
-</ul>
-</li>
-</ul>
-<h4 id="ArrayMap、SparseArray"><a href="#ArrayMap、SparseArray" class="headerlink" title="ArrayMap、SparseArray"></a>ArrayMap、SparseArray</h4><ul>
-<li><p>ArrayMap</p>
-<ul>
-<li>基于两个数组实现，一个存放 hash；一个存放键值对</li>
-<li>存放 hash 的数组是有序的，查找时使用二分法查找</li>
-<li>发生哈希冲突时键值对数组里连续存放，查找时也是通过 key.equals索引，找不到时先向后再向前遍历相同hash值的键值对数组</li>
-<li>扩容时不像 HashMap 直接 double，内存利用率高；也不需要重建哈希表，只需要调用 system.arraycopy 数组拷贝，性能较高</li>
-<li>不适合存大量数据（1000以下），因为数据量大的时候二分查找相比红黑树会慢很多</li>
-</ul>
-</li>
-<li><p>SparseArray</p>
-<ul>
-<li>基于 ArrayMap，key 只能是特定类型</li>
-</ul>
-</li>
-</ul>
-<h4 id="Concurrent-集合"><a href="#Concurrent-集合" class="headerlink" title="Concurrent 集合"></a>Concurrent 集合</h4><ul>
-<li>ConcurrentHashMap<ul>
-<li>数据结构跟 HashMap 一样，还是数组加链表</li>
-<li>采用 segment 分段锁技术，不像 HashTable 无脑直接同步 put 和 get 操作</li>
-<li>get 操作没有加锁，因为 value 用 volatile 修饰来保证可见行，性能很高</li>
-<li>java1.8 后去除分段锁，采用 CAS 乐观锁加 synchronized 来实现</li>
-</ul>
-</li>
-</ul>
-<h4 id="LRUCache-原理"><a href="#LRUCache-原理" class="headerlink" title="LRUCache 原理"></a>LRUCache 原理</h4><ul>
-<li>基于访问顺序排序的 LinkedHashMap 实现，最近访问的会排在最后</li>
-</ul>
-<h1 id="Java-同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁"><a href="#Java-同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁" class="headerlink" title="Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁"></a>Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁</h1><h4 id="volatile-关键字"><a href="#volatile-关键字" class="headerlink" title="volatile 关键字"></a>volatile 关键字</h4><ul>
-<li>只能用来修饰变量，适用修饰可能被多线程同时访问的变量</li>
-<li>相当于轻量级的 synchronized，volatitle 能保证有序性（禁用指令重排序）、可见性</li>
-<li>变量位于主内存中，每个线程还有自己的工作内存，变量在自己线程的工作内存中有份拷贝，线程直接操作的是这个拷贝</li>
-<li>被 volatile 修饰的变量改变后会立即同步到主内存，保持变量的可见性</li>
-<li>双重检查单例，为什么要加 violate？<ul>
-<li>volatile想要解决的问题是，在另一个线程中想要使用instance，发现instance!=null，但是实际上instance还未初始化完毕这个问题。将instance = newInstance();拆分为3句话是。1.分配内存2.初始化3.将instance指向分配的内存空间，volatile可以禁止指令重排序，确保先执行2，后执行3</li>
-</ul>
-</li>
-</ul>
-<h4 id="wait-和-sleep"><a href="#wait-和-sleep" class="headerlink" title="wait 和 sleep"></a>wait 和 sleep</h4><ul>
-<li>sleep 是 Thread 的静态方法，可以在任何地方调用</li>
-<li>wait 是 Object 的成员方法，只能在 synchronized 代码块中调用，否则会报 IllegalMonitorStateException 非法监控状态异常</li>
-<li>sleep 不会释放共享资源锁，wait 会释放共享资源锁</li>
-</ul>
-<h4 id="wait、notify、notifyAll"><a href="#wait、notify、notifyAll" class="headerlink" title="wait、notify、notifyAll"></a>wait、notify、notifyAll</h4><ul>
-<li>锁池：某个对象的锁已被线程A拥有，其他线程要执行该对象的 synchronized 方法获取锁时就会进入该对象的锁池，锁池中的线程回去竞争该对象的锁</li>
-<li>等待池：某个线程调用了某个对象的 wait 方法，该线程就会释放该对象的锁，进入该对象的等待池，等待池中的线程不会去竞争该对象的锁</li>
-<li>调用 notify 会随机唤醒等待池中的一个线程，唤醒后会进入到锁池</li>
-<li>调用 notifyAll 会唤醒等待池中的所有线程，唤醒后会都进入到锁池</li>
-</ul>
-<h4 id="lock-和-synchronized"><a href="#lock-和-synchronized" class="headerlink" title="lock 和 synchronized"></a>lock 和 synchronized</h4><ul>
-<li>synchronized 是 Java 关键字，内置特性；Lock 是一个接口</li>
-<li>synchronized 会自动释放锁；lock 需要手动释放，所以需要写到 try catch 块中并在 finally 中释放锁</li>
-<li>synchronized 无法中断等待锁；lock 可以中断</li>
-<li>Lock 可以提高多个线程进行读/写操作的效率</li>
-<li>竞争资源激烈时，lock 的性能会明显的优于 synchronized</li>
-</ul>
-<h4 id="Synchronized-原理"><a href="#Synchronized-原理" class="headerlink" title="Synchronized 原理"></a>Synchronized 原理</h4><ul>
-<li>每个对象都有一个监视器锁：monitor，同步代码块会执行  monitorenter 开始，motnitorexit 结束</li>
-<li>Wait/notify 就依赖 monitor 监视器，所以在非同步代码块中执行会报 IllegalMonitorStateException 异常</li>
-</ul>
-<h4 id="可重入锁"><a href="#可重入锁" class="headerlink" title="可重入锁"></a>可重入锁</h4><ul>
-<li>定义：已经获取到锁后，再次调用同步代码块/尝试获取锁时不必重新去申请锁，可以直接执行相关代码</li>
-<li>ReentrantLock 和 synchronized 都是可重入锁</li>
-</ul>
-<h4 id="公平锁"><a href="#公平锁" class="headerlink" title="公平锁"></a>公平锁</h4><ul>
-<li>定义：等待时间最久的线程会优先获得锁</li>
-<li>非公平锁无法保证哪个线程获取到锁，synchronized 就是非公平锁</li>
-<li>ReentrantLock 默认时非公平锁，可以设置为公平锁</li>
-</ul>
-<h4 id="乐观锁和悲观锁"><a href="#乐观锁和悲观锁" class="headerlink" title="乐观锁和悲观锁"></a>乐观锁和悲观锁</h4><ul>
-<li>悲观锁：线程一旦得到锁，其他线程就挂起等待，适用于写入操作频繁的场景；synchronized 就是悲观锁</li>
-<li>乐观锁：假设没有冲突，不加锁，更新数据时判断该数据是否过期，过期的话则不进行数据更新，适用于读取操作频繁的场景</li>
-<li>乐观锁 CAS：Compare And Swap，更新数据时先比较原值是否相等，不相等则表示数据过去，不进行数据更新</li>
-<li>乐观锁实现：AtomicInteger、AtomicLong、AtomicBoolean</li>
-</ul>
-<h4 id="死锁-4-个必要条件"><a href="#死锁-4-个必要条件" class="headerlink" title="死锁 4 个必要条件"></a>死锁 4 个必要条件</h4><ul>
-<li>互斥</li>
-<li>占有且等待</li>
-<li>不可抢占</li>
-<li>循环等待</li>
-</ul>
-<h1 id="Java-设计模式：六大原则、23-种设计模式、动态代理"><a href="#Java-设计模式：六大原则、23-种设计模式、动态代理" class="headerlink" title="Java 设计模式：六大原则、23 种设计模式、动态代理"></a>Java 设计模式：六大原则、23 种设计模式、动态代理</h1><h4 id="六大原则"><a href="#六大原则" class="headerlink" title="六大原则"></a>六大原则</h4><ul>
-<li>开闭原则：对拓展开放，对修改关闭</li>
-<li>单一指责原则：一个类指责单一</li>
-<li>里氏替换原则：引用基类的地方都能替换成子类对象</li>
-<li>依赖倒置原则：高层次模块不依赖低层次模块的具体实现，抽象不应该依赖细节</li>
-<li>接口隔离原则：类之间的依赖关系应该建立在最小的接口上</li>
-<li>迪米特原则：一个对象对其他对象应该有尽量少的了解</li>
-</ul>
-<h4 id="Java-23-种设计模式（按目的分类为：5-7-11）"><a href="#Java-23-种设计模式（按目的分类为：5-7-11）" class="headerlink" title="Java 23 种设计模式（按目的分类为：5+7+11）"></a>Java 23 种设计模式（按目的分类为：5+7+11）</h4><p>1995 年 GoF（四人组）出了一本设计模式的书，收录了 23 种设计模式，树立设计模式里程碑，也叫：GoF 设计模式</p>
-<ul>
-<li>创建型（5）：描述怎么创建对象<ul>
-<li>1.单例模式</li>
-<li>2.原型模式：对象的拷贝</li>
-<li>3.建造者模式</li>
-<li>4.工厂模式：建立一个工厂方法来制造新的对象</li>
-<li>5.抽象工厂模式：</li>
-</ul>
-</li>
-<li>结构型（7）：描述如何将类或对象按某种规则组成更大的结构<ul>
-<li>1.桥接模式：对于两个或以上纬度独立变化的场景，将抽象与具体实现分离，实例：用不同颜色画不同形状</li>
-<li>2.外观模式：对外有一个统一接口，外部不用关心内部子系统的具体实现，这是”迪米特原则”的典型应用</li>
-<li>3.适配器模式：改变类的接口，使原本由于接口不匹配而无法一起工作的两个类能够在一工作，实例：RecycleView 的 Adapter 不管什么类型的 View 都返回 ViewHolder</li>
-<li>4.代理模式：由代理对象控制对原对象的引用，包括静态代理和动态代理</li>
-<li>5.组合模式：将对象组成树形结构，用于对单个对象和组合对象的使用具有一致性，实例：ViewGroup</li>
-<li>6.装饰模式：对对象包装一层，动态的增加一些额外功能，实例：ContextWrapper 包装 Context</li>
-<li>7.享元模式：复用对象，实例：java 的常量池（比如 String），线程池，Message.obtain 等</li>
-</ul>
-</li>
-<li>行为型（11）：描述类或对象之间怎么相互协作，怎样分配指责<ul>
-<li>1.观察者模式：一对多依赖关系，多个观察者可以同时监听某一个对象，实例：jetpack 的 lifeCycle 添加生命周期观察者</li>
-<li>2.中介者模式：定义一个中介对象封装一系列对象的交互，解耦这些对象，实例：MVP 的 P</li>
-<li>3.访问者模式：将作用于某数据结构中各元素的操作分离出来封装成独立的类，对这些元素添加新的操作，但不改变原数据结构，实例：asm 中的 classVisitor 中再分别对类注解、变量、方法等进行处理</li>
-<li>4.状态模式：行为由状态决定，不同状态下由不同行为，与策略模式类似，实例：不同状态下有同一种操作的不同行为的子类实现</li>
-<li>5.命令模式：将一个请求封装为一个对象发出，交给别的对象去处理请求，实例：Handler 发送定义好的消息事件</li>
-<li>6.策略模式：将一系列的算法封装起来，方便替换，实例：动画的时间插值器</li>
-<li>7.责任链模式：让多个对象都有机会处理一个事件，实例：View 事件传递机制</li>
-<li>8.备忘录模式：保存对象之前的状态，方便后面恢复</li>
-<li>9.迭代器模式：提供一种方法遍历容器中的元素，而不需要暴露该对象的内部表示，实例：集合的迭代器</li>
-<li>10.解释器模式：多次出现的问题有一定规律，就可以归纳成一种简单的语言来解释，实例：AndroidManifest 文件、GLES 着色器语言</li>
-<li>11.模版方法模式：定义一套固定步骤，方便直接执行，实例：AsyncTask</li>
-</ul>
-</li>
-</ul>
-<h4 id="动态代理原理及实现"><a href="#动态代理原理及实现" class="headerlink" title="动态代理原理及实现"></a>动态代理原理及实现</h4><ul>
-<li>InvocationHandler 接口，动态代理类需要实现这个接口</li>
-<li>Proxy.newProxyInstance，用于动态创建代理对象</li>
-<li>Retrofit 应用： Retrofit 通过动态代理，为我们定义的请求接口都生成一个动态代理对象，实现请求</li>
-</ul>
-<h1 id="JVM：内存模型、内存结构、GC、四种引用、ClassLoader"><a href="#JVM：内存模型、内存结构、GC、四种引用、ClassLoader" class="headerlink" title="JVM：内存模型、内存结构、GC、四种引用、ClassLoader"></a>JVM：内存模型、内存结构、GC、四种引用、ClassLoader</h1><h4 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h4><ul>
-<li>定义：可以理解成一个虚构的计算机，解释自己的字节码指令集映射到本地 CPU 或 OS 的指令集，上层只需关注 Class 文件，与操作系统无关，实现跨平台</li>
-<li>Kotlin 就是能解释成 Class 文件，所以可以跑在 JVM 上</li>
-</ul>
-<h4 id="JVM-内存模型"><a href="#JVM-内存模型" class="headerlink" title="JVM 内存模型"></a>JVM 内存模型</h4><ul>
-<li>Java 多线程之间是通过共享内存来通信的，每个线程都有自己的本地内存</li>
-<li>共享变量存放于主内存中，线程会拷贝一份共享变量到本地内存</li>
-<li>volatile 关键字就是给内存模型服务的，用来保证内存可见性和顺序性</li>
-</ul>
-<h4 id="JVM-内存结构"><a href="#JVM-内存结构" class="headerlink" title="JVM 内存结构"></a>JVM 内存结构</h4><ul>
-<li>线程私有：<ul>
-<li>1.程序计数器：记录正在执行的字节码指令地址，若正在执行 Native 方法则为空</li>
-<li>2.虚拟机栈：执行方法时把方法所需数据存为一个栈帧入栈，执行完后出栈</li>
-<li>3.本地方法栈：同虚拟机栈，但是针对的是 Native 方法</li>
-</ul>
-</li>
-<li>线程共享：<ul>
-<li>1.堆：存储 Java 实例，GC 主要区域，分代收集 GC 方法会吧堆划分为新生代、老年代</li>
-<li>2.方法区：存储类信息，常量池，静态变量等数据</li>
-</ul>
-</li>
-</ul>
-<h4 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h4><ul>
-<li>回收区域：只针对堆、方法区；线程私有区域数据会随线程结束销毁，不用回收</li>
-<li>回收类型：<ul>
-<li>1.堆中的对象：分代收集 GC 方法会吧堆划分为新生代、老年代。 新生代：新建小对象会进入新生代；通过复制算法回收对象；老年代：新建大对象及老对象会进入老年代；通过标记-清除算法回收对象。</li>
-<li>2.方法区中的类信息、常量池</li>
-</ul>
-</li>
-<li>判断一个对象是否可被回收：<ul>
-<li>1.引用计数法：有循环引用的缺点</li>
-<li>2.可达性分析法：从 GC ROOT 开始搜索，不可达的对象都是可以被回收的。其中 GC ROOT 包括虚拟机栈/本地方法栈中引用的对象、方法区中常量/静态变量引用的对象。</li>
-</ul>
-</li>
-</ul>
-<h4 id="Minor-GC-Major-GC-Full-GC"><a href="#Minor-GC-Major-GC-Full-GC" class="headerlink" title="Minor GC/Major GC/Full GC"></a>Minor GC/Major GC/Full GC</h4><ul>
-<li>Minor GC（Young GC）：即新生代（分为一个 Eden 区和两个 Survivor 区）的垃圾回收<ul>
-<li>Eden 区无用对象被回收，存活对象会移到 Survivor 区</li>
-<li>Survivor 区的存活对象会被复制到另一个 Survivor 区，复制次数也记做年龄，年龄足够大时（15）会移到老年代</li>
-<li>如果 Survivor 区已满，则存活对象会被提前移动到老年代（过早提升），如果老年代也无法容纳，则会触发 Full GC（提升失败）</li>
-<li>老年代的对象可能引用新生代对象，所以这个引用会被作为 GC Roots</li>
-</ul>
-</li>
-<li>Major GC：通常是跟 Full GC 等价的，回收整个堆</li>
-<li>Full GC：回收整个堆，包括新生代和老年代<ul>
-<li>当要在老年代分配空间但无法容纳时触发</li>
-<li>当主动调用 System.gc 时触发</li>
-</ul>
-</li>
-</ul>
-<h4 id="四种引用"><a href="#四种引用" class="headerlink" title="四种引用"></a>四种引用</h4><ul>
-<li>强引用：不会被回收</li>
-<li>软引用：内存不足时会被回收</li>
-<li>弱引用：gc 时会被回收</li>
-<li>虚引用：无法通过虚引用得到对象，可以监听对象的回收</li>
-</ul>
-<h4 id="ClassLoader"><a href="#ClassLoader" class="headerlink" title="ClassLoader"></a>ClassLoader</h4><ul>
-<li>类的生命周期：<br>1.加载；2.验证；3.准备；4.解析；5.初始化；6.使用；7.卸载</li>
-<li>类加载过程：<br>1.加载：获取类的二进制字节流；生成方法区的运行时存储结构；在内存中生成 Class 对象<br>2.验证：确保该 Class 字节流符合虚拟机要求<br>3.准备：初始化静态变量<br>4.解析：将常量池的符号引用替换为直接引用<br>5.初始化：执行静态块代码、类变量赋值</li>
-<li>类加载时机：<br>1.实例化对象<br>2.调用类的静态方法<br>3.调用类的静态变量（放入常量池的常量除外）</li>
-<li>类加载器：负责加载 class 文件<br>1.引导类加载器 - 没有父类加载器<br>2.拓展类加载器 - 继承自引导类加载器<br>3.系统类加载器 - 继承自拓展类加载器</li>
-<li>双亲委托模型：<ul>
-<li>当要加载一个 class 时，会先逐层向上让父加载器先加载，加载失败才会自己加载</li>
-<li>为什么叫双亲？不考虑自定义加载器，系统类加载器需要网上询问两层，所以叫双亲</li>
-<li>判断是否是同一个类时，除了类信息，还必须时同一个类加载器</li>
-<li>优点：防止重复加载，父加载器加载过了就没必要加载了；安全，防止篡改核心库类</li>
-</ul>
-</li>
-</ul>
-<h1 id="Android-基础：Activity、View-绘制、动画、Window、SurfaceView、事件分发"><a href="#Android-基础：Activity、View-绘制、动画、Window、SurfaceView、事件分发" class="headerlink" title="Android 基础：Activity、View 绘制、动画、Window、SurfaceView、事件分发"></a>Android 基础：Activity、View 绘制、动画、Window、SurfaceView、事件分发</h1><h4 id="Activity-生命周期"><a href="#Activity-生命周期" class="headerlink" title="Activity 生命周期"></a>Activity 生命周期</h4><ul>
-<li>A 打开 B 界面，会先执行 A 的 onPause，再执行 B 的 onCreate、onStart、onResume，再执行 A 的 onStop</li>
-<li>B 界面的打开依赖 A 界面 onPause 方法执行完，所以不要在 onPause 中做耗时操作</li>
-</ul>
-<h4 id="Activity-启动模式"><a href="#Activity-启动模式" class="headerlink" title="Activity 启动模式"></a>Activity 启动模式</h4><ul>
-<li>standard 标准模式</li>
-<li>singleTop 栈顶复用模式，适用于推送点击消息界面</li>
-<li>singleTask 栈内复用模式，适用于 App 首页</li>
-<li>singleInstance 单例模式，单独位于一个任务栈中，适用于拨打电话界面</li>
-<li>细节：<ul>
-<li>taskAffinity：任务相关性，用于指定任务栈名称，默认为应用包名</li>
-<li>allowTaskReparenting：允许转移任务栈</li>
-</ul>
-</li>
-</ul>
-<h4 id="View-工作原理"><a href="#View-工作原理" class="headerlink" title="View 工作原理"></a>View 工作原理</h4><ul>
-<li>ViewRoot 的 performTraversals 方法调用触发开始 View 的绘制，然后会依次调用:<ul>
-<li>performMeasure：遍历 View 的 measure 测量尺寸</li>
-<li>performLayout：遍历 View 的 layout 确定位置</li>
-<li>performDraw：遍历 View 的 draw 绘制</li>
-</ul>
-</li>
-</ul>
-<h4 id="MeasureSpec-测量规则"><a href="#MeasureSpec-测量规则" class="headerlink" title="MeasureSpec 测量规则"></a>MeasureSpec 测量规则</h4><ul>
-<li>EXACTLY：父 View 指定了子 View 确切的大小</li>
-<li>AT_MOST：父 View 指定一个大小，子 View 不能超过这个值</li>
-<li>UNSPECIFIEND： 父 View 不对子 View 有任何限制</li>
-</ul>
-<h4 id="View-动画、帧动画及属性动画"><a href="#View-动画、帧动画及属性动画" class="headerlink" title="View 动画、帧动画及属性动画"></a>View 动画、帧动画及属性动画</h4><ul>
-<li>View 动画：<ul>
-<li>作用对象是 View，可用 xml 定义，建议 xml 实现比较易读</li>
-<li>支持四种效果：平移、缩放、旋转、透明度</li>
-</ul>
-</li>
-<li>帧动画：<ul>
-<li>通过 AnimationDrawable 实现，容易 OOM</li>
-</ul>
-</li>
-<li>属性动画：<ul>
-<li>可作用于任何对象，可用 xml 定义，Android 3 引入，建议代码实现比较灵活</li>
-<li>包括 ObjectAnimator、ValuetAnimator、AnimatorSet</li>
-<li>时间插值器：根据时间流逝的百分比计算当前属性改变的百分比，系统预置匀速、加速、减速等插值器</li>
-<li>类型估值器：根据当前属性改变的百分比计算改变后的属性值，系统预置整型、浮点、色值等类型估值器</li>
-<li>使用注意事项：避免使用帧动画，容易OOM；界面销毁时停止动画，避免内存泄漏；开启硬件加速，提高动画流畅性</li>
-<li>硬件加速原理：将 cpu 一部分工作分担给 gpu ，使用 gpu 完成绘制工作；从工作分摊和绘制机制两个方面优化了绘制速度</li>
-</ul>
-</li>
-</ul>
-<h4 id="Window-、WindowManager、WMS、SurfaceFlinger"><a href="#Window-、WindowManager、WMS、SurfaceFlinger" class="headerlink" title="Window 、WindowManager、WMS、SurfaceFlinger"></a>Window 、WindowManager、WMS、SurfaceFlinger</h4><ul>
-<li>WIndow：抽象概念不是实际存在的，而是以 View 的形式存在，通过 PhoneWindow 实现</li>
-<li>WindowManager：外界访问 Window 的入口，内部与 WMS 交互是个 IPC 过程</li>
-<li>WMS：管理窗口 Surface 的布局和次序，作为系统级服务单独运行在一个进程</li>
-<li>SurfaceFlinger：将 WMS 维护的窗口按一定次序混合后显示到屏幕上</li>
-</ul>
-<h4 id="SurfaceView、TextureView、SurfaceTexture、GLSurfaceView"><a href="#SurfaceView、TextureView、SurfaceTexture、GLSurfaceView" class="headerlink" title="SurfaceView、TextureView、SurfaceTexture、GLSurfaceView"></a>SurfaceView、TextureView、SurfaceTexture、GLSurfaceView</h4><ul>
-<li>SurfaceView：使用双缓冲机制，有自己的 surface，在一个独立的线程里绘制，Android7.0之前不能平移、缩放</li>
-<li>TextureView：持有 SurfaceTexture，将图像处理为 OpenGL 纹理更新到 HardwareLayer，必须开启硬件加速，Android5.0之前在主线程渲染，之后有独立的渲染线程，可以平移、旋转、缩放</li>
-<li>SurfaceTexture：将图像流转为 OpenGL 外部纹理，不直接显示</li>
-<li>GLSurfaceView：加入 EGL 管理，自带 GL 上下文和 GL 渲染线程</li>
-</ul>
-<h4 id="事件分发机制"><a href="#事件分发机制" class="headerlink" title="事件分发机制"></a>事件分发机制</h4><ul>
-<li>一个 MotionEvent 产生后，按 Activity -&gt; Window -&gt; decorView -&gt; View 顺序传递，View 传递过程就是事件分发，主要依赖三个方法:</li>
-<li>dispatchTouchEvent：用于分发事件，只要接受到点击事件就会被调用，返回结果表示是否消耗了当前事件</li>
-<li>onInterceptTouchEvent：用于判断是否拦截事件，当 ViewGroup 确定要拦截事件后，该事件序列都不会再触发调用此 ViewGroup 的 onIntercept</li>
-<li>onTouchEvent：用于处理事件，返回结果表示是否处理了当前事件，未处理则传递给父容器处理</li>
-<li>细节：<ul>
-<li>一个事件序列只能被一个 View 拦截且消耗</li>
-<li>View 没有 onIntercept 方法，直接调用 onTouchEvent 处理</li>
-<li>OnTouchListener 优先级比 OnTouchEvent 高，onClickListener 优先级最低</li>
-<li>requestDisallowInterceptTouchEvent 可以屏蔽父容器 onIntercept 方法的调用</li>
-</ul>
-</li>
-</ul>
-<h1 id="Android-通信：Handler、Parcelable、IPC、Binder"><a href="#Android-通信：Handler、Parcelable、IPC、Binder" class="headerlink" title="Android 通信：Handler、Parcelable、IPC、Binder"></a>Android 通信：Handler、Parcelable、IPC、Binder</h1><h4 id="Handler、MessageQueue、Looper-及-postDelayed-原理"><a href="#Handler、MessageQueue、Looper-及-postDelayed-原理" class="headerlink" title="Handler、MessageQueue、Looper 及 postDelayed 原理"></a>Handler、MessageQueue、Looper 及 postDelayed 原理</h4><ul>
-<li>Handler：开发直接接触的类，内部持有 MessageQueue 和 Looper</li>
-<li>MessageQueue：消息队列，内部通过单链表存储消息</li>
-<li>Looper：内部持有 MessageQueue，循环查看是否有新消息，有就处理，没就阻塞</li>
-<li>postDelayed 其实就是调用 postAtTime 实现的，传入的时间戳基于 SystemClock.uptimeMillis，即 boot 时间</li>
-<li>进一步会调用 MessageQueue#enqueueMessage 将消息插入到队列</li>
-<li>插入消息时会根据消息执行时刻 Message#when 来决定插入到什么位置，when 为 0 或最早执行就会插入到链表头，否则按执行时刻排序插入</li>
-<li>插入后如果正在阻塞则会尝试唤醒，插入到头部则会唤醒，插入到队列中则再根据其他条件判断是否需要唤醒</li>
-<li>Looper#loop 中调用 MessageQueue#next 取消息，next 方法除非是即将销毁时会返回 null，否则就会返回消息，没有消息就阻塞。如果当前时刻还没到消息的执行时刻 when，就会再阻塞这个时间差的时间</li>
-<li>阻塞是调用 nativePollOnce 实现，基于 Linux epoll 事件管理机制</li>
-<li>Looper#loop 中取出消息后通过 Message#target 拿到 handler，然后调用 Handler#dispatchMessage 分发处理消息</li>
-</ul>
-<h4 id="Serializable、Parcelable"><a href="#Serializable、Parcelable" class="headerlink" title="Serializable、Parcelable"></a>Serializable、Parcelable</h4><ul>
-<li>Serializable ：Java 序列化方式，适用于存储和网络传输，serialVersionUID 用于确定反序列化和类版本是否一致，不一致时反序列化回失败</li>
-<li>Parcelable ：Android 序列化方式，适用于组件通信数据传递，性能高，因为不像 Serializable 一样有大量反射操作</li>
-</ul>
-<h4 id="Linux-IPC-方式"><a href="#Linux-IPC-方式" class="headerlink" title="Linux IPC 方式"></a>Linux IPC 方式</h4><ul>
-<li>管道</li>
-<li>socket</li>
-<li>信号量：常作为一种锁机制，防止某进程正在访问共享资源时，其他进程也访问该资源。因此，主要作为进程间以及同一进程内不同线程之间的同步手段</li>
-<li>信号：不适用于信息交换，更适用于进程中断控制，比如非法内存访问，杀死某个进程等（Android 中的 Kill Process 采用的就是 signal（信号）机制）</li>
-<li>消息队列：信息复制两次，额外的 CPU 消耗；不合适频繁或信息量大的通信</li>
-<li>共享内存：无须复制，共享缓冲区直接付附加到进程虚拟地址空间，速度快；但进程间的同步问题操作系统无法实现，必须各进程利用同步工具解决</li>
-</ul>
-<h4 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h4><ul>
-<li>Android 中基于 C/S 结构的一种面向对象的进程间通信的机制</li>
-<li>主要用在 system_server 进程与上层 App 层的 IPC 交互</li>
-<li>包含：Client,Server,Binder 驱动和 ServiceManager 四部分</li>
-</ul>
-<h4 id="Android-为什么选择-binder"><a href="#Android-为什么选择-binder" class="headerlink" title="Android 为什么选择 binder"></a>Android 为什么选择 binder</h4><ul>
-<li>性能：使用 mmap 一次数据拷贝实现 IPC，传统 IPC：用户 A 空间-&gt;内核-&gt;用户 B 空间；mmap 将内核与用户 B 空间映射，实现直接从用户 A 空间-&gt;用户B空间，而 Linux 的管道、消息队列、Socket 都需要拷贝两次，binder 仅次于共享内存</li>
-<li>稳定性：基于C/S架构，架构清晰，稳定性好，不像共享内存实现方式复杂，需要充分考虑访问临界资源的并发同步问题</li>
-<li>安全：传统Linux IPC的接收方无法获得对方进程可靠的UID/PID，从而无法鉴别对方身份</li>
-</ul>
-<h4 id="Android-IPC-方式"><a href="#Android-IPC-方式" class="headerlink" title="Android IPC 方式"></a>Android IPC 方式</h4><ul>
-<li>Intent extras、Bundle：要求传递数据能被序列化，实现 Parcelable、Serializable ，适用于四大组件通信</li>
-<li>文件共享：适用于交换简单的数据实时性不高的场景</li>
-<li>AIDL：AIDL 接口实质上是系统提供给我们可以方便实现 Binder 的工具<ul>
-<li>Android Interface Definition Language，可实现跨进程调用方法</li>
-<li>服务端：将暴漏给客户端的接口声明在 AIDL 文件中，创建 Service 实现 AIDL 接口并监听客户端连接请求</li>
-<li>客户端：绑定服务端 Service ，绑定成功后拿到服务端 Binder 对象转为 AIDL 接口调用</li>
-<li>RemoteCallbackList 实现跨进程接口监听，同个 Binder 对象做 key 存储客户端注册的 listener</li>
-<li>监听 Binder 断开：1.Binder.linkToDeath 设置死亡代理；2. onServiceDisconnected 回调</li>
-</ul>
-</li>
-<li>Messenger：基于 AIDL 实现，服务端串行处理，主要用于传递消息，适用于低并发一对多通信</li>
-<li>ContentProvider：基于 Binder 实现，适用于一对多进程间数据共享</li>
-<li>Socket：TCP、UDP，适用于网络数据交换</li>
-</ul>
-<h1 id="Android-系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk-打包、Apk-安装"><a href="#Android-系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk-打包、Apk-安装" class="headerlink" title="Android 系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk 打包、Apk 安装"></a>Android 系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk 打包、Apk 安装</h1><h4 id="Android-系统架构"><a href="#Android-系统架构" class="headerlink" title="Android 系统架构"></a>Android 系统架构</h4><p><img src="file:///Users/wangyinghao/Documents/gitRes/AndroidInterview/img/20.jpg" alt></p>
-<ul>
-<li>应用层</li>
-<li>Framework 框架层</li>
-<li>本地 Native 库和 Android 运行时环境</li>
-<li>HAL</li>
-<li>Linux 内核</li>
-</ul>
-<h4 id="Dalvik-和-ART"><a href="#Dalvik-和-ART" class="headerlink" title="Dalvik 和 ART"></a>Dalvik 和 ART</h4><ul>
-<li>Dalvik<ul>
-<li>谷歌设计专用于 Android 平台的 Java 虚拟机，可直接运行 .dex 文件，适合内存和处理速度有限的系统</li>
-<li>JVM 指令集是基于栈的；Dalvik 指令集是基于寄存器的，代码执行效率更优</li>
-</ul>
-</li>
-<li>ART<ul>
-<li>Dalvik 每次运行都要将字节码转换成机器码；ART 在应用安装时就会转换成机器码，执行速度更快</li>
-<li>ART 存储机器码占用空间更大，空间换时间</li>
-</ul>
-</li>
-</ul>
-<h4 id="Android-系统启动流程"><a href="#Android-系统启动流程" class="headerlink" title="Android 系统启动流程"></a>Android 系统启动流程</h4><ul>
-<li>按电源键 -&gt; 加载引导程序 BootLoader 到 RAM -&gt; 执行 BootLoader 程序启动内核 -&gt; 启动 init 进程 -&gt; 启动 Zygote 和各种守护进程 -&gt; 启动  System Server 服务进程开启 AMS、WMS 等 -&gt; 启动 Launcher 应用进程</li>
-</ul>
-<h4 id="Android-类加载器"><a href="#Android-类加载器" class="headerlink" title="Android 类加载器"></a>Android 类加载器</h4><ul>
-<li>BootClassLoader(加载 Framework 级别的类)</li>
-<li>PathClassLoader(加载系统类和 data/app 应用目录下的 dex 文件)</li>
-<li>DexClassLoader(加载自定义的 dex 文件或 jar，支持从 sd 卡中进行加载)</li>
-</ul>
-<h4 id="APK-打包流程"><a href="#APK-打包流程" class="headerlink" title="APK 打包流程"></a>APK 打包流程</h4><ul>
-<li>1.aapt 打包资源文件生成 R.java 文件；aidl 生成 java 文件</li>
-<li>2.将 java 文件编译为 class 文件</li>
-<li>3.将工程及第三方的 class 文件转换成 dex 文件</li>
-<li>4.将 dex 文件、so、编译过的资源、原始资源等打包成 apk 文件</li>
-<li>5.签名</li>
-<li>6.资源文件对齐，减少运行时内存</li>
-</ul>
-<h4 id="App-安装过程"><a href="#App-安装过程" class="headerlink" title="App 安装过程"></a>App 安装过程</h4><ul>
-<li>首先要解压 APK，资源、so等放到应用目录</li>
-<li>Dalvik 会将 dex 处理成 ODEX ；ART 会将 dex 处理成 OAT；</li>
-<li>OAT 包含 dex 和安装时编译的机器码</li>
-</ul>
-<h1 id="Android-优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native-Crash"><a href="#Android-优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native-Crash" class="headerlink" title="Android 优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native Crash"></a>Android 优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native Crash</h1><h4 id="网络优化及检测"><a href="#网络优化及检测" class="headerlink" title="网络优化及检测"></a>网络优化及检测</h4><ul>
-<li>速度：1.GZIP 压缩（okhttp 自动支持）；2.Protocol Buffer 替代 json；3.优化图片/文件流量；4.IP 直连省去 DNS 解析时间</li>
-<li>成功率：1.失败重试策略；</li>
-<li>流量：1.GZIP 压缩（okhttp 自动支持）；2.Protocol Buffer 替代 json；3.优化图片/文件流量；5.文件下载断点续传 ；6.缓存</li>
-<li>协议层的优化，比如更优的 http 版本等</li>
-<li>监控：Charles 抓包、Network Monitor 监控流量</li>
-</ul>
-<h4 id="UI卡顿优化"><a href="#UI卡顿优化" class="headerlink" title="UI卡顿优化"></a>UI卡顿优化</h4><ul>
-<li>减少布局层级及控件复杂度，避免过度绘制</li>
-<li>使用 include、merge、viewstub</li>
-<li>优化绘制过程，避免在 Draw 中频繁创建对象、做耗时操作</li>
-</ul>
-<h4 id="内存优化"><a href="#内存优化" class="headerlink" title="内存优化"></a>内存优化</h4><ul>
-<li>内存问题<ul>
-<li>内存泄漏</li>
-<li>内存抖动：频繁创建临时对象</li>
-<li>Bitmap 大内存：规避位图超标</li>
-<li>代码质量：intdef 代替枚举，使用 SparseArray 代替 HashMap</li>
-</ul>
-</li>
-<li>检测工具<ul>
-<li>MAT(Memory Analysis Tools) ，可分析 Java 堆数据，可查看实例占用空间、引用关系等</li>
-<li>Android Studio 自带的 Profiler</li>
-<li>LeakCanary：通过弱引用和引用队列监控对象是否被回收，比如 Activity 销毁时开始监控此对象，检测到未被回收则主动 gc ，然后继续监控</li>
-</ul>
-</li>
-</ul>
-<h4 id="瘦包"><a href="#瘦包" class="headerlink" title="瘦包"></a>瘦包</h4><ul>
-<li>1.资源方面：资源在线化、图片使用 webp 格式、tint 着色生成不同色调的切、使用 icon font</li>
-<li>2.so 库：保留一个 cpu 架构的 so 文件</li>
-<li>3.AS Inspect Code 清除无用代码和资源</li>
-<li>4.代码混淆：使用 ProGuard 可以移除无用的类、字段、方法（压缩），移除无用字节码指令</li>
-<li>5.不保留行号：使用 ProGuard 配置不保留行号</li>
-<li>6.开启 shrinkResources：移除无用资源</li>
-<li>7.资源混淆：使用 AndResGuard 缩短资源长度，对资源进行 7z 压缩等（直接对apk操作）</li>
-<li>8.代码结构简化，比如用 intdef 代替 枚举(一个枚举有1~1.4kb大小)</li>
-<li>9.使用 compileOnly 在只需编译时依赖的场景，不会打到 apk 里</li>
-<li>10.使用 thinR 插件剔除 R 文件，将引用 R 字段的地方替换成对应常量</li>
-<li>11.Android 7.0 使用 V2(apksigner) 代替 V1(jarsigner) 签名工具</li>
-<li>12.动态加载 so 库(System.load加载绝对路径文件)、插件化技术、App Bundle</li>
-<li>13.使用 facebook 的 redex</li>
-</ul>
-<h4 id="内存泄漏场景及规避"><a href="#内存泄漏场景及规避" class="headerlink" title="内存泄漏场景及规避"></a>内存泄漏场景及规避</h4><ul>
-<li>1.静态变量、单例强引跟生命周期相关的数据或资源，包括 EventBus</li>
-<li>2.游标、IO 流等资源忘记主动释放</li>
-<li>3.界面相关动画在界面销毁时及时暂停</li>
-<li>4.内部类持有外部类引用导致的内存泄漏<ul>
-<li>handler 内部类内存泄漏规避：1.使用静态内部类+弱引用 2.界面销毁时清空消息队列</li>
-<li>检测：Android Studio Profiler</li>
-</ul>
-</li>
-</ul>
-<h4 id="ANR-问题及分析"><a href="#ANR-问题及分析" class="headerlink" title="ANR 问题及分析"></a>ANR 问题及分析</h4><ul>
-<li>anr 分类<ul>
-<li>主线程 5s 内没有处理完输入事件</li>
-<li>service 阻塞 20s</li>
-<li>前台广播阻塞 10s 或后台广告阻塞 20s</li>
-<li>ContentProvider publish 在 20s 内没有处理完</li>
-</ul>
-</li>
-<li>anr 发生过程<ul>
-<li>1.捕获到 anr，发送 linux 信号量 3</li>
-<li>2.进程接受到信号量将 anr 信息写入 data/anr/traces.txt 文件</li>
-<li>3.Log 打印 anr 信息</li>
-<li>4.进程进入 anr 状态，弹出 anr 提示框</li>
-</ul>
-</li>
-<li>监控 anr<ul>
-<li>1.Android 5.0 以下监听 traces.txt 文件写入</li>
-<li>2.每隔 5s 向主线程发送消息判断主线程是否阻塞</li>
-</ul>
-</li>
-<li>分析 anr<ul>
-<li>查看 cpu 负载是否是 cpu 资源紧张导致</li>
-<li>查看堆栈看是否是我们的代码耗时过长</li>
-</ul>
-</li>
-<li>避免 anr<ul>
-<li>主线程中不要做耗时操作，注意使用 IntentService</li>
-<li>降低子线程优先级，让主线程可以更多的获取到 cpu 资源</li>
-</ul>
-</li>
-</ul>
-<h4 id="Native-Crash"><a href="#Native-Crash" class="headerlink" title="Native Crash"></a>Native Crash</h4><ul>
-<li>崩溃过程：native crash 时操作系统会向进程发送信号，崩溃信息会写入到 data/tombstones 下，并在 logcat 输出崩溃日志</li>
-<li>定位：so 库剥离调试信息的话，只有相对位置没有具体行号，可以使用 NDK 提供的 addr2line 或 ndk-stack 来定位</li>
-<li>addr2line：根据有调试信息的 so 和相对位置定位实际的代码处</li>
-<li>ndk-stack：可以分析 tombstone 文件，得到实际的代码调用栈</li>
-</ul>
-<h1 id="其他：解析-XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack"><a href="#其他：解析-XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack" class="headerlink" title="其他：解析 XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack"></a>其他：解析 XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack</h1><h4 id="Android-解析-XML"><a href="#Android-解析-XML" class="headerlink" title="Android 解析 XML"></a>Android 解析 XML</h4><ul>
-<li>SAX：流式解析</li>
-<li>DOM：先把 XML 全部读取到内存，再访问树形结构，很消耗内存</li>
-<li>PULL：流式解析，Android 内置的默认解析方式</li>
-</ul>
-<h4 id="热修复、插件化、组件化"><a href="#热修复、插件化、组件化" class="headerlink" title="热修复、插件化、组件化"></a>热修复、插件化、组件化</h4><ul>
-<li>热修复原理：<ul>
-<li>Native Hook（AndFix）：直接在 native 层进行方法的结构体信息对换</li>
-<li>分包（QFix）：插入新 dex 到 dexElements[]，利用 ClassLoader 通过遍历 dexElements[] 来 findClass 的特性</li>
-<li>Java Hook（Robust）：hook 每个方法，在每个方法里埋好准备替换的逻辑</li>
-</ul>
-</li>
-<li>插件化：DexClassLoader 动态加载，四大组件未注册问题通过 hook AMS、Instrumentation 等解决，VirtualAPK 源码分析</li>
-<li>组件化：ARoute 路由实现：通过 APT 解析 @Route 等注解，结合 JavaPoet 生成路由表，即路由与 Activity 的映射关系</li>
-</ul>
-<h4 id="进程保活"><a href="#进程保活" class="headerlink" title="进程保活"></a>进程保活</h4><ul>
-<li>进程优先级：1.前台进程 ；2.可见进程；3.服务进程；4.后台进程；5.空进程</li>
-<li>进程被 kill 场景：1.切到后台内存不足时被杀；2.切到后台厂商省电机制杀死；3.用户主动清理</li>
-<li>保活方式：<ul>
-<li>1.Activity 提权：挂一个 1像素 Activity 将进程优先级提高到前台进程</li>
-<li>2.Service 提权：启动一个前台服务（API&gt;18会有正在运行通知栏）</li>
-<li>3.广播拉活</li>
-<li>4.Service 拉活</li>
-<li>5.JobScheduler 定时任务拉活</li>
-<li>6.双进程拉活</li>
-</ul>
-</li>
-</ul>
-<h4 id="播放器原理"><a href="#播放器原理" class="headerlink" title="播放器原理"></a>播放器原理</h4><ul>
-<li>视频播放原理：（mp4、flv）-&gt; 解封装 -&gt; （mp3/aac、h264/h265）-&gt; 解码 -&gt; （pcm、yuv）-&gt; 音视频同步 -&gt; 渲染播放</li>
-<li>音视频同步：<ul>
-<li>选择参考时钟源：音频时间戳、视频时间戳和外部时间三者选择一个作为参考时钟源（一般选择音频，因为人对音频更敏感，ijk 默认也是音频）</li>
-<li>通过等待或丢帧将视频流与参考时钟源对齐，实现同步</li>
-</ul>
-</li>
-<li>IjkPlayer 原理<ul>
-<li>集成了 MediaPlayer、ExoPlayer 和 IjkPlayer 三种实现，其中 IjkPlayer 基于 FFmpeg 的 ffplay</li>
-<li>音频输出方式：AudioTrack、OpenSL ES；视频输出方式：NativeWindow、OpenGL ES</li>
-</ul>
-</li>
-</ul>
-<h4 id="Lint"><a href="#Lint" class="headerlink" title="Lint"></a>Lint</h4><ul>
-<li>Android Lint 是 Google 提供给 Android 开发者的静态代码检查工具</li>
-<li>使用 Lint 对 Android 工程代码进行扫描和检查，可以发现代码潜在的问题，提醒程序员及早修正</li>
-<li>基于 Detector、IssueRegistry 实现，通过 lintChecks project 引入</li>
-</ul>
-<h4 id="CI"><a href="#CI" class="headerlink" title="CI"></a>CI</h4><ul>
-<li>Continuous integration（持续集成，简称CI）：频繁的将代码集成到主干，防止分支大幅偏离主干，方便快速发现错误</li>
-<li>Continuous delivery（持续交付）：频繁地将软件的新版本，交付给质量团队或者用户，以供评审</li>
-<li>Continuous deployment（持续部署）：持续交付的下一步，指的是代码通过评审以后，自动部署到生产环境</li>
-<li>交付后需要进行构建，将源码转换为可以运行的实际代码，常用的构建工具有 Jenkins、Strider</li>
-</ul>
-<h4 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h4><ul>
-<li>基于 Gradle Transform API 创建 TransForm ，其执行时机在 class 被打包成 dex 之前</li>
-<li>在 TransForm 中通过 javassist 或 asm 修改字节码</li>
-<li>基于 Gradle Plugin API 自定义插件，应用自定义的 TransForm</li>
-</ul>
-<h4 id="JetPack"><a href="#JetPack" class="headerlink" title="JetPack"></a>JetPack</h4><ul>
-<li>LiveData 感知声明周期原理：像 Glide 一样给界面添加了无视图的 Fragment</li>
-<li>ViewModel 界面旋转短暂销毁重建时保存数据原理：<ul>
-<li>ViewModel 保存在 ViewModelStore 中</li>
-<li>当 Activity 配置变更销毁时，系统会调用 onRetainNonConfigurationInstance 保存 NonConfigurationInstances，而 ViewModel 就保存在 NonConfigurationInstances 中</li>
-<li>重建时 onCreate 方法通过 getLastNonConfigurationInstance 方法获取到 NonConfigurationInstances，从而获取到 ViewModelStore</li>
-</ul>
-</li>
-<li>JetPack 与 MVVM：<ul>
-<li>先了解下 MVP：Model：处理数据；View：控制视图；Presenter：分离 Activity 和 Model</li>
-<li>再看 MVVM：Model：处理获取保存数据；View：控制视图；ViewModel：数据容器</li>
-<li>使用 Jetpack 组件架构的 LiveData、ViewModel 可以便捷的实现 MVVM</li>
-</ul>
-</li>
-</ul>
-
+        <blockquote>
+<p>网络：分层模型、TCP、UDP、HTTP、HTTPS<br>算法：数据结构、常用算法<br>Java 基础：StringBuilder、泛型擦除、Exception、IO、容器<br>Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁<br>Java 设计模式：六大原则、23 种设计模式、动态代理<br>Java 虚拟机：内存模型、内存结构、GC、四种引用、ClassLoader<br>Android 基础：Activity、View 绘制、动画、Window、SurfaceView、事件分发<br>Android 通信：Handler、Parcelable、IPC、Binder<br>Android 系统：系统架构、Dalvik、ART、系统启动、类加载器、Apk 打包、Apk 安装<br>Android 优化：网络优化、卡顿优化、内存优化、瘦包、内存泄漏、ANR、Native Crash<br>其他：解析 XML、进程保活、播放器、Lint、CI、CD、AOP、JetPack</p>
+</blockquote>
+        
+          <p class="article-more-link">
+            <a href="/yhaowa/c75061d/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/c75061d/" data-id="ckictuesu000olvcaeaimqmet" class="article-share-link" data-share="baidu" data-title="Android 知识简记">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/c75061d/" data-id="ckictyir9000opdcawxm7tzc9" class="article-share-link" data-share="baidu" data-title="Android 知识简记">分享到</a>
       
 
       
@@ -1107,7 +526,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/f713728e/" data-id="ckictuetb0028lvcamwcqlh7z" class="article-share-link" data-share="baidu" data-title="对 Android 开发的一点思考">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/f713728e/" data-id="ckictyirt002apdcay9ewkkax" class="article-share-link" data-share="baidu" data-title="对 Android 开发的一点思考">分享到</a>
       
 
       
@@ -1164,7 +583,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/f346f34f/" data-id="ckictuet4001llvca12enwnbw" class="article-share-link" data-share="baidu" data-title="一个轻量的 Android 端日志打印记录库">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/f346f34f/" data-id="ckictyirl001qpdcanenahe7j" class="article-share-link" data-share="baidu" data-title="一个轻量的 Android 端日志打印记录库">分享到</a>
       
 
       
@@ -1205,7 +624,9 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°</p>
+        <blockquote>
+<p>饿汉方式单例到底有多“饿”？<br>静态内部类为什么是延迟加载的？<br>枚举方式单例是延迟加载的吗？<br>饿汉、静态内部类、枚举方式单例为什么是线程安全的？<br>序列化为什么会破坏单例模式？<br>怎么防止序列化破坏单例模式？<br>枚举方式单例是怎么避免序列化破坏的？</p>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/1516a551/#more">Read More</a>
@@ -1215,7 +636,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/1516a551/" data-id="ckictuet90023lvcaf4thgel1" class="article-share-link" data-share="baidu" data-title="单例的线程安全及序列化问题">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/1516a551/" data-id="ckictyirr0025pdcafo337sw7" class="article-share-link" data-share="baidu" data-title="单例的线程安全及序列化问题">分享到</a>
       
 
       

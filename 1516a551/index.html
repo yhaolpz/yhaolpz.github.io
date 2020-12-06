@@ -6,18 +6,18 @@
   
   <title>单例的线程安全及序列化问题 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°">
+  <meta name="description" content="饿汉方式单例到底有多“饿”？静态内部类为什么是延迟加载的？枚举方式单例是延迟加载的吗？饿汉、静态内部类、枚举方式单例为什么是线程安全的？序列化为什么会破坏单例模式？怎么防止序列化破坏单例模式？枚举方式单例是怎么避免序列化破坏的？">
 <meta name="keywords" content="单例">
 <meta property="og:type" content="article">
 <meta property="og:title" content="单例的线程安全及序列化问题">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/1516a551/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°">
+<meta property="og:description" content="饿汉方式单例到底有多“饿”？静态内部类为什么是延迟加载的？枚举方式单例是延迟加载的吗？饿汉、静态内部类、枚举方式单例为什么是线程安全的？序列化为什么会破坏单例模式？怎么防止序列化破坏单例模式？枚举方式单例是怎么避免序列化破坏的？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.215Z">
+<meta property="og:updated_time" content="2020-12-06T09:28:54.303Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="单例的线程安全及序列化问题">
-<meta name="twitter:description" content="单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°">
+<meta name="twitter:description" content="饿汉方式单例到底有多“饿”？静态内部类为什么是延迟加载的？枚举方式单例是延迟加载的吗？饿汉、静态内部类、枚举方式单例为什么是线程安全的？序列化为什么会破坏单例模式？怎么防止序列化破坏单例模式？枚举方式单例是怎么避免序列化破坏的？">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -95,18 +95,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°</p>
+        <blockquote>
+<p>饿汉方式单例到底有多“饿”？<br>静态内部类为什么是延迟加载的？<br>枚举方式单例是延迟加载的吗？<br>饿汉、静态内部类、枚举方式单例为什么是线程安全的？<br>序列化为什么会破坏单例模式？<br>怎么防止序列化破坏单例模式？<br>枚举方式单例是怎么避免序列化破坏的？</p>
+</blockquote>
 <a id="more"></a>
-<ul>
-<li>饿汉方式单例到底有多“饿”？</li>
-<li>静态内部类为什么是延迟加载的？</li>
-<li>枚举方式单例是延迟加载的吗？</li>
-<li>饿汉、静态内部类、枚举方式单例为什么是线程安全的？</li>
-<li>序列化为什么会破坏单例模式？</li>
-<li>怎么防止序列化破坏单例模式？</li>
-<li>枚举方式单例是怎么避免序列化破坏的？</li>
-</ul>
-<p>开始正文前先思考下以上问题，如果你都掌握了，就可以点叉出去了。</p>
+<p>单例模式可以说是最简单的设计模式了，但在使用时也有一些问题需要注意，比如线程安全性和序列化破坏。本文以几个问题为出发点，分析延迟加载、线程安全以及序列化三个方面，深入了解一下单例模式的各种姿势，以便在今后使用时追求极致性能  ⊙﹏⊙‖∣°</p>
 <h1 id="延迟加载"><a href="#延迟加载" class="headerlink" title="延迟加载"></a>延迟加载</h1><h4 id="饿汉方式"><a href="#饿汉方式" class="headerlink" title="饿汉方式"></a>饿汉方式</h4><p>先来看一下饿汉方式实现的单例：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span> </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>与饿汉方式一并提起的往往还有懒汉方式，对比而言，懒汉方式具有延迟加载（这里的加载指创建 Singleton 实例）的优点。这容易让人对饿汉方式有一个恶劣的刻板印象：它的性能很不好！没有使用它的时候它就会初始化，白白占用资源！</p>
@@ -151,7 +144,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/1516a551/" data-id="ckictuet90023lvcaf4thgel1" class="article-share-link" data-share="baidu" data-title="单例的线程安全及序列化问题">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/1516a551/" data-id="ckictyirr0025pdcafo337sw7" class="article-share-link" data-share="baidu" data-title="单例的线程安全及序列化问题">分享到</a>
       
 
       

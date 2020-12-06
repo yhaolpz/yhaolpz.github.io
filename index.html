@@ -92,7 +92,21 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>介绍一下 Handler 中的 epoll 机制？ </p>
+        <blockquote>
+<ol>
+<li>IO 多路复用</li>
+<li>select、poll、epoll 对比</li>
+<li>epoll API</li>
+<li>epoll 使用示例</li>
+<li>eventfd</li>
+<li>Handler 中的 epoll 源码分析<ol>
+<li>nativePollOnce</li>
+<li>nativePollOnce</li>
+<li>nativeWake</li>
+</ol>
+</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/649d55e5/#more">Read More</a>
@@ -102,7 +116,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/649d55e5/" data-id="ckictuesh0002lvca56uu9d72" class="article-share-link" data-share="baidu" data-title="Android Handler epoll 机制分析">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/649d55e5/" data-id="ckictyir20009pdcap7f6mawp" class="article-share-link" data-share="baidu" data-title="Android Handler epoll 机制分析">分享到</a>
       
 
       
@@ -144,7 +158,29 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>介绍一下 Android 屏幕显示原理，开发编写的 View 控件，是怎么变成屏幕上图像的？</p>
+<ol>
+<li>Activity 与 Window<ol>
+<li>setContentView 原理</li>
+<li>Activity 窗口添加过程</li>
+</ol>
+</li>
+<li>UI 刷新机制<ol>
+<li>发起 UI 重绘请求</li>
+<li>执行 UI 绘制时机</li>
+<li>vsync 信号的生成</li>
+<li>vsync 信号的分发<ol>
+<li>SurfaceFlinger -&gt; DispSync</li>
+<li>DispSync -&gt; DispSyncSource</li>
+<li>DispSyncSource -&gt; EventThread</li>
+<li>Connection -&gt; SurfaceFlinger </li>
+<li>Connection -&gt; app</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>UI 绘制流程</li>
+<li>Surface 与 SurfaceFlinger</li>
+</ol>
 </blockquote>
         
           <p class="article-more-link">
@@ -155,7 +191,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/f9fd2518/" data-id="ckictuesl0006lvcaixpb593m" class="article-share-link" data-share="baidu" data-title="开发编写的 View 控件，是怎么变成屏幕上图像的？">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/f9fd2518/" data-id="ckictyir10008pdcatncas6jj" class="article-share-link" data-share="baidu" data-title="开发编写的 View 控件，是怎么变成屏幕上图像的？">分享到</a>
       
 
       
@@ -197,7 +233,14 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。</p>
+<ol>
+<li>如何插入一个消息屏障？</li>
+<li>如何删除一个消息屏障？</li>
+<li>如何插入一个异步消息？</li>
+<li>消息屏障对插入消息有什么影响？</li>
+<li>消息屏障是如何优先处理异步消息的？</li>
+<li>Framework 中哪里使用了消息屏障？</li>
+</ol>
 </blockquote>
         
           <p class="article-more-link">
@@ -208,7 +251,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/52cb86d4/" data-id="ckictuesq000elvca6cvmav19" class="article-share-link" data-share="baidu" data-title="Android 消息屏障与异步消息">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/52cb86d4/" data-id="ckictyir6000hpdca52hvxhvi" class="article-share-link" data-share="baidu" data-title="Android 消息屏障与异步消息">分享到</a>
       
 
       
@@ -249,7 +292,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>目录：</p>
+        <blockquote>
 <ol>
 <li>线程基础</li>
 <li>线程池</li>
@@ -260,6 +303,7 @@
 <li>线程协作</li>
 <li>AQS 框架</li>
 </ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/d55eb6b/#more">Read More</a>
@@ -269,7 +313,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/d55eb6b/" data-id="ckictuet1001alvcam7ifw80e" class="article-share-link" data-share="baidu" data-title="Java 并发编程知识点总结">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/d55eb6b/" data-id="ckictyirh0019pdcamcm5byd4" class="article-share-link" data-share="baidu" data-title="Java 并发编程知识点总结">分享到</a>
       
 
       
@@ -325,7 +369,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a5b629de/" data-id="ckictueso000dlvcasbcwa6yc" class="article-share-link" data-share="baidu" data-title="Android 方法插桩 plugin 开发实践">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a5b629de/" data-id="ckictyir5000dpdcawg23gkx9" class="article-share-link" data-share="baidu" data-title="Android 方法插桩 plugin 开发实践">分享到</a>
       
 
       
@@ -367,7 +411,14 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>应用在后台运行时，会消耗一部分有限的设备资源，例如 RAM。 这可能会影响用户体验，如果用户正在使用占用大量资源的应用（例如玩游戏或观看视频），影响会尤为明显。 为了提升用户体验，Android 8.0（API 级别 26）对应用在后台运行时可以执行的操作施加了限制。</p>
+<ol>
+<li>限制了什么？</li>
+<li>什么是前台应用?</li>
+<li>正确理解后台服务限制</li>
+<li>后台服务限制源码分析</li>
+<li>适配 Android 8.0 startService 限制策略</li>
+<li>如何绕过 Android 8.0 startService 限制？</li>
+</ol>
 </blockquote>
         
           <p class="article-more-link">
@@ -378,7 +429,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a183dbba/" data-id="ckictueta0025lvcavt0c32f7" class="article-share-link" data-share="baidu" data-title="如何绕过 Android 8.0 startService 限制？">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a183dbba/" data-id="ckictyirr0028pdcazjkvgd9v" class="article-share-link" data-share="baidu" data-title="如何绕过 Android 8.0 startService 限制？">分享到</a>
       
 
       
@@ -419,7 +470,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>GUI 系统综述</li>
+<li>BufferQueue 与图像数据流</li>
+<li>Gralloc</li>
+<li>ANativeWindow</li>
+<li>FrameBufferNativeWindow</li>
+<li>FramebufferSurface</li>
+<li>最后</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/38614e33/#more">Read More</a>
@@ -429,7 +490,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/38614e33/" data-id="ckictueti002ulvca1qvqoqur" class="article-share-link" data-share="baidu" data-title="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/38614e33/" data-id="ckictyirz002vpdcao7q5fpvb" class="article-share-link" data-share="baidu" data-title="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">分享到</a>
       
 
       
@@ -470,7 +531,26 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>深入 binder 驱动内部<ol>
+<li>binder_ioctl</li>
+<li>binder_get_thread</li>
+<li>binder_ioctl_write_read</li>
+<li>binder_thread_write</li>
+<li>binder_transaction</li>
+<li>binder_thread_read</li>
+<li>小结</li>
+</ol>
+</li>
+<li>binder Q&amp;A<ol>
+<li>如何找到目标进程 Binder 实体</li>
+<li>如何实现 Binder 线程的睡眠与唤醒</li>
+</ol>
+</li>
+<li>最后</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/c74cb1a3/#more">Read More</a>
@@ -480,7 +560,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/c74cb1a3/" data-id="ckictueth002qlvcapahk5pg8" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/c74cb1a3/" data-id="ckictyiry002spdcampx28vim" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">分享到</a>
       
 
       
@@ -521,7 +601,17 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>智能指针</li>
+<li>binder 驱动中的结构体</li>
+<li>ProcessState</li>
+<li>IPCThreadState</li>
+<li>BpBinder</li>
+<li>BinderProxy</li>
+<li>ServiceManager getService 流程</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/a8eae25c/#more">Read More</a>
@@ -531,7 +621,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a8eae25c/" data-id="ckictuetj002xlvca5owku272" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a8eae25c/" data-id="ckictyis10030pdcaw76ym8pk" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">分享到</a>
       
 
       
@@ -572,7 +662,29 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br>
+        <blockquote>
+<ol>
+<li>必备知识<ol>
+<li>设备驱动</li>
+<li>文件描述符</li>
+<li>页框</li>
+</ol>
+</li>
+<li>Binder 概述</li>
+<li>binder 驱动<ol>
+<li>binder_open</li>
+<li>binder_mmap</li>
+<li>binder_ioctl</li>
+</ol>
+</li>
+<li>Service Manager<ol>
+<li>启动</li>
+<li>注册与查询</li>
+</ol>
+</li>
+<li>最后</li>
+</ol>
+</blockquote>
         
           <p class="article-more-link">
             <a href="/yhaowa/a7541469/#more">Read More</a>
@@ -582,7 +694,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a7541469/" data-id="ckictuetg002mlvcamlflldai" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a7541469/" data-id="ckictyirw002lpdcaslfdfxia" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（三）Binder 机制 [上]">分享到</a>
       
 
       

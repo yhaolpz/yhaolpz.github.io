@@ -6,21 +6,21 @@
   
   <title>细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下] | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+  <meta name="description" content="深入 binder 驱动内部 binder_ioctl binder_get_thread binder_ioctl_write_read binder_thread_write binder_transaction binder_thread_read 小结   binder Q&amp;amp;A 如何找到目标进程 Binder 实体 如何实现 Binder 线程的睡眠与唤醒   最后">
 <meta name="keywords" content="读书笔记,binder">
 <meta property="og:type" content="article">
 <meta property="og:title" content="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/c74cb1a3/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:description" content="深入 binder 驱动内部 binder_ioctl binder_get_thread binder_ioctl_write_read binder_thread_write binder_transaction binder_thread_read 小结   binder Q&amp;amp;A 如何找到目标进程 Binder 实体 如何实现 Binder 线程的睡眠与唤醒   最后">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/binderDriver.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/serviceManagerBinder.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/binder_design.jpg">
-<meta property="og:updated_time" content="2020-12-06T07:16:30.623Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.348Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">
-<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:description" content="深入 binder 驱动内部 binder_ioctl binder_get_thread binder_ioctl_write_read binder_thread_write binder_transaction binder_thread_read 小结   binder Q&amp;amp;A 如何找到目标进程 Binder 实体 如何实现 Binder 线程的睡眠与唤醒   最后">
 <meta name="twitter:image" content="http://yhaowa.gitee.io/yhaowa/img/binderDriver.png">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -99,8 +99,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
-<blockquote>
+        <blockquote>
 <ol>
 <li>深入 binder 驱动内部<ol>
 <li>binder_ioctl</li>
@@ -120,6 +119,8 @@
 <li>最后</li>
 </ol>
 </blockquote>
+<a id="more"></a>
+<p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em></p>
 <h2 id="深入-binder-驱动内部"><a href="#深入-binder-驱动内部" class="headerlink" title="深入 binder 驱动内部"></a>深入 binder 驱动内部</h2><p>前两篇文章都有提到 binder_ioctl 方法，在 <a href="https://yhaowa.gitee.io/a7541469/">Binder 机制 [上]</a>  中介绍了 binder_ioctl 支持的命令；<a href="https://yhaowa.gitee.io/a7541469/">Binder 机制 [中]</a>  中提到 IPCThreadState 会调用到 binder_ioctl 方法。</p>
 <p>书中对 binder 驱动内部调用的讲解没有分为较清晰的步骤，一口气就是 20 页篇幅的源码详解，理解起来有些难度，容易迷失。在细读了三四遍后，终于感觉对整体有些掌握了，结合前面的学习与自己的理解，将一次 IPC 调用中 binder 驱动的工作分为以下 5 步：</p>
 <p><strong>1.准备数据，根据命令分发给具体的方法去处理<br>2.找到目标进程的相关信息<br>3.将数据一次拷贝到目标进程所映射的物理内存块<br>4.记录待处理的任务，唤醒目标线程<br>5.调用线程进入休眠<br>6.目标进程直接拿到数据进行处理，处理完后唤醒调用线程<br>7.调用线程返回处理结果</strong></p>
@@ -217,7 +218,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/c74cb1a3/" data-id="ckictueth002qlvcapahk5pg8" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/c74cb1a3/" data-id="ckictyiry002spdcampx28vim" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（五）Binder 机制 [下]">分享到</a>
       
 
       

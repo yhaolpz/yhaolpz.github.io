@@ -6,18 +6,18 @@
   
   <title>细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+  <meta name="description" content="进程间通信的经典实现 共享内存 管道 UNIX Domain Socket Remote Procedure Calls   同步机制的经典实现 信号量 Mutex 管程 Linux Futex   Android 中的进程间同步机制 进程间同步 Mutex 条件判断 Condition 加解锁的自动化操作 Autolock Mutex+Autolock+Condition 示例   最后">
 <meta name="keywords" content="Linux IPC,Mutex,Autolock,读书笔记">
 <meta property="og:type" content="article">
 <meta property="og:title" content="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/12a8b16b/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:description" content="进程间通信的经典实现 共享内存 管道 UNIX Domain Socket Remote Procedure Calls   同步机制的经典实现 信号量 Mutex 管程 Linux Futex   Android 中的进程间同步机制 进程间同步 Mutex 条件判断 Condition 加解锁的自动化操作 Autolock Mutex+Autolock+Condition 示例   最后">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.219Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.313Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">
-<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:description" content="进程间通信的经典实现 共享内存 管道 UNIX Domain Socket Remote Procedure Calls   同步机制的经典实现 信号量 Mutex 管程 Linux Futex   Android 中的进程间同步机制 进程间同步 Mutex 条件判断 Condition 加解锁的自动化操作 Autolock Mutex+Autolock+Condition 示例   最后">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -95,8 +95,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
-<blockquote>
+        <blockquote>
 <ol>
 <li>进程间通信的经典实现<ol>
 <li>共享内存</li>
@@ -122,6 +121,8 @@
 <li>最后</li>
 </ol>
 </blockquote>
+<a id="more"></a>
+<p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em></p>
 <h2 id="进程间通信的经典实现"><a href="#进程间通信的经典实现" class="headerlink" title="进程间通信的经典实现"></a>进程间通信的经典实现</h2><p>进程间通信（Inter-process communication，IPC）指运行在不同进程中的若干线程间的数据交换，可发生在同一台机器上，也可通过网络跨机器实现，以下几种因高效稳定的优点几乎被应用在所有操作系统中，分别是共享内存、管道、UNIX Domain Socket 和 RPC 。</p>
 <h3 id="共享内存"><a href="#共享内存" class="headerlink" title="共享内存"></a>共享内存</h3><p>共享内存是一种常用的进程间通信机制，不同进程可以直接共享访问同一块内存区域，避免了数据拷贝，速度较快。实现步骤：</p>
 <ol>
@@ -212,7 +213,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/12a8b16b/" data-id="ckictuete002ilvcaf18fz66k" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/12a8b16b/" data-id="ckictyirv002ipdca2v9gdnoc" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（一）进程间通信与同步机制">分享到</a>
       
 
       

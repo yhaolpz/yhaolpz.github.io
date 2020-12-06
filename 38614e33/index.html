@@ -6,21 +6,21 @@
   
   <title>细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上] | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+  <meta name="description" content="GUI 系统综述 BufferQueue 与图像数据流 Gralloc ANativeWindow FrameBufferNativeWindow FramebufferSurface 最后">
 <meta name="keywords" content="BufferQueue,GUI,ANativeWindow,Gralloc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/38614e33/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:description" content="GUI 系统综述 BufferQueue 与图像数据流 Gralloc ANativeWindow FrameBufferNativeWindow FramebufferSurface 最后">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/ape_fwk_graphics.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/bufferqueue.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/Gralloc.jpg">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.217Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.311Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">
-<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:description" content="GUI 系统综述 BufferQueue 与图像数据流 Gralloc ANativeWindow FrameBufferNativeWindow FramebufferSurface 最后">
 <meta name="twitter:image" content="http://yhaowa.gitee.io/yhaowa/img/ape_fwk_graphics.png">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -99,8 +99,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
-<blockquote>
+        <blockquote>
 <ol>
 <li>GUI 系统综述</li>
 <li>BufferQueue 与图像数据流</li>
@@ -111,6 +110,8 @@
 <li>最后</li>
 </ol>
 </blockquote>
+<a id="more"></a>
+<p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em></p>
 <h2 id="GUI-系统综述"><a href="#GUI-系统综述" class="headerlink" title="GUI 系统综述"></a>GUI 系统综述</h2><p>GUI（Graphical User Interface）即图形用户界面，官方架构图如下：</p>
 <p><img src="../img/ape_fwk_graphics.png" alt></p>
 <p><strong>IMAGE STREAM PRODUCERS 图像流生产方</strong>：生成图形缓冲区以供消耗的任何内容，例如 OpenGL ES、Canvas 2D 和 mediaserver 视频解码器都是图像流生产方。</p>
@@ -172,7 +173,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/38614e33/" data-id="ckictueti002ulvca1qvqoqur" class="article-share-link" data-share="baidu" data-title="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/38614e33/" data-id="ckictyirz002vpdcao7q5fpvb" class="article-share-link" data-share="baidu" data-title="细读《深入理解-Android-内核设计思想》（六）GUI 系统 [上]">分享到</a>
       
 
       

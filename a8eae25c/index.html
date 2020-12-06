@@ -6,21 +6,21 @@
   
   <title>细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中] | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+  <meta name="description" content="智能指针 binder 驱动中的结构体 ProcessState IPCThreadState BpBinder BinderProxy ServiceManager getService 流程">
 <meta name="keywords" content="读书笔记,binder,ProcessState,IPCThreadState,BpBinder,BinderProxy">
 <meta property="og:type" content="article">
 <meta property="og:title" content="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/a8eae25c/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:description" content="智能指针 binder 驱动中的结构体 ProcessState IPCThreadState BpBinder BinderProxy ServiceManager getService 流程">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/binder_proc.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/BinderProxy.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/transact.jpg">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.210Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.304Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">
-<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:description" content="智能指针 binder 驱动中的结构体 ProcessState IPCThreadState BpBinder BinderProxy ServiceManager getService 流程">
 <meta name="twitter:image" content="http://yhaowa.gitee.io/yhaowa/img/binder_proc.png">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -99,8 +99,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
-<blockquote>
+        <blockquote>
 <ol>
 <li>智能指针</li>
 <li>binder 驱动中的结构体</li>
@@ -111,6 +110,8 @@
 <li>ServiceManager getService 流程</li>
 </ol>
 </blockquote>
+<a id="more"></a>
+<p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em></p>
 <h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2><p>在 binder 相关源码可以看到 sp、wp 类型的引用：<br><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sp&lt;IBinder&gt; result = new BpBinder(handle);</span><br><span class="line"></span><br><span class="line">wp&lt;IBinder&gt; result = new BpBinder(handle);</span><br></pre></td></tr></table></figure></p>
 <p>sp 即 strong pointer 强指针引用；wp 是 weak pointer 弱指针引用。在 Java 中我们不用关心对象的销毁及内存释放，GC 机制会自动辨别回收无用对象，而<strong>智能指针</strong>就是 native 层一个小型的 GC 实现。</p>
 <p>智能指针以引用计数的方式来标识无用对象，使用智能指针的对象需继承自 RefBase，RefBase 中维护了此对象被强引用数量和弱引用数量。</p>
@@ -248,7 +249,7 @@ Binder Driver->Client:BR_REPLY</textarea><textarea id="sequence-0-options" style
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/a8eae25c/" data-id="ckictuetj002xlvca5owku272" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/a8eae25c/" data-id="ckictyis10030pdcaw76ym8pk" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（四）Binder 机制 [中]">分享到</a>
       
 
       

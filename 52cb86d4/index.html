@@ -6,18 +6,18 @@
   
   <title>Android 消息屏障与异步消息 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。">
+  <meta name="description" content="如何插入一个消息屏障？ 如何删除一个消息屏障？ 如何插入一个异步消息？ 消息屏障对插入消息有什么影响？ 消息屏障是如何优先处理异步消息的？ Framework 中哪里使用了消息屏障？">
 <meta name="keywords" content="handler">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Android 消息屏障与异步消息">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/52cb86d4/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。">
+<meta property="og:description" content="如何插入一个消息屏障？ 如何删除一个消息屏障？ 如何插入一个异步消息？ 消息屏障对插入消息有什么影响？ 消息屏障是如何优先处理异步消息的？ Framework 中哪里使用了消息屏障？">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T06:59:08.623Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.334Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 消息屏障与异步消息">
-<meta name="twitter:description" content="Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。">
+<meta name="twitter:description" content="如何插入一个消息屏障？ 如何删除一个消息屏障？ 如何插入一个异步消息？ 消息屏障对插入消息有什么影响？ 消息屏障是如何优先处理异步消息的？ Framework 中哪里使用了消息屏障？">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -96,10 +96,6 @@
     <div class="article-entry" itemprop="articleBody">
       
         <blockquote>
-<p>Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。</p>
-</blockquote>
-<a id="more"></a>
-<p><strong>目录：</strong></p>
 <ol>
 <li>如何插入一个消息屏障？</li>
 <li>如何删除一个消息屏障？</li>
@@ -108,6 +104,9 @@
 <li>消息屏障是如何优先处理异步消息的？</li>
 <li>Framework 中哪里使用了消息屏障？</li>
 </ol>
+</blockquote>
+<a id="more"></a>
+<p>Android 消息机制中的 MessageQueue 可以存放三种类型的消息，普通消息、消息屏障和异步消息。其中消息屏障和异步消息搭配使用，可以达到屏蔽普通消息、优先处理异步消息的目的。</p>
 <h4 id="1-如何插入一个消息屏障？"><a href="#1-如何插入一个消息屏障？" class="headerlink" title="1. 如何插入一个消息屏障？"></a>1. 如何插入一个消息屏障？</h4><p>见 MessageQueue 的 postSyncBarrier 方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">postSyncBarrier</span><span class="params">(<span class="keyword">long</span> when)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">int</span> token = mNextBarrierToken++;</span><br><span class="line">        <span class="keyword">final</span> Message msg = Message.obtain();</span><br><span class="line">        msg.markInUse();</span><br><span class="line">        msg.when = when;</span><br><span class="line">        msg.arg1 = token;</span><br><span class="line">        <span class="comment">//按时间排序插入到队列中...</span></span><br><span class="line">        <span class="keyword">return</span> token;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol>
@@ -146,7 +145,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/52cb86d4/" data-id="ckictuesq000elvca6cvmav19" class="article-share-link" data-share="baidu" data-title="Android 消息屏障与异步消息">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/52cb86d4/" data-id="ckictyir6000hpdca52hvxhvi" class="article-share-link" data-share="baidu" data-title="Android 消息屏障与异步消息">分享到</a>
       
 
       

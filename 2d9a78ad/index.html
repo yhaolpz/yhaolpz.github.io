@@ -6,18 +6,18 @@
   
   <title>细读《深入理解 Android 内核设计思想》（二）内存管理 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+  <meta name="description" content="操作系统内存管理基础 虚拟内存 内存分配与回收 mmap Copy on Write   Android 内存管理 Low Memory Killer Ashmem 驱动 MemoryFile 原理   总结">
 <meta name="keywords" content="mmap,读书笔记,虚拟内存,COW,LMK,Ashmem">
 <meta property="og:type" content="article">
 <meta property="og:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/2d9a78ad/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta property="og:description" content="操作系统内存管理基础 虚拟内存 内存分配与回收 mmap Copy on Write   Android 内存管理 Low Memory Killer Ashmem 驱动 MemoryFile 原理   总结">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.233Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.330Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="细读《深入理解 Android 内核设计思想》（二）内存管理">
-<meta name="twitter:description" content="对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版">
+<meta name="twitter:description" content="操作系统内存管理基础 虚拟内存 内存分配与回收 mmap Copy on Write   Android 内存管理 Low Memory Killer Ashmem 驱动 MemoryFile 原理   总结">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
   
@@ -95,8 +95,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em><br><a id="more"></a></p>
-<blockquote>
+        <blockquote>
 <ol>
 <li>操作系统内存管理基础<ol>
 <li>虚拟内存</li>
@@ -114,6 +113,8 @@
 <li>总结</li>
 </ol>
 </blockquote>
+<a id="more"></a>
+<p><em>对冗余挑拣重点，对重点深入补充，输出结构清晰的精简版</em></p>
 <h2 id="操作系统内存管理基础"><a href="#操作系统内存管理基础" class="headerlink" title="操作系统内存管理基础"></a>操作系统内存管理基础</h2><p>不论什么操作系统，内存管理都是绝对的重点和难点。内存管理旨在为系统中所有 Task 提供稳定可靠的内存分配、释放和保护机制。你可能会疑问，学习 Android 系统有必要了解 Linux Kernel 的内存管理机制吗？</p>
 <p>是的！不论是 Android 的音频系统、GUI 系统，还是 Binder 的实现机理等，都是和内存管理息息相关的。</p>
 <h3 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h3><p>虚拟内存就是当内存资源不足时，借用硬盘中的一部分的空间，充当内存使用。系统会挑选优先级低的内存数据放入硬盘，后续若要用到硬盘中的数据，系统会产生一次<strong>缺页中断</strong>，然后把数据交换回内存中。</p>
@@ -265,7 +266,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/2d9a78ad/" data-id="ckictuetg002olvcaulw5fqwf" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（二）内存管理">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/2d9a78ad/" data-id="ckictyirx002ppdcavg9s88dr" class="article-share-link" data-share="baidu" data-title="细读《深入理解 Android 内核设计思想》（二）内存管理">分享到</a>
       
 
       

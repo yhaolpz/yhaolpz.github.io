@@ -6,22 +6,22 @@
   
   <title>带你彻底理解 Window 和 WindowManager | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：">
+  <meta name="description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
 <meta name="keywords" content="window,wms">
 <meta property="og:type" content="article">
 <meta property="og:title" content="带你彻底理解 Window 和 WindowManager">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/9cf3ee4d/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：">
+<meta property="og:description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-4dc2eebed4c383ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-70dfe9d03a79cad4?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
 <meta property="og:image" content="http://upload-images.jianshu.io/upload_images/4679478-c1204a1a543f1417?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
-<meta property="og:updated_time" content="2020-12-06T07:13:14.230Z">
+<meta property="og:updated_time" content="2020-12-06T09:18:58.325Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="带你彻底理解 Window 和 WindowManager">
-<meta name="twitter:description" content="有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：">
+<meta name="twitter:description" content="WindowManagerService Window 分类 WindowManager 使用 WindowManager 的内部机制 Window 的创建过程 总结">
 <meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -100,8 +100,18 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：</p>
+        <blockquote>
+<ol>
+<li>WindowManagerService</li>
+<li>Window 分类</li>
+<li>WindowManager 使用</li>
+<li>WindowManager 的内部机制</li>
+<li>Window 的创建过程</li>
+<li>总结</li>
+</ol>
+</blockquote>
 <a id="more"></a>
+<p>有时候我们需要在桌面上显示一个类似悬浮窗的东西，这种效果就需要用 Window 来实现，Window 是一个抽象类，表示一个窗口，它的具体实现类是 PhoneWindow，实现位于 WindowManagerService 中。相信看到 WindowManagerService 你会有点眼熟，刚接触 Android 时几乎所有人都看到过这样一张图：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/4679478-17fabe616c82c91e?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
 <h1 id="WindowManagerService"><a href="#WindowManagerService" class="headerlink" title="WindowManagerService"></a><strong>WindowManagerService</strong></h1><p>WindowManagerService 就是位于 Framework 层的窗口管理服务，它的职责就是管理系统中的所有窗口。窗口的本质是什么呢？其实就是一块显示区域，在 Android 中就是绘制的画布：Surface，当一块 Surface 显示在屏幕上时，就是用户所看到的窗口了。WindowManagerService 添加一个窗口的过程，其实就是 WindowManagerService 为其分配一块 Surface 的过程，一块块的 Surface 在 WindowManagerService 的管理下有序的排列在屏幕上，Android 才得以呈现出多姿多彩的界面。于是根据对 Surface 的操作类型可以将 Android 的显示系统分为三个层次，如下图：</p>
 <p><img src="http://upload-images.jianshu.io/upload_images/4679478-4dc2eebed4c383ee?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="这里写图片描述"></p>
@@ -194,7 +204,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/9cf3ee4d/" data-id="ckictuetc002blvcaoobjhlg1" class="article-share-link" data-share="baidu" data-title="带你彻底理解 Window 和 WindowManager">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/9cf3ee4d/" data-id="ckictyiru002dpdcaj99bu2ue" class="article-share-link" data-share="baidu" data-title="带你彻底理解 Window 和 WindowManager">分享到</a>
       
 
       
