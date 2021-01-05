@@ -1,0 +1,333 @@
+
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+  <title>Android APT 开发实践 | what is your main focus for today?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.">
+<meta name="keywords" content="APT,JavaPoet,ViewModel">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android APT 开发实践">
+<meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/28077273/index.html">
+<meta property="og:site_name" content="what is your main focus for today?">
+<meta property="og:description" content="基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2021-01-05T16:39:54.812Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android APT 开发实践">
+<meta name="twitter:description" content="基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.">
+  
+    <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/yhaowa/css/style.css">
+  <!--[if lt IE 9]><script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7/html5shiv.min.js"></script><![endif]-->
+  
+</head></html>
+<body>
+<div id="container">
+  <div id="wrap">
+    <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/yhaowa/" id="logo">what is your main focus for today?</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/yhaowa/">首页</a>
+        
+          <a class="main-nav-link" href="/yhaowa/archives">归档</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//www.baidu.com/baidu" method="get" accept-charset="utf-8" class="search-form">
+          <input type="search" name="word" maxlength="20" class="search-form-input" placeholder="Search">
+          <input type="submit" value="" class="search-form-submit">
+          <input name=tn type=hidden value="bds">
+          <input name=cl type=hidden value="3">
+          <input name=ct type=hidden value="2097152">
+          <input type="hidden" name="si" value="yhaowa.gitee.io/yhaowa">
+        </form>
+      </div>
+    </div>
+  </div>
+</header>
+    <div class="outer">
+      <section id="main"><article id="post-Android-APT-开发实践" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/yhaowa/28077273/" class="article-date">
+  <time datetime="2021-01-05T15:00:30.000Z" itemprop="datePublished">2021-01-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/yhaowa/categories/Android/">Android</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Android APT 开发实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.</p>
+</blockquote>
+<a id="more"></a>
+<p>项目界面需求较特殊，需频繁新增 Activity/Fragment，虽基于 ViewModel、LiveData 的 MVVM 模式已将 View 与 Model 彻底解耦，数据获取及处理逻辑可直接复用，但仍存在一些样板代码。</p>
+<p>举个例子，新增一个需要展示用户信息和书籍信息的 MainActivity，那就要新增对应的 ViewModel：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainActivityViewModel</span> <span class="keyword">extends</span> <span class="title">ViewModel</span> </span>&#123; </span><br><span class="line">  <span class="keyword">private</span> UserDataStore mUserDataStore = <span class="keyword">new</span> UserDataStore();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> BookDataStore mBookDataStore = <span class="keyword">new</span> BookDataStore();</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> UserDataStore <span class="title">getUserDataStore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mUserDataStore;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> BookDataStore <span class="title">getBookDataStore</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mBookDataStore;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如何规避编写这样的样板代码呢？想要实现的效果如下，在 MainActivity 中添加注解，列出该界面需使用的 Model：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ViewModelAutoGen</span>(&#123;</span><br><span class="line">    UserDataStore<span class="class">.<span class="keyword">class</span>,</span></span><br><span class="line"><span class="class">    <span class="title">BookDataStore</span>.<span class="title">class</span></span></span><br><span class="line"><span class="class">&#125;)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">MainActivity</span> <span class="keyword">extends</span> <span class="title">AppCompatActivity</span> </span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
+<p>然后 Make Project 编译一下，自动生成 MainActivityViewModel 类，无需手动编写。</p>
+<p>而基于 APT、JavaPoet 可以实现这个需求，先简单了解下它们。</p>
+<p><strong>APT</strong> 即 Annotation Processing Tool，编译时注解处理器，是 javac 的一个工具，用于编译时扫描和处理注解。通过 APT 可以获取到注解和被注解对象的相关信息，在拿到这些信息后我们可以根据需求自动生成一些代码，省去手动编写。获取注解及生成代码在代码编译期完成，相比反射在运行时处理注解大大提高了程序性能。</p>
+<p><strong>JavaPoet</strong> 是一个辅助生成 Java 源代码的工具库，APT 结合 JavaPoet，可以便捷的生成代码。</p>
+<p>下面来看具体如何实现，首先创建一个 java-library ViewModelAnnotation，在其中定义注解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ViewModelAutoGen &#123;</span><br><span class="line">    Class[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再创建一个 java-library ViewModelAnnotationProcessor ，在其中处理注解，处理类需继承 AutoService 并添加特定注解标注，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AutoService</span>(Processor<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ViewModelAnnotationProcessor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而最关键的代码生成逻辑就在此类中了，代码见 <a href="https://github.com/yhaolpz/AptSample/blob/master/ViewModelAnnotationProcessor/src/main/java/com/wyh/viewmodel/annotation/processor/ViewModelAnnotationProcessor.java" target="_blank" rel="noopener">ViewModelAnnotationProcessor.java</a>。</p>
+<p>外部导入时需通过 <strong>annotationProcessor</strong> 使其支持编译时注解处理：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">dependencies &#123;</span><br><span class="line">    <span class="function">annotationProcessor <span class="title">project</span><span class="params">(<span class="string">':ViewModelAnnotationProcessor'</span>)</span></span></span><br><span class="line"><span class="function">    implementation <span class="title">project</span><span class="params">(<span class="string">':ViewModelAnnotation'</span>)</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>完整 Sample 见 <a href="https://github.com/yhaolpz/AptSample" target="_blank" rel="noopener">https://github.com/yhaolpz/AptSample</a>.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      
+        <a data-url="http://yhaowa.gitee.io/yhaowa/28077273/" data-id="ckjk4jayg0002ngca7seohkey" class="article-share-link" data-share="baidu" data-title="Android APT 开发实践">分享到</a>
+      
+
+      
+
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/APT/">APT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/JavaPoet/">JavaPoet</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/yhaowa/tags/ViewModel/">ViewModel</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/yhaowa/649d55e5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">Android Handler epoll 机制分析</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+      
+      <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/APT/" style="font-size: 10px;">APT</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/JavaPoet/" style="font-size: 10px;">JavaPoet</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ViewModel/" style="font-size: 10px;">ViewModel</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">近期文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/yhaowa/28077273/">Android APT 开发实践</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/f9fd2518/">开发编写的 View 控件，是怎么变成屏幕上图像的？</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/52cb86d4/">Android 消息屏障与异步消息</a>
+          </li>
+        
+          <li>
+            <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">友情链接</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="https://github.com/yhaolpz" target="_blank">我的「GitHub」</a>
+          </li>
+        
+          <li>
+            <a href="http://blog.csdn.net/yhaolpz" target="_blank">我的「CSDN」</a>
+          </li>
+        
+          <li>
+            <a href="https://moonshoter.github.io/" target="_blank">Moonshot</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      
+    </div>
+    <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2021 Ahab<br>
+      Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
+      .
+      Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
+    </div>
+  </div>
+</footer>
+  </div>
+  <nav id="mobile-nav">
+  
+    <a href="/yhaowa/" class="mobile-nav-link">首页</a>
+  
+    <a href="/yhaowa/archives" class="mobile-nav-link">归档</a>
+  
+</nav>
+  <!-- totop start -->
+<div id="totop">
+<a title="返回顶部"><img src="/yhaowa/img/scrollup.png"/></a>
+</div>
+
+<!-- totop end -->
+
+
+<!-- 百度分享 start -->
+
+<div id="article-share-box" class="article-share-box">
+  <div id="bdshare" class="bdsharebuttonbox article-share-links">
+    <a class="article-share-weibo" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a class="article-share-weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a class="article-share-qq" data-cmd="sqq" title="分享到QQ"></a>
+    <a class="article-share-renren" data-cmd="renren" title="分享到人人网"></a>
+    <a class="article-share-more" data-cmd="more" title="更多"></a>
+  </div>
+</div>
+<script>
+  function SetShareData(cmd, config) {
+    if (shareDataTitle && shareDataUrl) {
+      config.bdText = shareDataTitle;
+      config.bdUrl = shareDataUrl;
+    }
+    return config;
+  }
+  window._bd_share_config={
+    "common":{onBeforeClick: SetShareData},
+    "share":{"bdCustomStyle":"/yhaowa/css/bdshare.css"}
+  };
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+<!-- 百度分享 end -->
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/yhaowa/fancybox/jquery.fancybox.css">
+  <script src="/yhaowa/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<! -- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+                processEscapes: true
+                    
+}
+  
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+                  
+}
+    
+        });
+</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Queue(function() {
+            var all = MathJax.Hub.getAllJax(), i;
+            for(i=0; i < all.length; i += 1) {
+                            all[i].SourceElement().parentNode.className += ' has-jax';
+                                    
+            }
+                
+        });
+</script>
+
+<script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+<script src="/yhaowa/js/script.js"></script>
+
+</div>
+</body>
+</html>

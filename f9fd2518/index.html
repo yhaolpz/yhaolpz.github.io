@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="what is your main focus for today?">
 <meta property="og:description" content="Activity 与 Window setContentView 原理 Activity 窗口添加过程   UI 刷新机制 发起 UI 重绘请求 执行 UI 绘制时机 vsync 信号的生成 vsync 信号的分发 SurfaceFlinger -&amp;gt; DispSync DispSync -&amp;gt; DispSyncSource DispSyncSource -&amp;gt; EventThre">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2020-12-06T14:24:02.937Z">
+<meta property="og:updated_time" content="2021-01-03T14:31:26.468Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="开发编写的 View 控件，是怎么变成屏幕上图像的？">
 <meta name="twitter:description" content="Activity 与 Window setContentView 原理 Activity 窗口添加过程   UI 刷新机制 发起 UI 重绘请求 执行 UI 绘制时机 vsync 信号的生成 vsync 信号的分发 SurfaceFlinger -&amp;gt; DispSync DispSync -&amp;gt; DispSyncSource DispSyncSource -&amp;gt; EventThre">
@@ -117,7 +117,12 @@
 </ol>
 </li>
 <li>UI 绘制流程</li>
-<li>Surface 与 SurfaceFlinger</li>
+<li>Surface 原理<ol>
+<li>Surface 创建流程</li>
+<li>Surface 的跨进程传递</li>
+<li>GraphicBufferProducer</li>
+</ol>
+</li>
 </ol>
 </blockquote>
 <a id="more"></a>
@@ -287,12 +292,15 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Called from native code.</span></span><br><span class="line"><span class="meta">@SuppressWarnings</span>(<span class="string">"unused"</span>)</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchVsync</span><span class="params">(<span class="keyword">long</span> timestampNanos, <span class="keyword">int</span> builtInDisplayId, <span class="keyword">int</span> frame)</span> </span>&#123;</span><br><span class="line">    onVsync(timestampNanos, builtInDisplayId, frame);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>随后进一步回调到 Choreographer 的 doFrame，执行 ViewRootImpl 传过来的 TraversalRunnable、调用 performTraversals 方法，由顶而下的执行界面绘制逻辑。</p>
 <p>小结一下：vsync 信号分为 SurfaceFlinger、app 两路分发，这两路分别对应于一个 EventThread。当 vsync 信号到来时，会唤醒 EventThread 线程，然后 EventThread 通过注册到内部的 Connection 分发出去。Connection 进一步通过 BitTube 并使用消息机制 looper 监听 BitTube 的 fd，从而实现 vsync 的分发。</p>
-<h1 id="3-UI-绘制流程"><a href="#3-UI-绘制流程" class="headerlink" title="3. UI 绘制流程"></a>3. UI 绘制流程</h1><h1 id="4-Surface-与-SurfaceFlinger"><a href="#4-Surface-与-SurfaceFlinger" class="headerlink" title="4. Surface 与 SurfaceFlinger"></a>4. Surface 与 SurfaceFlinger</h1>
+<h1 id="3-UI-绘制流程"><a href="#3-UI-绘制流程" class="headerlink" title="3. UI 绘制流程"></a>3. UI 绘制流程</h1><h1 id="4-Surface-原理"><a href="#4-Surface-原理" class="headerlink" title="4. Surface 原理"></a>4. Surface 原理</h1><h3 id="1-Surface-存在的意义"><a href="#1-Surface-存在的意义" class="headerlink" title="1. Surface 存在的意义"></a>1. Surface 存在的意义</h3><p>Android GUI 系统中有两类本地窗口，FramebufferNativeWindow 和 Surface。FramebufferNativeWindow 面向 SurfaceFlinger，使用了帧缓冲区，用于直接显示在屏幕上；而 Surface 面向应用程序，是从内存缓冲区分配的空间。</p>
+<p>为什么要有面向应用程序的图像缓冲区 Surface 呢？只有屏幕显示帧缓冲区不可以吗？假如系统中只有一个需要显示 UI 的程序，仅有帧缓冲区确实可以胜任，但如果有多个 UI 程序的话，每个程序都要使用 FrameBuffer，这就像幼儿园的几个小朋友共用一个画板来涂鸦一样，”五彩斑斓”、”创意无限”。</p>
+<p>所以需要有面向应用程序的 Surface，供应用程序独立的准备其图像数据。SurfaceFlinger 会收集所有应用程序的的 Surface，对它们进行统一的混合操作，然后输出到屏幕显示帧缓冲区上，从而保证多个应用程序图像可以被有序的显示到屏幕上。</p>
+<h3 id="2-Surface-创建流程"><a href="#2-Surface-创建流程" class="headerlink" title="2. Surface 创建流程"></a>2. Surface 创建流程</h3><h3 id="3-GraphicBufferProducer"><a href="#3-GraphicBufferProducer" class="headerlink" title="3. GraphicBufferProducer"></a>3. GraphicBufferProducer</h3><h3 id="1-BufferQueue"><a href="#1-BufferQueue" class="headerlink" title="1. BufferQueue"></a>1. BufferQueue</h3><h3 id="1-Canvas-和-Surface"><a href="#1-Canvas-和-Surface" class="headerlink" title="1. Canvas 和 Surface"></a>1. Canvas 和 Surface</h3><h3 id="window-surface-Layer-BufferQueue-关系"><a href="#window-surface-Layer-BufferQueue-关系" class="headerlink" title="window surface  Layer  BufferQueue 关系"></a>window surface  Layer  BufferQueue 关系</h3><h3 id="skia-和-OpenGL"><a href="#skia-和-OpenGL" class="headerlink" title="skia 和 OpenGL"></a>skia 和 OpenGL</h3>
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/f9fd2518/" data-id="ckicycdi800097bca5iho1hmg" class="article-share-link" data-share="baidu" data-title="开发编写的 View 控件，是怎么变成屏幕上图像的？">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/f9fd2518/" data-id="ckjk4jayp000fngcacqhgdrvs" class="article-share-link" data-share="baidu" data-title="开发编写的 View 控件，是怎么变成屏幕上图像的？">分享到</a>
       
 
       
@@ -334,7 +342,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">12</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Android/">Android</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Framework/">Framework</a><span class="category-list-count">10</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/Java/">Java</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/深度学习/">深度学习</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/yhaowa/categories/音视频/">音视频</a><span class="category-list-count">11</span></li></ul>
     </div>
   </div>
 
@@ -343,7 +351,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
+      <a href="/yhaowa/tags/ANativeWindow/" style="font-size: 10px;">ANativeWindow</a> <a href="/yhaowa/tags/APT/" style="font-size: 10px;">APT</a> <a href="/yhaowa/tags/Ashmem/" style="font-size: 10px;">Ashmem</a> <a href="/yhaowa/tags/Autolock/" style="font-size: 10px;">Autolock</a> <a href="/yhaowa/tags/BinderProxy/" style="font-size: 10px;">BinderProxy</a> <a href="/yhaowa/tags/BpBinder/" style="font-size: 10px;">BpBinder</a> <a href="/yhaowa/tags/BufferQueue/" style="font-size: 10px;">BufferQueue</a> <a href="/yhaowa/tags/COW/" style="font-size: 10px;">COW</a> <a href="/yhaowa/tags/Caffe/" style="font-size: 10px;">Caffe</a> <a href="/yhaowa/tags/FFmpeg/" style="font-size: 20px;">FFmpeg</a> <a href="/yhaowa/tags/Fmod/" style="font-size: 10px;">Fmod</a> <a href="/yhaowa/tags/GUI/" style="font-size: 10px;">GUI</a> <a href="/yhaowa/tags/Glide/" style="font-size: 10px;">Glide</a> <a href="/yhaowa/tags/Gralloc/" style="font-size: 10px;">Gralloc</a> <a href="/yhaowa/tags/IPCThreadState/" style="font-size: 10px;">IPCThreadState</a> <a href="/yhaowa/tags/JavaPoet/" style="font-size: 10px;">JavaPoet</a> <a href="/yhaowa/tags/LMK/" style="font-size: 10px;">LMK</a> <a href="/yhaowa/tags/Linux-IPC/" style="font-size: 10px;">Linux IPC</a> <a href="/yhaowa/tags/Linux-driver/" style="font-size: 10px;">Linux driver</a> <a href="/yhaowa/tags/Mutex/" style="font-size: 10px;">Mutex</a> <a href="/yhaowa/tags/OpenGL/" style="font-size: 12.5px;">OpenGL</a> <a href="/yhaowa/tags/ProcessState/" style="font-size: 10px;">ProcessState</a> <a href="/yhaowa/tags/RecycleView/" style="font-size: 12.5px;">RecycleView</a> <a href="/yhaowa/tags/Service-Manager/" style="font-size: 10px;">Service Manager</a> <a href="/yhaowa/tags/SoundTouch/" style="font-size: 10px;">SoundTouch</a> <a href="/yhaowa/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/yhaowa/tags/ViewModel/" style="font-size: 10px;">ViewModel</a> <a href="/yhaowa/tags/ams/" style="font-size: 10px;">ams</a> <a href="/yhaowa/tags/aop/" style="font-size: 10px;">aop</a> <a href="/yhaowa/tags/asm/" style="font-size: 10px;">asm</a> <a href="/yhaowa/tags/binder/" style="font-size: 15px;">binder</a> <a href="/yhaowa/tags/cmake/" style="font-size: 10px;">cmake</a> <a href="/yhaowa/tags/epoll/" style="font-size: 10px;">epoll</a> <a href="/yhaowa/tags/h264/" style="font-size: 10px;">h264</a> <a href="/yhaowa/tags/handler/" style="font-size: 12.5px;">handler</a> <a href="/yhaowa/tags/ijkplayer/" style="font-size: 15px;">ijkplayer</a> <a href="/yhaowa/tags/kotlin/" style="font-size: 10px;">kotlin</a> <a href="/yhaowa/tags/log/" style="font-size: 10px;">log</a> <a href="/yhaowa/tags/mmap/" style="font-size: 12.5px;">mmap</a> <a href="/yhaowa/tags/plugin/" style="font-size: 10px;">plugin</a> <a href="/yhaowa/tags/service/" style="font-size: 10px;">service</a> <a href="/yhaowa/tags/startActivity/" style="font-size: 10px;">startActivity</a> <a href="/yhaowa/tags/surface/" style="font-size: 10px;">surface</a> <a href="/yhaowa/tags/vsync/" style="font-size: 10px;">vsync</a> <a href="/yhaowa/tags/window/" style="font-size: 12.5px;">window</a> <a href="/yhaowa/tags/wms/" style="font-size: 10px;">wms</a> <a href="/yhaowa/tags/侧滑菜单/" style="font-size: 12.5px;">侧滑菜单</a> <a href="/yhaowa/tags/内部类/" style="font-size: 10px;">内部类</a> <a href="/yhaowa/tags/刘海屏适配/" style="font-size: 10px;">刘海屏适配</a> <a href="/yhaowa/tags/单例/" style="font-size: 10px;">单例</a> <a href="/yhaowa/tags/并发编程/" style="font-size: 10px;">并发编程</a> <a href="/yhaowa/tags/开发模式/" style="font-size: 10px;">开发模式</a> <a href="/yhaowa/tags/总结/" style="font-size: 10px;">总结</a> <a href="/yhaowa/tags/悬浮窗/" style="font-size: 10px;">悬浮窗</a> <a href="/yhaowa/tags/比特率/" style="font-size: 10px;">比特率</a> <a href="/yhaowa/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/yhaowa/tags/虚拟内存/" style="font-size: 10px;">虚拟内存</a> <a href="/yhaowa/tags/读书笔记/" style="font-size: 17.5px;">读书笔记</a> <a href="/yhaowa/tags/采样率/" style="font-size: 10px;">采样率</a>
     </div>
   </div>
 
@@ -353,6 +361,10 @@
     <h3 class="widget-title">近期文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/yhaowa/28077273/">Android APT 开发实践</a>
+          </li>
         
           <li>
             <a href="/yhaowa/649d55e5/">Android Handler epoll 机制分析</a>
@@ -368,10 +380,6 @@
         
           <li>
             <a href="/yhaowa/d55eb6b/">Java 并发编程知识点总结</a>
-          </li>
-        
-          <li>
-            <a href="/yhaowa/a5b629de/">Android 方法插桩 plugin 开发实践</a>
           </li>
         
       </ul>
@@ -409,7 +417,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 Ahab<br>
+      &copy; 2021 Ahab<br>
       Powered by <a href="//hexo.io/" target="_blank">Hexo</a>
       .
       Theme by <a href="https://github.com/xiangming/landscape-plus" target="_blank">Landscape-plus</a>
