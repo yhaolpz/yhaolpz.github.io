@@ -14,7 +14,7 @@
 <meta property="og:site_name" content="what is your main focus for today?">
 <meta property="og:description" content="基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2021-01-05T16:39:54.812Z">
+<meta property="og:updated_time" content="2021-01-05T16:44:49.746Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android APT 开发实践">
 <meta name="twitter:description" content="基于 APT、JavaPoet，自动生成 Activity/Fragment 对应的 ViewModel.">
@@ -110,7 +110,7 @@
 <p><strong>JavaPoet</strong> 是一个辅助生成 Java 源代码的工具库，APT 结合 JavaPoet，可以便捷的生成代码。</p>
 <p>下面来看具体如何实现，首先创建一个 java-library ViewModelAnnotation，在其中定义注解：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)</span><br><span class="line"><span class="meta">@Target</span>(&#123;ElementType.TYPE&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ViewModelAutoGen &#123;</span><br><span class="line">    Class[] value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后再创建一个 java-library ViewModelAnnotationProcessor ，在其中处理注解，处理类需继承 AutoService 并添加特定注解标注，如下：</p>
+<p>然后再创建一个 java-library ViewModelAnnotationProcessor ，在其中处理注解，处理类需继承 AbstractProcessor 并添加特定注解标注，如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@AutoService</span>(Processor<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">ViewModelAnnotationProcessor</span> <span class="keyword">extends</span> <span class="title">AbstractProcessor</span> </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>而最关键的代码生成逻辑就在此类中了，代码见 <a href="https://github.com/yhaolpz/AptSample/blob/master/ViewModelAnnotationProcessor/src/main/java/com/wyh/viewmodel/annotation/processor/ViewModelAnnotationProcessor.java" target="_blank" rel="noopener">ViewModelAnnotationProcessor.java</a>。</p>
 <p>外部导入时需通过 <strong>annotationProcessor</strong> 使其支持编译时注解处理：</p>
@@ -121,7 +121,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/28077273/" data-id="ckjk4jayg0002ngca7seohkey" class="article-share-link" data-share="baidu" data-title="Android APT 开发实践">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/28077273/" data-id="ckjk83zsf00090scaz4luvn8g" class="article-share-link" data-share="baidu" data-title="Android APT 开发实践">分享到</a>
       
 
       
