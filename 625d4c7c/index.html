@@ -6,13 +6,13 @@
   
   <title>TCP/IP 网络协议知识点总结 | what is your main focus for today?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理 TCP 流量与拥塞控制 HTTP 1.0/1.1/2.0 QUIC 和 HTTP 3.0">
+  <meta name="description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理">
 <meta name="keywords" content="网络,TCP,UDP,HTTPS">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP&#x2F;IP 网络协议知识点总结">
 <meta property="og:url" content="http://yhaowa.gitee.io/yhaowa/625d4c7c/index.html">
 <meta property="og:site_name" content="what is your main focus for today?">
-<meta property="og:description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理 TCP 流量与拥塞控制 HTTP 1.0/1.1/2.0 QUIC 和 HTTP 3.0">
+<meta property="og:description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/tcp_ip.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/tcp.png">
@@ -26,10 +26,10 @@
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/dns.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/CA.png">
 <meta property="og:image" content="http://yhaowa.gitee.io/yhaowa/img/CA2.png">
-<meta property="og:updated_time" content="2021-02-11T17:33:17.503Z">
+<meta property="og:updated_time" content="2021-02-12T08:13:17.277Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TCP&#x2F;IP 网络协议知识点总结">
-<meta name="twitter:description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理 TCP 流量与拥塞控制 HTTP 1.0/1.1/2.0 QUIC 和 HTTP 3.0">
+<meta name="twitter:description" content="TCP/IP 模型 TCP 和 UDP TCP 为什么要三次握手 TCP 为什么要四次挥手 网页请求一个 URL 的流程 DNS 工作原理 HTTPS 加密原理">
 <meta name="twitter:image" content="http://yhaowa.gitee.io/yhaowa/img/tcp_ip.png">
   
     <link rel="alternative" href="/atom.xml" title="what is your main focus for today?" type="application/atom+xml">
@@ -117,9 +117,6 @@
 <li>网页请求一个 URL 的流程</li>
 <li>DNS 工作原理</li>
 <li>HTTPS 加密原理</li>
-<li>TCP 流量与拥塞控制</li>
-<li>HTTP 1.0/1.1/2.0</li>
-<li>QUIC 和 HTTP 3.0</li>
 </ol>
 </blockquote>
 <a id="more"></a>
@@ -197,16 +194,15 @@
 <p>非对称加密的私钥不会在互联网上传输，可以保证私钥的私密性，但公钥是公开的，可能被冒充，所以需要通过证书和权威机构来验证公钥的合法性</p>
 <p><img src="../img/CA.png" alt></p>
 <p>服务器需向 CA （Certificate Authority）权威认证机构申请数字证书，CA 用自己的私钥对服务器个人信息与服务器公钥生成数字签名后，再和服务器个人信息与服务器公钥一起形成数字证书</p>
-<p>，客户端需用 CA 的公匙解密数字证书并验证数字证书的合法性</p>
 <p><img src="../img/CA2.png" alt></p>
 <p>客户端发起请求时，服务器会将数字证书发送给客户端，客户端用 CA 公钥解密数字签名生成服务器信息摘要，再和证书中的服务器信息摘要进行对比，以此验证数字证书是否是 CA 颁发的合法证书</p>
 <p>但 CA 的公钥也可能被冒充，为了验证 CA 公钥的合法性，CA 也要有 CA 自身的数字证书，由更可信、更权威的 CA 机构签名生成，由此形成多层级的认证机构，客户端设备默认内置了一部分权威机构的根证书</p>
-<h2 id="8-TCP-流量与拥塞控制"><a href="#8-TCP-流量与拥塞控制" class="headerlink" title="8. TCP 流量与拥塞控制"></a>8. TCP 流量与拥塞控制</h2><h2 id="9-HTTP-1-0-1-1-2-0"><a href="#9-HTTP-1-0-1-1-2-0" class="headerlink" title="9. HTTP 1.0/1.1/2.0"></a>9. HTTP 1.0/1.1/2.0</h2><h2 id="10-QUIC-和-HTTP-3-0"><a href="#10-QUIC-和-HTTP-3-0" class="headerlink" title="10. QUIC 和 HTTP 3.0"></a>10. QUIC 和 HTTP 3.0</h2>
+
       
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/625d4c7c/" data-id="ckkxdyph0002botcab3z11vq3" class="article-share-link" data-share="baidu" data-title="TCP/IP 网络协议知识点总结">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/625d4c7c/" data-id="ckl20ibj8001mh4capswb5o53" class="article-share-link" data-share="baidu" data-title="TCP/IP 网络协议知识点总结">分享到</a>
       
 
       
