@@ -15,7 +15,7 @@
 <meta property="og:description" content="网络：分层模型、TCP、UDP、HTTP、HTTPS算法：数据结构、常用算法Java 基础：StringBuilder、泛型擦除、Exception、IO、容器Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁Java 设计模式：六大原则、23 种设计模式、动态代理Java 虚拟机：内存模型、内存结构、GC、四种引用、ClassLoaderAndroid">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="file:///Users/wangyinghao/Documents/gitRes/AndroidInterview/img/20.jpg">
-<meta property="og:updated_time" content="2020-12-06T09:28:36.826Z">
+<meta property="og:updated_time" content="2021-02-13T09:17:51.128Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Android 知识简记">
 <meta name="twitter:description" content="网络：分层模型、TCP、UDP、HTTP、HTTPS算法：数据结构、常用算法Java 基础：StringBuilder、泛型擦除、Exception、IO、容器Java 同步：volatile、wait、synchronized、可重入锁、乐观锁、死锁Java 设计模式：六大原则、23 种设计模式、动态代理Java 虚拟机：内存模型、内存结构、GC、四种引用、ClassLoaderAndroid">
@@ -216,7 +216,7 @@
 <li>存放 hash 的数组是有序的，查找时使用二分法查找</li>
 <li>发生哈希冲突时键值对数组里连续存放，查找时也是通过 key.equals索引，找不到时先向后再向前遍历相同hash值的键值对数组</li>
 <li>扩容时不像 HashMap 直接 double，内存利用率高；也不需要重建哈希表，只需要调用 system.arraycopy 数组拷贝，性能较高</li>
-<li>不适合存大量数据（1000以下），因为数据量大的时候二分查找相比红黑树会慢很多</li>
+<li>不适合存大量数据（1000以下），因为数据量大的时候二分查找相比直接 hash 确定索引慢</li>
 </ul>
 </li>
 <li><p>SparseArray</p>
@@ -736,7 +736,7 @@
     </div>
     <footer class="article-footer">
       
-        <a data-url="http://yhaowa.gitee.io/yhaowa/c75061d/" data-id="ckl20ibiw000nh4cah4q9n8xl" class="article-share-link" data-share="baidu" data-title="Android 知识简记">分享到</a>
+        <a data-url="http://yhaowa.gitee.io/yhaowa/c75061d/" data-id="ckl3ibfyb000q53cah9jvkd6h" class="article-share-link" data-share="baidu" data-title="Android 知识简记">分享到</a>
       
 
       
