@@ -1,0 +1,1302 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Agent 知识网络（v0）</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b1020;
+        --panel: rgba(255, 255, 255, 0.06);
+        --panel-2: rgba(255, 255, 255, 0.085);
+        --border: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.9);
+        --muted: rgba(255, 255, 255, 0.65);
+        --muted2: rgba(255, 255, 255, 0.45);
+        --accent: #7dd3fc;
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--sans);
+        background: radial-gradient(1200px 800px at 18% 12%, rgba(125, 211, 252, 0.17), transparent 55%),
+          radial-gradient(900px 700px at 88% 22%, rgba(167, 139, 250, 0.16), transparent 55%),
+          radial-gradient(900px 700px at 70% 88%, rgba(74, 222, 128, 0.14), transparent 55%),
+          var(--bg);
+        color: var(--text);
+      }
+
+      .app {
+        height: 100%;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      header {
+        padding: 18px 18px 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .titleRow {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: end;
+        gap: 12px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      .sub {
+        margin: 6px 0 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      button {
+        appearance: none;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: none;
+        font-size: 12px;
+      }
+
+      button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      button:active {
+        transform: translateY(1px);
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .search {
+        display: grid;
+        grid-template-columns: 1fr;
+      }
+
+      input[type="search"] {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+        outline: none;
+      }
+
+      input[type="search"]:focus {
+        border-color: rgba(125, 211, 252, 0.5);
+        box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.14);
+      }
+
+      .filters {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 999px;
+        font-size: 12px;
+        color: var(--muted);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .chip input {
+        margin: 0;
+      }
+
+      main {
+        padding: 12px 18px 18px;
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 14px;
+        min-height: 0;
+      }
+
+      .panel {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.04));
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        min-height: 0;
+      }
+
+      .panelHeader {
+        padding: 12px 12px 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .panelHeader .hint {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .list {
+        overflow: auto;
+        max-height: 100%;
+      }
+
+      .group {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .groupTitle {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: 10px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        background: rgba(10, 16, 32, 0.75);
+        backdrop-filter: blur(10px);
+      }
+
+      .groupTitle .name {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .items {
+        padding: 6px;
+        display: grid;
+        gap: 6px;
+      }
+
+      .item {
+        padding: 10px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        cursor: pointer;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .item:hover {
+        background: rgba(255, 255, 255, 0.055);
+        border-color: rgba(255, 255, 255, 0.14);
+      }
+
+      .item.active {
+        background: rgba(125, 211, 252, 0.09);
+        border-color: rgba(125, 211, 252, 0.35);
+      }
+
+      .item .id {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.78);
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+      }
+
+      .item .title {
+        font-size: 13px;
+        line-height: 1.25;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .meta {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .pill {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+      }
+
+      .right {
+        display: grid;
+        grid-template-rows: auto 1fr;
+        min-height: 0;
+      }
+
+      .detail {
+        padding: 14px 14px 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .detail h2 {
+        margin: 0;
+        font-size: 16px;
+        letter-spacing: 0.2px;
+      }
+
+      .detail .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .kv {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 10px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .kv b {
+        color: rgba(255, 255, 255, 0.92);
+        font-weight: 600;
+        font-family: var(--mono);
+      }
+
+      .links {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .links .box {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 14px;
+        padding: 10px;
+        min-height: 100px;
+      }
+
+      .links .boxTitle {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .links .linkList {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .nodeLink {
+        font-family: var(--mono);
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.86);
+        cursor: pointer;
+      }
+
+      .nodeLink:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .graphWrap {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        min-height: 0;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .graphHeader {
+        padding: 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      svg {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .legend {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+
+      .legendItem {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        font-size: 12px;
+        color: var(--muted2);
+      }
+
+      @media (max-width: 980px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="titleRow">
+          <div>
+            <h1>AI Agent 知识网络（v0 交互原型）</h1>
+            <div class="sub">支持搜索、分类筛选、依赖/被依赖关系浏览、邻域图可视化（选中节点的依赖与被依赖）</div>
+          </div>
+          <div class="actions">
+            <button id="btnRandom">随机跳转</button>
+            <button id="btnCopyLink">复制节点链接</button>
+            <button id="btnExport">导出 JSON（nodes/edges）</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search">
+            <input id="q" type="search" placeholder="搜索：输入 ID（如 C08）或关键词（如 检索 / 安全 / 评测）" />
+          </div>
+          <div class="filters" id="filters"></div>
+        </div>
+      </header>
+
+      <main>
+        <section class="panel">
+          <div class="panelHeader">
+            <div class="hint" id="resultHint">加载中…</div>
+            <div class="hint"><span id="selectedHint">未选择</span></div>
+          </div>
+          <div class="list" id="list"></div>
+        </section>
+
+        <section class="panel right">
+          <div class="detail" id="detail"></div>
+          <div class="graphWrap">
+            <div class="graphHeader">
+              <div>邻域图（中心=当前节点；内圈=依赖；外圈=被依赖）</div>
+              <div class="legend" id="legend"></div>
+            </div>
+            <svg id="graph" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const RAW = `
+C01\tLLM 与生成式建模基本概念\t
+C02\tToken / 上下文窗口\t
+C03\tPrompt（指令/上下文/示例）\tC01,C02
+C04\tSampling（温度、top-p、随机性）\tC01
+C05\t对话状态与多轮上下文\tC02,C03
+C06\tEmbedding 与语义空间\tC01
+C07\t向量检索与相似度\tC06
+C08\tRAG（检索增强生成）\tC03,C07
+C09\t工具调用（Tool Calling）\tC03
+C10\t结构化输出（JSON/Schema）\tC03
+C11\tAgent 定义（感知-决策-行动闭环）\tC05,C09
+C12\t观察-行动循环（OODA in Agent）\tC11
+C13\tPlanning（规划） vs Acting（执行）\tC11,C12
+C14\t记忆：短期/长期/工作记忆\tC05,C11
+C15\t状态（State）与可恢复性\tC12,C14
+C16\t工具契约：输入/输出/副作用\tC09,C10
+C17\t环境（Environment）与外部系统\tC09,C12
+C18\t多智能体（Multi-Agent）与协作\tC11
+C19\t角色（Role）与职责边界\tC18
+C20\t任务分解（Subtasking）\tC13
+C21\t幻觉与不确定性来源\tC01,C03
+C22\tGrounding（可追溯依据）\tC08,C21
+C23\t事实一致性与引用（Citations）\tC22
+C24\t上下文工程（Context Engineering）\tC03,C08
+C25\t指令层级与优先级\tC03,C05
+C26\t约束与策略（Policy）\tC25
+C27\t可靠性：确定性、重试与幂等\tC09,C16
+C28\t成本模型：Token 成本、工具成本\tC02,C09
+C29\t延迟模型：端到端路径与瓶颈\tC17,C28
+C30\t可观测性概念：日志/指标/追踪\tC12,C17
+C31\t评测概念：离线/在线/人评\tC21,C30
+C32\t安全概念：攻击面与信任边界\tC17,C26
+C33\tPrompt 注入（Prompt Injection）基本原理\tC25,C32
+C34\t数据隐私：PII、敏感数据分类\tC32
+C35\t权限与最小权限原则（Least Privilege）\tC32
+C36\t模型网关（Model Gateway）与路由\tC28,C29
+C37\t多模态输入输出（图/音/表）\tC01,C10
+C38\t代理记忆检索（Memory Retrieval）\tC07,C14
+C39\t知识图谱（KG）与图推理基础\tC06,C22
+C40\tAgent 生命周期：设计-上线-迭代\tC30,C31,C32
+P01\tReAct（边推理边行动）\tC11,C12,C09
+P02\tPlan-Then-Execute（先计划后执行）\tC13,C20
+P03\tPlanner/Executor 解耦\tP02,C15
+P04\tSelf-Ask（自问自答分解）\tC20,C03
+P05\tTool Router（工具选择路由）\tC16,C09
+P06\tRetrieval Router（检索路由/是否检索）\tC08,C24
+P07\tMulti-Query Retrieval（多查询扩展）\tC08,C07
+P08\tReranking（重排）\tC07,C08
+P09\tHyDE（假设文档检索）\tC08,C03
+P10\tAgentic RAG（边检索边行动）\tP01,C08
+P11\tMemory Summarization（对话摘要记忆）\tC14,C05
+P12\tEpisodic Memory（事件记忆）\tC14,C15
+P13\tScratchpad（工作区/草稿区）\tC10,C14
+P14\tCritique-Revise（批判-修订）\tC21,C22
+P15\tReflection（复盘式反思）\tP14,C40
+P16\tSelf-Consistency（多样本一致性）\tC04,C21
+P17\tDebate/Council（多角色辩论）\tC18,C19
+P18\tSwarm（并行探索-汇总）\tC18,C20
+P19\tMap-Reduce Summarization（分块汇总）\tC02,C24
+P20\tFunction Calling + Schema Validate（结构化强约束）\tC10,C16
+P21\tRetrieval Grounding + Citations（带引用回答）\tC23,C08
+P22\tTool Sandbox（工具沙箱执行）\tC17,C32
+P23\tHuman-in-the-Loop Approval（人工确认门）\tC26,C35
+P24\tBudget-Aware Agent（预算控制）\tC28,C29
+P25\tTimeouts & Backoff（超时与退避）\tC27
+P26\tCircuit Breaker（熔断）\tP25,C27
+P27\tFallback Model Routing（模型降级）\tC36,C29
+P28\tPartial Streaming UX（边生成边交付）\tC29,C05
+P29\tIdempotent Tooling（幂等工具模式）\tC27,C16
+P30\tDeterministic Replay（可重放执行）\tC15,C30
+P31\tTrace-Guided Debug（基于追踪调试）\tC30,C40
+P32\tStructured Planning（计划结构化）\tC10,P02
+P33\tState Machine Agent（状态机代理）\tC15,C12
+P34\tWorkflow Orchestration（工作流编排）\tC17,P33
+P35\tEvent-Driven Agent（事件驱动）\tC17,C15
+P36\tRetrieval Poisoning Defense Pattern（检索投毒防护）\tC32,C08
+P37\tSafety Filter + Policy Engine（安全过滤）\tC26,C32
+P38\tTool Permission Scoping（工具权限切片）\tC35,C16
+P39\tCanary Prompt / Prompt Experiment（提示词实验）\tC31,C24
+P40\tContinuous Learning Loop（评测→改进闭环）\tC31,C40
+A01\t前端信息架构：知识图谱 + 搜索\tC24
+A02\tAPI Gateway（统一入口）\tC17
+A03\tAgent Service（会话/状态/策略）\tC11,C15
+A04\tTool Service（工具注册与执行）\tC16,C17
+A05\tRetrieval Service（向量检索/重排）\tC08,C07
+A06\tVector Store（向量库）\tC07
+A07\tDocument Store（文档与元数据）\tC22
+A08\tPrompt Registry（提示词仓库）\tC24
+A09\tModel Gateway（多模型路由/配额）\tC36
+A10\tPolicy Engine（策略与合规模块）\tC26,C32
+A11\tAuthN/AuthZ（认证授权）\tC35
+A12\tSecrets Vault（密钥管理）\tC32,C35
+A13\tAudit Log（审计日志）\tC32,C30
+A14\tObservability Stack（日志/指标/追踪）\tC30
+A15\tTrace Store（追踪存储与检索）\tA14
+A16\tMetrics Store（指标存储）\tA14
+A17\tError Budget / SLO 管理\tC29,C30
+A18\tQueue & Worker（异步任务）\tC17,C29
+A19\tScheduler（定时/批处理）\tA18
+A20\tCache Layer（缓存）\tC29,C28
+A21\tRate Limiter（限流）\tC35,C29
+A22\tTool Sandbox Runtime（沙箱运行时）\tP22,C32
+A23\tFile Processing Pipeline（解析/切分/索引）\tC08,A05
+A24\tKnowledge Graph Store（KG 存储）\tC39
+A25\tHybrid Retrieval（向量+图+关键词）\tA05,A24
+A26\tConversation Store（会话存储）\tC05,C15
+A27\tMemory Store（长期记忆存储）\tC14,A26
+A28\tFeature Flags（灰度开关）\tC40
+A29\tExperiment Platform（A/B 实验）\tC31,A28
+A30\tEvaluation Pipeline（离线评测流水线）\tC31,A18
+A31\tOnline Feedback Loop（线上反馈采集）\tC31,A14
+A32\tContent CMS（内容管理）\tA01,C40
+A33\tSearch Index（全文检索）\tA07
+A34\tMulti-Tenant（多租户隔离）\tA11,A12
+A35\tBilling/Quota（计费配额）\tA34,C28
+A36\tNotification Service（通知/人工介入）\tP23,A02
+A37\tData Retention & Deletion（数据保留/删除）\tC34,A26
+A38\tCompliance Layer（合规适配）\tC34,C32
+A39\tDeployment Topology（单体/微服务/边缘）\tC29,A02
+A40\tReference Architecture（端到端参考实现）\tA03,A04,A05,A09,A14
+E01\t代码与内容仓库结构（Mono/Poly）\tC40
+E02\t环境管理（dev/staging/prod）\tA39
+E03\t配置管理（12-factor）\tE02
+E04\tPrompt 版本化与变更审计\tA08,A13
+E05\tTool Contract 测试（输入输出契约）\tC16
+E06\tSchema 校验与反序列化防御\tC10,C16
+E07\t单元测试（纯函数/解析器）\t
+E08\t集成测试（工具/检索/网关）\tE05,A04,A05
+E09\t端到端测试（E2E 对话任务）\tE08,C11
+E10\t回归测试与基线锁定\tC31,V01
+E11\tCI 流水线（lint/test/build）\tE07
+E12\tCD 发布（灰度/回滚）\tA28,E11
+E13\t容器化（Docker）\tE02
+E14\tIaC（Terraform/Pulumi）\tE02
+E15\t数据迁移与版本（schema/migrate）\tA26,A07
+E16\t观测接入：结构化日志规范\tC30,A14
+E17\tTrace 语义规范（span/attributes）\tA15,E16
+E18\t指标与告警规则（SLO 驱动）\tA16,A17
+E19\tRunbook 与事故演练\tE18
+E20\t成本监控（token/tool/infra）\tC28,A35
+E21\t延迟优化（缓存/并行/剪枝）\tC29,A20
+E22\t并发控制（队列、限流、隔离）\tA18,A21
+E23\t超时、重试与幂等工程实践\tC27,P25,P29
+E24\t流式输出与前端体验工程\tP28,A01
+E25\t数据标注与数据集管理\tC31
+E26\t文档切分策略与索引质量\tC08,A23
+E27\t检索质量调优（召回/精度权衡）\tP08,A05
+E28\tPrompt 模板化与上下文拼装器\tC24,A08
+E29\t工具注册中心与能力发现\tA04
+E30\tAgent 状态持久化与恢复\tC15,A26
+E31\t可重放执行与调试工具链\tP30,A15
+E32\t线上反馈闭环（日志→样本→修复）\tA31,E25
+E33\t内容生产流水线（草稿→发布）\tA32
+E34\tSEO 与内容分发工程（站点结构）\tA01,A33
+E35\t国际化与术语统一（glossary）\tC03
+E36\t权限矩阵与 RBAC 工程实现\tA11,C35
+E37\t数据保留与删除自动化\tA37
+E38\t依赖与供应链治理（锁版本/扫描）\tS26
+E39\t性能压测与容量规划\tC29,E21
+E40\t版本发布策略（SemVer/Changelog）\tE12
+S01\t威胁建模（Threat Modeling）\tC32
+S02\t信任边界与数据流图（DFD）\tS01
+S03\tPrompt Injection：指令劫持\tC33,S02
+S04\tData Exfiltration：数据外泄路径\tC34,S02
+S05\tTool Abuse：越权工具调用\tC16,C35,S02
+S06\tSSRF 风险与防护\tS05
+S07\tRCE/沙箱逃逸风险\tS05
+S08\t最小权限工具设计\tC35,C16
+S09\t工具输入校验与 allowlist\tE06,S08
+S10\t工具输出过滤与数据脱敏\tC34
+S11\tSecrets 管理（不入日志、不入提示）\tA12,C34
+S12\t认证（AuthN）策略\tA11
+S13\t授权（AuthZ）与 RBAC/ABAC\tS12,C35
+S14\t审计与可追责（Auditability）\tA13,S13
+S15\tPII 识别与处理策略\tC34
+S16\t合规：数据保留/删除/同意\tA38,A37
+S17\t检索投毒（Retrieval Poisoning）\tC08,C32
+S18\tPrompt 泄漏与系统提示保护\tC25,S03
+S19\t越狱（Jailbreak）与对抗提示\tC26,S03
+S20\t内容安全（毒性/违规/自伤）\tC26
+S21\t供应链安全（依赖、镜像）\tE13
+S22\t依赖漏洞扫描与修复流程\tS21
+S23\tEgress 控制（出网策略）\tS04
+S24\t网络隔离与零信任原则\tS02
+S25\t沙箱化执行（容器/VM/权限）\tA22,S07
+S26\tSecret Scanning（密钥泄漏扫描）\tS11,E11
+S27\t日志脱敏与最小化采集\tA14,S15
+S28\t防滥用：限流、风控、黑名单\tA21,S12
+S29\t模型输出约束（schema/policy filter）\tP37,E06
+S30\t安全评测：注入成功率/泄漏率\tV31,V32
+S31\t安全回归：攻击样本集维护\tV01,E25
+S32\t安全事件响应（IR）流程\tE19,S14
+S33\t工具权限分级与审批门\tP23,S08
+S34\t多租户隔离安全\tA34,S13
+S35\t数据加密：传输/存储\tS02
+S36\t会话隔离与上下文污染防护\tC05,S34
+S37\t训练/微调数据安全与许可\tC34,S16
+S38\t第三方工具与 OAuth 风险\tS12,S05
+S39\t安全基线与策略即代码\tA10,S01
+S40\t安全上线清单（Go-Live Checklist）\tS39,E12
+V01\tGolden Set（黄金测试集）\tC31
+V02\t任务成功率（Task Success）\tV01,C11
+V03\t工具调用正确率\tC16,V01
+V04\t事实正确性（Factuality）\tC21,V01
+V05\tGrounding 覆盖率（有依据回答比例）\tC22,V01
+V06\t引用质量（Citation Precision/Recall）\tC23,V05
+V07\t鲁棒性（噪声/歧义/缺失）\tV01,C21
+V08\t一致性（多次运行一致）\tC04,V01
+V09\t多轮一致性（对话内不自相矛盾）\tC05,V01
+V10\t延迟指标（P50/P95）\tC29,A14
+V11\t成本指标（token/tool/infra）\tC28,A35
+V12\t可靠性指标（错误率/超时率）\tC27,A14
+V13\t召回评测（检索 Recall@k）\tC07,A05
+V14\t精度评测（检索 Precision@k）\tV13
+V15\tRerank 增益评测\tP08,V13
+V16\t端到端 RAG 评测（回答+依据）\tC08,V04,V05
+V17\tAgent 轨迹评分（Trajectory Scoring）\tC12,V01
+V18\t计划质量评分（Plan Quality）\tP02,V01
+V19\t工具副作用安全性评测\tS05,V03
+V20\t回归门禁（Eval Gate）\tE12,V01
+V21\tLLM-as-a-Judge（自动裁判）\tC31,V01
+V22\t人评 Rubric（评分量表）\tC31,V01
+V23\tPairwise Preference（成对偏好）\tV22
+V24\t校准与不确定性评测（置信度）\tC21,V04
+V25\t覆盖率：场景/意图/工具覆盖\tV01
+V26\t对抗评测（Adversarial）\tS19,V01
+V27\t注入成功率（Prompt Injection Rate）\tS03,V26
+V28\tPII 泄漏率\tS15,V26
+V29\t越权工具调用率\tS05,V26
+V30\t内容安全违规率\tS20,V26
+V31\t安全综合评分（多指标汇总）\tV27,V28,V29,V30
+V32\t在线监控评测（Prod Metrics）\tA14,V10,V12
+V33\tA/B 实验评测设计\tA29,V02
+V34\tCanary 评测与灰度策略\tA28,V20
+V35\t数据漂移检测（Query/Doc Drift）\tA31,V13
+V36\t长上下文压力测试\tC02,V01
+V37\t多轮压力测试（长对话）\tC05,V01
+V38\t并发与容量评测\tE39,V10
+V39\t评测集持续维护（采样、去重、版本）\tE25,V01
+V40\t评测→改进闭环（EvalOps）\tP40,V20,V39
+X01\tAI Agent 知识问答站（你这个产品本身）\tA01,A32,C24,V20,S40
+X02\t代码库问答助手（Repo QA）\tC08,A05,P10,V16,S18
+X03\t文档生成/改写助手（Docs Copilot）\tC10,P20,E33,V02
+X04\t教程式交互 Tutor（分层讲解）\tC24,P19,A01,V22
+X05\t研究助理（Paper 阅读+引用）\tP21,V06,C23,A05
+X06\t学术笔记→知识图谱构建器\tC39,A24,A25,E26
+X07\t会议纪要助手（转写→总结→行动项）\tP19,P11,V09,E24
+X08\t邮件分流与自动草拟\tP05,C10,S13,V03
+X09\t日历排程助手（含确认门）\tP23,S33,C27,V02
+X10\t旅行规划助手（预算+约束）\tP24,P02,V02,C28
+X11\t客服一线助手（检索+工单）\tP10,A05,A18,S27,V32
+X12\t工单自动分类与路由\tP05,V25,E08
+X13\tCRM 自动更新助手（工具副作用）\tS05,P29,E23,V19
+X14\t销售话术生成+合规审核\tS20,P37,V30,E06
+X15\t招聘筛选助手（隐私与公平）\tS15,S16,V22,V31
+X16\tHR 入职助手（知识库+流程）\tA23,P34,V02,A18
+X17\tIT Helpdesk（诊断→建议→执行）\tP01,P25,A04,S08
+X18\tSRE 事故响应助手（Runbook）\tE19,A14,P31,V12
+X19\t监控告警归因助手（Trace 驱动）\tA15,P31,V17
+X20\t数据分析助手（SQL + 图表）\tC09,P20,A04,V03
+X21\tSpreadsheet Agent（表格清洗与填充）\tP34,C10,E06
+X22\tBI 报表生成（多源数据+解释）\tA05,A07,P19,V04
+X23\t知识库自动构建（抓取→切分→索引）\tA23,E26,V13,S17
+X24\t合同审阅助手（条款抽取+风险点）\tC10,P20,S15,V04
+X25\t法务问答（引用与可追溯）\tP21,V06,S16
+X26\t安全告警分诊（对抗与误报）\tV26,V31,S28
+X27\t恶意提示检测与拦截服务\tS03,S19,P37,V27
+X28\t内容审核与社区管理助手\tS20,V30,P05
+X29\t市场内容生产流水线（多步编排）\tP34,E33,V23
+X30\tPRD/需求拆解助手（计划结构化）\tP32,P02,C10,V18
+X31\t代码评审助手（规则+引用）\tC22,P21,V04,S18
+X32\t测试用例生成助手（回归闭环）\tE09,V20,P40
+X33\t端到端 RPA（表单/网页操作）\tA22,S25,P23,S08
+X34\t采购比价助手（检索+结构化对比）\tC08,C10,V16
+X35\t个人知识管理 PKM（记忆+检索）\tC14,P12,A27
+X36\t学习路径推荐（个性化图谱导航）\tA01,V25,P06
+X37\tAgent Playground（在线运行+追踪）\tA14,A22,E31
+X38\t评测平台（离线+在线仪表盘）\tA30,A31,V40
+X39\t多智能体协作 Demo（辩论/分工）\tC18,P17,P18,V17
+X40\t企业内网知识助手（多租户+合规）\tA34,S16,S40,V31
+`;
+
+      const CATEGORIES = {
+        C: { key: "C", name: "概念", color: "#7dd3fc" },
+        P: { key: "P", name: "模式", color: "#a78bfa" },
+        A: { key: "A", name: "架构", color: "#60a5fa" },
+        E: { key: "E", name: "工程化", color: "#34d399" },
+        S: { key: "S", name: "安全", color: "#fb7185" },
+        V: { key: "V", name: "V-评测", color: "#fbbf24" },
+        X: { key: "X", name: "案例", color: "#f472b6" }
+      };
+
+      function parseRaw(raw) {
+        const lines = raw
+          .split("\n")
+          .map((l) => l.trim())
+          .filter(Boolean);
+        const nodes = [];
+        for (const line of lines) {
+          const [id, title, depsRaw = ""] = line.split("\t");
+          if (!id || !title) continue;
+          const catKey = id[0];
+          const deps = depsRaw
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+          nodes.push({ id, title, catKey, deps });
+        }
+        const byId = new Map(nodes.map((n) => [n.id, n]));
+        const edges = [];
+        for (const n of nodes) {
+          for (const d of n.deps) {
+            edges.push({ from: d, to: n.id });
+          }
+        }
+        const dependents = new Map();
+        for (const n of nodes) dependents.set(n.id, []);
+        for (const e of edges) {
+          if (!dependents.has(e.from)) dependents.set(e.from, []);
+          dependents.get(e.from).push(e.to);
+        }
+        return { nodes, edges, byId, dependents };
+      }
+
+      const state = {
+        q: "",
+        enabledCats: new Set(Object.keys(CATEGORIES)),
+        selectedId: null
+      };
+
+      const data = parseRaw(RAW);
+
+      function escapeHtml(s) {
+        return String(s)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function catLabel(catKey) {
+        return CATEGORIES[catKey]?.name ?? catKey;
+      }
+
+      function catColor(catKey) {
+        return CATEGORIES[catKey]?.color ?? "#cbd5e1";
+      }
+
+      function normalize(s) {
+        return String(s).toLowerCase().replaceAll(/\s+/g, "");
+      }
+
+      function getFilteredNodes() {
+        const q = normalize(state.q);
+        const enabled = state.enabledCats;
+        const out = [];
+        for (const n of data.nodes) {
+          if (!enabled.has(n.catKey)) continue;
+          if (!q) {
+            out.push(n);
+            continue;
+          }
+          const hay = normalize(`${n.id} ${n.title} ${catLabel(n.catKey)}`);
+          if (hay.includes(q)) out.push(n);
+        }
+        return out;
+      }
+
+      function groupNodes(nodes) {
+        const groups = new Map();
+        for (const n of nodes) {
+          if (!groups.has(n.catKey)) groups.set(n.catKey, []);
+          groups.get(n.catKey).push(n);
+        }
+        for (const [k, arr] of groups) {
+          arr.sort((a, b) => a.id.localeCompare(b.id, "en"));
+          groups.set(k, arr);
+        }
+        return groups;
+      }
+
+      function setSelected(id) {
+        const node = data.byId.get(id);
+        if (!node) return;
+        state.selectedId = id;
+        location.hash = `#${encodeURIComponent(id)}`;
+        render();
+      }
+
+      function renderFilters() {
+        const el = document.getElementById("filters");
+        const parts = [];
+        const totalByCat = new Map();
+        for (const n of data.nodes) totalByCat.set(n.catKey, (totalByCat.get(n.catKey) || 0) + 1);
+        for (const catKey of Object.keys(CATEGORIES)) {
+          const info = CATEGORIES[catKey];
+          const checked = state.enabledCats.has(catKey) ? "checked" : "";
+          const count = totalByCat.get(catKey) || 0;
+          parts.push(
+            `<label class="chip" style="border-color: rgba(255,255,255,0.14)"><input type="checkbox" data-cat="${info.key}" ${checked} />` +
+              `<span class="dot" style="background:${info.color}"></span>` +
+              `${escapeHtml(info.name)} <span class="badge">${count}</span></label>`
+          );
+        }
+        el.innerHTML = parts.join("");
+        el.querySelectorAll("input[type=checkbox]").forEach((input) => {
+          input.addEventListener("change", (e) => {
+            const cat = e.target.getAttribute("data-cat");
+            if (!cat) return;
+            if (e.target.checked) state.enabledCats.add(cat);
+            else state.enabledCats.delete(cat);
+            render();
+          });
+        });
+      }
+
+      function renderList() {
+        const nodes = getFilteredNodes();
+        const groups = groupNodes(nodes);
+        const order = Object.keys(CATEGORIES);
+        const listEl = document.getElementById("list");
+        const sections = [];
+
+        for (const catKey of order) {
+          const arr = groups.get(catKey) || [];
+          if (arr.length === 0) continue;
+          const head =
+            `<div class="groupTitle"><div class="name">` +
+            `<span class="dot" style="background:${catColor(catKey)}"></span>` +
+            `${escapeHtml(catLabel(catKey))}</div>` +
+            `<span class="badge">${arr.length}</span></div>`;
+
+          const items = arr
+            .map((n) => {
+              const depCount = n.deps.length;
+              const depdCount = (data.dependents.get(n.id) || []).length;
+              const active = n.id === state.selectedId ? "active" : "";
+              return (
+                `<div class="item ${active}" data-id="${escapeHtml(n.id)}">` +
+                `<div class="id">${escapeHtml(n.id)}</div>` +
+                `<div class="title">${escapeHtml(n.title)}</div>` +
+                `<div class="meta">` +
+                `<span class="pill">deps:${depCount}</span>` +
+                `<span class="pill">usedBy:${depdCount}</span>` +
+                `</div>` +
+                `</div>`
+              );
+            })
+            .join("");
+
+          sections.push(`<div class="group">${head}<div class="items">${items}</div></div>`);
+        }
+
+        listEl.innerHTML = sections.join("");
+        listEl.querySelectorAll(".item").forEach((it) => {
+          it.addEventListener("click", () => {
+            const id = it.getAttribute("data-id");
+            if (id) setSelected(id);
+          });
+        });
+
+        const hintEl = document.getElementById("resultHint");
+        hintEl.textContent = `当前显示 ${nodes.length} / ${data.nodes.length} 节点`;
+      }
+
+      function buildNodePills(ids) {
+        if (!ids || ids.length === 0) return `<span class="hint">无</span>`;
+        return ids
+          .slice()
+          .sort((a, b) => a.localeCompare(b, "en"))
+          .map((id) => {
+            const n = data.byId.get(id);
+            const color = n ? catColor(n.catKey) : "rgba(255,255,255,0.35)";
+            const title = n ? `${id} · ${n.title}` : id;
+            return `<span class="nodeLink" data-id="${escapeHtml(id)}" title="${escapeHtml(title)}" style="border-color:${color}55">${escapeHtml(
+              id
+            )}</span>`;
+          })
+          .join("");
+      }
+
+      function renderDetail() {
+        const detailEl = document.getElementById("detail");
+        const selectedHint = document.getElementById("selectedHint");
+        const id = state.selectedId;
+        if (!id) {
+          selectedHint.textContent = "未选择";
+          detailEl.innerHTML =
+            `<div class="hint">从左侧点击一个节点，右侧会展示依赖关系与邻域图。</div>` +
+            `<div class="hint">小技巧：URL hash 支持直达，例如 <span style="font-family:var(--mono)">#C08</span>。</div>`;
+          return;
+        }
+
+        const n = data.byId.get(id);
+        if (!n) {
+          selectedHint.textContent = "未选择";
+          detailEl.innerHTML = `<div class="hint">节点不存在：${escapeHtml(id)}</div>`;
+          return;
+        }
+
+        selectedHint.textContent = `${n.id} · ${catLabel(n.catKey)}`;
+
+        const deps = n.deps.filter((d) => data.byId.has(d));
+        const usedBy = (data.dependents.get(n.id) || []).filter((d) => data.byId.has(d));
+
+        const html = `
+          <div class="row">
+            <h2>${escapeHtml(n.title)}</h2>
+          </div>
+          <div class="row">
+            <span class="kv"><b>${escapeHtml(n.id)}</b></span>
+            <span class="kv">分类：<span style="color:${catColor(n.catKey)}">${escapeHtml(catLabel(n.catKey))}</span></span>
+            <span class="kv">依赖：${deps.length}</span>
+            <span class="kv">被依赖：${usedBy.length}</span>
+          </div>
+          <div class="links">
+            <div class="box">
+              <div class="boxTitle"><span>前置依赖</span><span class="badge">${deps.length}</span></div>
+              <div class="linkList">${buildNodePills(deps)}</div>
+            </div>
+            <div class="box">
+              <div class="boxTitle"><span>后继（依赖本节点）</span><span class="badge">${usedBy.length}</span></div>
+              <div class="linkList">${buildNodePills(usedBy)}</div>
+            </div>
+          </div>
+        `;
+
+        detailEl.innerHTML = html;
+        detailEl.querySelectorAll(".nodeLink").forEach((el) => {
+          el.addEventListener("click", () => {
+            const nid = el.getAttribute("data-id");
+            if (nid) setSelected(nid);
+          });
+        });
+      }
+
+      function clearSvg(svg) {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+      }
+
+      function elNS(tag) {
+        return document.createElementNS("http://www.w3.org/2000/svg", tag);
+      }
+
+      function drawGraph() {
+        const svg = document.getElementById("graph");
+        clearSvg(svg);
+        const id = state.selectedId;
+        if (!id) {
+          const t = elNS("text");
+          t.setAttribute("x", "450");
+          t.setAttribute("y", "260");
+          t.setAttribute("text-anchor", "middle");
+          t.setAttribute("fill", "rgba(255,255,255,0.55)");
+          t.setAttribute("font-size", "14");
+          t.textContent = "选择一个节点以显示邻域图";
+          svg.appendChild(t);
+          return;
+        }
+
+        const center = data.byId.get(id);
+        if (!center) return;
+
+        const deps = center.deps.filter((d) => data.byId.has(d));
+        const usedBy = (data.dependents.get(id) || []).filter((d) => data.byId.has(d));
+        const maxRing = 14;
+        const depsRing = deps.slice(0, maxRing);
+        const usedRing = usedBy.slice(0, maxRing);
+
+        const W = 900;
+        const H = 520;
+        const cx = W / 2;
+        const cy = H / 2;
+        const r1 = 135;
+        const r2 = 245;
+
+        const positions = new Map();
+        positions.set(id, { x: cx, y: cy });
+
+        function place(ids, radius, startAngle) {
+          const n = ids.length;
+          if (n === 0) return;
+          const step = (Math.PI * 2) / n;
+          for (let i = 0; i < n; i++) {
+            const a = startAngle + step * i;
+            positions.set(ids[i], { x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius });
+          }
+        }
+
+        place(depsRing, r1, -Math.PI / 2);
+        place(usedRing, r2, Math.PI / 2);
+
+        const defs = elNS("defs");
+        const glow = elNS("filter");
+        glow.setAttribute("id", "glow");
+        const feGaussian = elNS("feGaussianBlur");
+        feGaussian.setAttribute("stdDeviation", "3.2");
+        feGaussian.setAttribute("result", "coloredBlur");
+        const feMerge = elNS("feMerge");
+        const feMergeNode1 = elNS("feMergeNode");
+        feMergeNode1.setAttribute("in", "coloredBlur");
+        const feMergeNode2 = elNS("feMergeNode");
+        feMergeNode2.setAttribute("in", "SourceGraphic");
+        feMerge.appendChild(feMergeNode1);
+        feMerge.appendChild(feMergeNode2);
+        glow.appendChild(feGaussian);
+        glow.appendChild(feMerge);
+        defs.appendChild(glow);
+        svg.appendChild(defs);
+
+        const bg = elNS("rect");
+        bg.setAttribute("x", "0");
+        bg.setAttribute("y", "0");
+        bg.setAttribute("width", String(W));
+        bg.setAttribute("height", String(H));
+        bg.setAttribute("fill", "transparent");
+        svg.appendChild(bg);
+
+        function line(x1, y1, x2, y2, color, width, dash) {
+          const l = elNS("line");
+          l.setAttribute("x1", String(x1));
+          l.setAttribute("y1", String(y1));
+          l.setAttribute("x2", String(x2));
+          l.setAttribute("y2", String(y2));
+          l.setAttribute("stroke", color);
+          l.setAttribute("stroke-width", String(width));
+          l.setAttribute("stroke-linecap", "round");
+          l.setAttribute("opacity", "0.7");
+          if (dash) l.setAttribute("stroke-dasharray", dash);
+          return l;
+        }
+
+        function nodeCircle(nodeId, radius) {
+          const n = data.byId.get(nodeId);
+          const p = positions.get(nodeId);
+          if (!p || !n) return null;
+          const g = elNS("g");
+          g.setAttribute("cursor", "pointer");
+          g.addEventListener("click", () => setSelected(nodeId));
+
+          const c = elNS("circle");
+          c.setAttribute("cx", String(p.x));
+          c.setAttribute("cy", String(p.y));
+          c.setAttribute("r", String(radius));
+          c.setAttribute("fill", `${catColor(n.catKey)}22`);
+          c.setAttribute("stroke", `${catColor(n.catKey)}cc`);
+          c.setAttribute("stroke-width", nodeId === id ? "2.5" : "1.4");
+          if (nodeId === id) c.setAttribute("filter", "url(#glow)");
+          g.appendChild(c);
+
+          const t1 = elNS("text");
+          t1.setAttribute("x", String(p.x));
+          t1.setAttribute("y", String(p.y - 2));
+          t1.setAttribute("text-anchor", "middle");
+          t1.setAttribute("fill", "rgba(255,255,255,0.92)");
+          t1.setAttribute("font-size", nodeId === id ? "14" : "12");
+          t1.setAttribute("font-family", "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace");
+          t1.textContent = n.id;
+          g.appendChild(t1);
+
+          const t2 = elNS("text");
+          t2.setAttribute("x", String(p.x));
+          t2.setAttribute("y", String(p.y + 16));
+          t2.setAttribute("text-anchor", "middle");
+          t2.setAttribute("fill", "rgba(255,255,255,0.62)");
+          t2.setAttribute("font-size", "11");
+          t2.textContent = catLabel(n.catKey);
+          g.appendChild(t2);
+
+          const title = elNS("title");
+          title.textContent = `${n.id} · ${n.title}`;
+          g.appendChild(title);
+
+          return g;
+        }
+
+        for (const d of depsRing) {
+          const p1 = positions.get(d);
+          const p2 = positions.get(id);
+          if (!p1 || !p2) continue;
+          svg.appendChild(line(p1.x, p1.y, p2.x, p2.y, "rgba(125,211,252,0.55)", 1.2, "4 6"));
+        }
+
+        for (const u of usedRing) {
+          const p1 = positions.get(id);
+          const p2 = positions.get(u);
+          if (!p1 || !p2) continue;
+          svg.appendChild(line(p1.x, p1.y, p2.x, p2.y, "rgba(34,197,94,0.55)", 1.35, null));
+        }
+
+        const ring1 = elNS("circle");
+        ring1.setAttribute("cx", String(cx));
+        ring1.setAttribute("cy", String(cy));
+        ring1.setAttribute("r", String(r1));
+        ring1.setAttribute("fill", "transparent");
+        ring1.setAttribute("stroke", "rgba(255,255,255,0.08)");
+        ring1.setAttribute("stroke-dasharray", "3 7");
+        svg.appendChild(ring1);
+
+        const ring2 = elNS("circle");
+        ring2.setAttribute("cx", String(cx));
+        ring2.setAttribute("cy", String(cy));
+        ring2.setAttribute("r", String(r2));
+        ring2.setAttribute("fill", "transparent");
+        ring2.setAttribute("stroke", "rgba(255,255,255,0.06)");
+        ring2.setAttribute("stroke-dasharray", "2 9");
+        svg.appendChild(ring2);
+
+        for (const d of depsRing) {
+          const g = nodeCircle(d, 22);
+          if (g) svg.appendChild(g);
+        }
+        for (const u of usedRing) {
+          const g = nodeCircle(u, 24);
+          if (g) svg.appendChild(g);
+        }
+        svg.appendChild(nodeCircle(id, 34));
+
+        const overflowDeps = deps.length - depsRing.length;
+        const overflowUsed = usedBy.length - usedRing.length;
+        const note = [];
+        if (overflowDeps > 0) note.push(`依赖还有 ${overflowDeps} 个未展示`);
+        if (overflowUsed > 0) note.push(`被依赖还有 ${overflowUsed} 个未展示`);
+        if (note.length > 0) {
+          const t = elNS("text");
+          t.setAttribute("x", "14");
+          t.setAttribute("y", "506");
+          t.setAttribute("fill", "rgba(255,255,255,0.5)");
+          t.setAttribute("font-size", "12");
+          t.textContent = note.join("；");
+          svg.appendChild(t);
+        }
+      }
+
+      function renderLegend() {
+        const el = document.getElementById("legend");
+        const parts = [];
+        for (const catKey of Object.keys(CATEGORIES)) {
+          parts.push(
+            `<span class="legendItem" title="${escapeHtml(CATEGORIES[catKey].name)}">` +
+              `<span class="dot" style="background:${catColor(catKey)}"></span>` +
+              `${escapeHtml(catKey)}</span>`
+          );
+        }
+        el.innerHTML = parts.join("");
+      }
+
+      function render() {
+        renderList();
+        renderDetail();
+        drawGraph();
+        document.querySelectorAll(".item").forEach((el) => {
+          const id = el.getAttribute("data-id");
+          el.classList.toggle("active", id === state.selectedId);
+        });
+      }
+
+      function selectFromHash() {
+        const raw = location.hash.replace(/^#/, "");
+        if (!raw) return;
+        const id = decodeURIComponent(raw);
+        if (data.byId.has(id)) state.selectedId = id;
+      }
+
+      function copyToClipboard(text) {
+        if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        return Promise.resolve();
+      }
+
+      function download(filename, text) {
+        const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function init() {
+        renderFilters();
+        renderLegend();
+        selectFromHash();
+
+        const q = document.getElementById("q");
+        q.addEventListener("input", () => {
+          state.q = q.value;
+          render();
+        });
+
+        window.addEventListener("hashchange", () => {
+          selectFromHash();
+          render();
+        });
+
+        document.getElementById("btnRandom").addEventListener("click", () => {
+          const visible = getFilteredNodes();
+          const pickFrom = visible.length > 0 ? visible : data.nodes;
+          const idx = Math.floor(Math.random() * pickFrom.length);
+          setSelected(pickFrom[idx].id);
+        });
+
+        document.getElementById("btnCopyLink").addEventListener("click", async () => {
+          if (!state.selectedId) return;
+          const link = `${location.origin}${location.pathname}#${encodeURIComponent(state.selectedId)}`;
+          await copyToClipboard(link);
+        });
+
+        document.getElementById("btnExport").addEventListener("click", () => {
+          const nodes = data.nodes.map((n) => ({ id: n.id, title: n.title, category: catLabel(n.catKey), categoryKey: n.catKey, deps: n.deps }));
+          const edges = data.edges.map((e) => ({ from: e.from, to: e.to }));
+          download("agent-knowledge-network.json", JSON.stringify({ nodes, edges }, null, 2));
+        });
+
+        if (!state.selectedId) state.selectedId = "C11";
+        render();
+      }
+
+      init();
+    </script>
+  </body>
+</html>
