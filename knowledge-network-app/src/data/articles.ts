@@ -1,5 +1,7 @@
 import { abilityFolderNameById, type AbilityId } from "@/data/abilitiesMeta";
 
+export const ARTICLES_ROOT_DIR = "按能力拆解 Agent 架构";
+
 function base64UrlEncodeUtf8(text: string) {
   const base64 = btoa(unescape(encodeURIComponent(text)));
   return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
@@ -35,19 +37,26 @@ export function fromFsName(name: string) {
   return name.replace(/／/g, "/");
 }
 
-const MARKDOWN_LOADERS = import.meta.glob("/src/articles/**/*.md", {
+const MARKDOWN_LOADERS = import.meta.glob("/src/articles/按能力拆解 Agent 架构/**/*.md", {
   query: "?raw",
   import: "default"
 }) as Record<string, () => Promise<string>>;
+
+function toFsPath(pathLike: string) {
+  return pathLike
+    .split("/")
+    .map((seg) => toFsName(seg))
+    .join("/");
+}
 
 export function resolveArticlePath(payload: { abilityId: string; groupTitle: string; itemTitle: string }) {
   const abilityId = payload.abilityId as AbilityId;
   const abilityFolder = abilityFolderNameById[abilityId];
   if (!abilityFolder) return null;
 
-  const groupFolder = toFsName(payload.groupTitle);
+  const groupFolder = toFsPath(payload.groupTitle);
   const fileName = `${toFsName(payload.itemTitle)}.md`;
-  return `/src/articles/${abilityFolder}/${groupFolder}/${fileName}`;
+  return `/src/articles/${ARTICLES_ROOT_DIR}/${abilityFolder}/${groupFolder}/${fileName}`;
 }
 
 export async function loadArticleMarkdown(payload: { abilityId: string; groupTitle: string; itemTitle: string }) {

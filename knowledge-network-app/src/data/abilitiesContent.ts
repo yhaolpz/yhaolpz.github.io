@@ -21,10 +21,10 @@ export type Ability = {
   groups: KnowledgeGroup[];
 };
 
-const ARTICLE_FILES = import.meta.glob("/src/articles/**/*.md", { query: "?raw", import: "default" });
+const ARTICLE_FILES = import.meta.glob("/src/articles/按能力拆解 Agent 架构/**/*.md", { query: "?raw", import: "default" });
 
 function parseArticlePath(path: string): { abilityId: AbilityId; groupTitle: string; itemTitle: string } | null {
-  const prefix = "/src/articles/";
+  const prefix = "/src/articles/按能力拆解 Agent 架构/";
   if (!path.startsWith(prefix)) return null;
 
   const rest = path.slice(prefix.length);
