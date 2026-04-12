@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NPM_CONFIG_REGISTRY: https://registry.npmjs.org/
 
 jobs:
   build:
@@ -32,18 +32,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
           cache: npm
           cache-dependency-path: knowledge-network-app/package-lock.json
 
       - name: Install
         working-directory: knowledge-network-app
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: Build
         working-directory: knowledge-network-app
         env:
-          VITE_BASE: ${{ github.event.repository.name == format('{0}.github.io', github.repository_owner) && '/' || format('/{0}/', github.event.repository.name) }}
+          VITE_BASE: ${{ endsWith(github.event.repository.name, '.github.io') && '/' || format('/{0}/', github.event.repository.name) }}
         run: |
           npm run build
           touch dist/.nojekyll
