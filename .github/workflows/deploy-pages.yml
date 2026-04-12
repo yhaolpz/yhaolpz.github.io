@@ -33,24 +33,19 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
-          cache: pnpm
-          cache-dependency-path: knowledge-network-app/pnpm-lock.yaml
-
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@9.15.5 --activate
+          cache: npm
+          cache-dependency-path: knowledge-network-app/package-lock.json
 
       - name: Install
         working-directory: knowledge-network-app
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Build
         working-directory: knowledge-network-app
         env:
           VITE_BASE: ${{ github.event.repository.name == format('{0}.github.io', github.repository_owner) && '/' || format('/{0}/', github.event.repository.name) }}
         run: |
-          pnpm run build
+          npm run build
           touch dist/.nojekyll
 
       - name: Upload artifact
