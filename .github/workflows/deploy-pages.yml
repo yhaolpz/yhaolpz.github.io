@@ -37,7 +37,9 @@ jobs:
           cache-dependency-path: knowledge-network-app/pnpm-lock.yaml
 
       - name: Enable Corepack
-        run: corepack enable
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.5 --activate
 
       - name: Install
         working-directory: knowledge-network-app
