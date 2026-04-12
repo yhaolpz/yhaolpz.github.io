@@ -51,7 +51,7 @@ export default function Home() {
             <AbilityTabs
               defaultAbilityId="perception"
               onOpenArticle={(payload) => {
-                window.open(`/article/${payload.ref}`, "_blank", "noopener,noreferrer");
+                window.open(`${import.meta.env.BASE_URL}#/article/${payload.ref}`, "_blank", "noopener,noreferrer");
               }}
             />
           </div>

@@ -6,7 +6,7 @@ export function TopBar() {
   return (
     <div className="sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-700 dark:bg-zinc-900/80">
       <div className="mx-auto flex h-14 max-w-[1040px] items-center justify-between gap-3 px-5">
-        <a href="#top" className="text-sm font-semibold tracking-wide text-zinc-900 dark:text-zinc-200">
+        <a href={`${import.meta.env.BASE_URL}#/`} className="text-sm font-semibold tracking-wide text-zinc-900 dark:text-zinc-200">
           Agent 架构学习
         </a>
 
