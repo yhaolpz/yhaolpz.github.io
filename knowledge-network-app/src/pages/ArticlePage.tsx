@@ -123,7 +123,7 @@ export default function ArticlePage() {
         </div>
 
         <footer className="mt-16 border-t border-zinc-200 py-8 dark:border-zinc-700">
-          <div className="text-sm text-zinc-500 dark:text-zinc-400">© 2026 Agent 架构学习 · WangYingHao.Ahab</div>
+          <div className="text-sm text-zinc-500 dark:text-zinc-400">© {new Date().getFullYear()} WangYingHao.Ahab</div>
         </footer>
       </main>
     </div>
