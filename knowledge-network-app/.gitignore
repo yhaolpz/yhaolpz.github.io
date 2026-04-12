@@ -13,6 +13,9 @@ dist
 dist-ssr
 *.local
 
+# Local-only product roadmap & planning (not committed)
+PRODUCT_ROADMAP.local.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
